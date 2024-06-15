@@ -1,0 +1,142 @@
+/* NavButton.module.css */
+@import url('https://fonts.googleapis.com/css2?family=Jomolhari&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Imprima&family=Jomolhari&display=swap');
+
+
+.app{
+  display: flex;
+  width: 100%;
+  height: 100%;
+  
+}
+
+.left{
+  padding-left: 301px;
+  padding-top: 190px;
+  width: 420px;
+  height: 95px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  /* text-align: center; */
+}
+
+.title{
+  font-size: 64px;
+  text-align: center;
+  padding-bottom: 15px;
+  font-family: "Jomolhari", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.login_campo{
+  display: flex;
+  flex-direction: column;
+  gap:24px;
+  justify-content: left;
+  
+  
+  
+}
+
+.senha{
+  display: flex;
+  justify-content: left;
+  align-items: baseline;
+  gap: 5px;
+  
+}
+
+.s{
+  font-size: 16px;
+}
+
+input{
+  border: none;
+  border-bottom: 2px solid rgb(0, 0, 0);
+  font-family: "Imprima", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+input:focus{
+  outline: none;
+  
+}
+
+input::placeholder{
+  color: rgb(3, 3, 3);
+  opacity: 0.5;
+}
+
+.botao{
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  font-family: "Imprima", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.logar{
+  display: flex;
+  align-items: center;
+  width: 405px;
+  height: 52px;
+  background-color: #F9D5D5;
+  justify-content: center;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: "Imprima", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: larger;
+  
+}
+
+.logar_google{
+  display: flex;
+  justify-content: center;
+  background-color: #41BBFF;
+  width: 405px;
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uOCA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNCAxMC43YTUuNCA1LjQgMCAwIDEgMC0zLjRWNUgxYTkgOSAwIDAgMCAwIDhsMy0yLjN6IiBmaWxsPSIjRkJCQzA1IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOSAzLjZjMS4zIDAgMi41LjQgMy40IDEuM0wxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBNDMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4=);
+  background-repeat: no-repeat;
+  background-position: 95px ;
+  height: 52px;
+  border-radius: 20px;
+  align-items: center;
+  cursor: pointer;
+  font-family: "Imprima", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: larger;
+
+}
+
+.right{
+  display: flex;
+  padding-left: 150px;
+  padding-top: 200px;
+  width: 302px;
+  height: 95px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  /* top: 150px; */
+  padding-bottom: 10px;
+  gap: 5px;
+}
+
+span{
+  font-family: "Imprima", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+button:hover{
+  background-color: rgb(134, 243, 33);
+}
