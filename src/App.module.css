@@ -3,25 +3,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Imprima&family=Jomolhari&display=swap');
 
 
-.app{
+.app {
   display: flex;
   width: 100%;
-  height: 100%;
-  
+  /* height: 100vh; */
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 20px;
 }
 
-.left{
-  padding-left: 301px;
-  padding-top: 190px;
-  width: 420px;
-  height: 95px;
+.left {
+  padding-left: 15%;
+  /* padding-top: 20%; */
+  width: 38%;
+  /* height: 95px; */
   display: flex;
   justify-content: center;
   flex-direction: column;
   /* text-align: center; */
 }
 
-.title{
+.title {
   font-size: 64px;
   text-align: center;
   padding-bottom: 15px;
@@ -30,29 +32,26 @@
   font-style: normal;
 }
 
-.login_campo{
+.login_campo {
   display: flex;
   flex-direction: column;
-  gap:24px;
-  justify-content: left;
-  
-  
-  
+  gap: 24px;
+
 }
 
-.senha{
+.senha {
   display: flex;
   justify-content: left;
   align-items: baseline;
   gap: 5px;
-  
+
 }
 
-.s{
+.s {
   font-size: 16px;
 }
 
-input{
+input {
   border: none;
   border-bottom: 2px solid rgb(0, 0, 0);
   font-family: "Imprima", sans-serif;
@@ -60,17 +59,17 @@ input{
   font-style: normal;
 }
 
-input:focus{
+input:focus {
   outline: none;
-  
+
 }
 
-input::placeholder{
+input::placeholder {
   color: rgb(3, 3, 3);
   opacity: 0.5;
 }
 
-.botao{
+.botao {
   padding-top: 40px;
   display: flex;
   flex-direction: column;
@@ -81,10 +80,10 @@ input::placeholder{
   font-style: normal;
 }
 
-.logar{
+.logar {
   display: flex;
   align-items: center;
-  width: 405px;
+  width: 100%;
   height: 52px;
   background-color: #F9D5D5;
   justify-content: center;
@@ -94,17 +93,14 @@ input::placeholder{
   font-weight: 400;
   font-style: normal;
   font-size: larger;
-  
+
 }
 
-.logar_google{
+.logar_google {
   display: flex;
   justify-content: center;
   background-color: #41BBFF;
-  width: 405px;
-  background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uOCA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNCAxMC43YTUuNCA1LjQgMCAwIDEgMC0zLjRWNUgxYTkgOSAwIDAgMCAwIDhsMy0yLjN6IiBmaWxsPSIjRkJCQzA1IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOSAzLjZjMS4zIDAgMi41LjQgMy40IDEuM0wxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBNDMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4=);
-  background-repeat: no-repeat;
-  background-position: 95px ;
+  width: 100%;
   height: 52px;
   border-radius: 20px;
   align-items: center;
@@ -114,29 +110,40 @@ input::placeholder{
   font-style: normal;
   font-size: larger;
 
+
 }
 
-.right{
+.right {
+
+  /* padding-left: 10%; */
+  /* padding-top: 7%; */
+  /* width: 302px;
+  height: 95px; */
   display: flex;
-  padding-left: 150px;
-  padding-top: 200px;
-  width: 302px;
-  height: 95px;
-  display: flex;
+  width: 30%;
   justify-content: center;
   flex-direction: column;
   align-items: center;
   /* top: 150px; */
-  padding-bottom: 10px;
-  gap: 5px;
+  /* padding-bottom: 10px; */
+  /* gap: 5px; */
+  /* background-color: aqua; */
+  /* background-color: #41BBFF; */
 }
 
-span{
+.lobo {
+  position: relative;
+  justify-content: center;
+  align-items: center;
+
+}
+
+span {
   font-family: "Imprima", sans-serif;
   font-weight: 400;
   font-style: normal;
 }
 
-button:hover{
+button:hover {
   background-color: rgb(134, 243, 33);
 }
