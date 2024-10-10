@@ -3,6 +3,7 @@ import cadeado from './cadeado.svg';
 import styles from './App.module.css';
 import { FcGoogle } from "react-icons/fc";
 import { Link } from 'react-router-dom';
+import { IoPersonOutline } from "react-icons/io5";
 
 
 
@@ -14,7 +15,7 @@ function Cad() {
         <h1 className={styles.title}>Crie sua conta</h1>
         <div className={styles.login_campo}>
 
-          <span>Nome</span>
+          <span><IoPersonOutline /> {'\u00A0'}Nome</span>
           <input placeholder="Digite seu nome"></input>
 
           <span>Sobrenome</span>
@@ -24,7 +25,7 @@ function Cad() {
           <input placeholder="Digite seu E-mail"></input>
 
           <div className={styles.senha}>
-            <img src={cadeado} width="12px" heigth="12px" alt='imagem de um lobo'></img>
+            <img src={cadeado} width="12px" heigth="12px" alt='cadeado'></img>
             <span className="s">Senha</span>
           </div>
 

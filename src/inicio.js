@@ -17,9 +17,18 @@ import img_card from './img/3918491.jpg';
 function Ini() {
     const [showOptions, setShowOptions] = useState(false);
 
+
+
     const handleButtonClick = () => {
         setShowOptions(!showOptions);
     }
+
+    const headClick = (e) => {
+        if (window.location.pathname === "/") {
+            window.location.reload();
+        }
+    }
+
     return (
 
         <header className={styles.cabecalho}>
@@ -27,7 +36,7 @@ function Ini() {
                 <div className={styles.head}>
                     <div className={styles.logoNome}>
 
-                        <Link to="/login" className={styles.img_topo}><img src={lobo} width="40px" alt='imagem de um lobo'></img> Therapist Friend</Link>
+                        <Link to="/ " className={styles.img_topo} onClick={headClick}><img src={lobo} width="55px" alt='imagem de um lobo'></img> Therapist Friend</Link>
 
                     </div>
 
@@ -39,7 +48,7 @@ function Ini() {
                             {showOptions && (
                                 <div className={styles.options}>
                                     <Link to="/cadastro">Paciente</Link>
-                                    <Link to="/cadastro"> Profissional</Link>
+                                    <Link to="/cadastroP"> Profissional</Link>
                                 </div>
 
                             )}
@@ -60,12 +69,13 @@ function Ini() {
                     </span>
                 </div>
             </div>
+            <hr></hr>
             <span className={styles.comoFunciona}>Como funciona?</span>
 
 
             <div className={styles.f}>
                 <div class={styles.card}>
-                    <a> Desabafe Anonimamente</a>
+                    <p className={styles.paragrafo}> Desabafe Anonimamente</p>
 
                     <div class={styles.card__content} style={{ backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url(${maos})` }}>
 
@@ -77,7 +87,7 @@ function Ini() {
                 </div>
 
                 <div class={styles.card} >
-                    <a> Leitura Pelos Profissionais</a>
+                    <p className={styles.paragrafo}> Leitura Pelos Profissionais</p>
 
                     <div class={styles.card__content} style={{ backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url(${leitura})` }}>
                         <p class={styles.card__title}>Profissionais</p>
@@ -88,7 +98,7 @@ function Ini() {
                 </div>
 
                 <div class={styles.card}>
-                    <a> Contato Iniciado pelos Profissionais</a>
+                    <p className={styles.paragrafo}> Contato Iniciado pelos Profissionais</p>
 
                     <div class={styles.card__content} style={{ backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url(${contato})` }}>
 
@@ -100,7 +110,7 @@ function Ini() {
                 </div>
 
                 <div class={styles.card}>
-                    <a> Agendamento de Atendimento</a>
+                    <p className={styles.paragrafo}> Agendamento de Atendimento</p>
 
                     <div class={styles.card__content} style={{ backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url(${agenda})` }}>
                         <p class={styles.card__title}>Agendamento</p>

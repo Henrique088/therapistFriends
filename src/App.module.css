@@ -39,18 +39,6 @@
 
 }
 
-.senha {
-  display: flex;
-  justify-content: left;
-  align-items: baseline;
-  gap: 5px;
-
-}
-
-.s {
-  font-size: 16px;
-}
-
 input {
   border: none;
   border-bottom: 2px solid rgb(0, 0, 0);
@@ -142,6 +130,8 @@ span {
   font-family: "Imprima", sans-serif;
   font-weight: 400;
   font-style: normal;
+  display: flex;
+  align-items: center;
 }
 
 button:hover {
