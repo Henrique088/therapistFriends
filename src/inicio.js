@@ -43,16 +43,10 @@ function Ini() {
                     <div className={styles.loginCad}>
                         <Link to="/login" className={styles.log}><a>Login</a></Link>
 
-                        <div className={styles.navButton}>
-                            <button onClick={handleButtonClick} className={styles.botao}>Novo?</button>
-                            {showOptions && (
-                                <div className={styles.options}>
-                                    <Link to="/cadastro">Paciente</Link>
-                                    <Link to="/cadastroP"> Profissional</Link>
-                                </div>
-
-                            )}
-                        </div>
+                        
+                        <Link to="/cadastro" className={styles.log}><a>Cadastro</a></Link>
+                            
+                        
                     </div>
                 </div>
                 {/* <hr></hr> */}

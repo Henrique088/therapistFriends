@@ -14,8 +14,34 @@ import cpf_img from './img/cpf_02.webp';
 
 function CadProfissioanais() {
 
-    const [telefone, setTelefone] = useState('');
-    const [cpf, setCpf] = useState('');
+    // const [telefone, setTelefone] = useState('');
+    // const [cpf, setCpf] = useState('');
+    const [senha, setSenha] = useState('');
+    const [confirmarSenha, setConfirmarSenha] = useState('');
+    const [mensagemErro, setMensagemErro] = useState('');
+    
+    const handleSenhaChange = (e) => {
+        setSenha(e.target.value);
+        
+        if (e.target.value !== confirmarSenha && confirmarSenha !== '') {
+            setMensagemErro('As senhas não coincidem');
+        } else {
+            setMensagemErro('');
+        }
+    };
+
+    const handleConfirmarSenhaChange = (e) => {
+        setConfirmarSenha(e.target.value);
+
+        if (e.target.value !== senha) {
+            setMensagemErro('As senhas não coincidem');
+        } else {
+            setMensagemErro('');
+        }
+    };
+
+     
+
 
     return (
         <div className={styles.app}>
@@ -31,7 +57,7 @@ function CadProfissioanais() {
                     <input placeholder="Digite seu E-mail" type='email'></input>
 
 
-                    <span><img src={cpf_img} width="4%" heigth="2%" alt='cpf logo'></img>{'\u00A0'}CPF</span>
+                    {/* <span><img src={cpf_img} width="4%" heigth="2%" alt='cpf logo'></img>{'\u00A0'}CPF</span>
                     <InputMask
                         mask="999.999.999-99"
                         value={cpf}
@@ -50,10 +76,25 @@ function CadProfissioanais() {
                         placeholder="(XX) XXXXX-XXXX"
                         id="telefone"
                         name="telefone"
-                    />
+                    /> */}
 
                     <span ><CiLock />{'\u00A0'}Senha</span>
-                    <input placeholder="Digite sua senha"></input>
+                    <input type = "password"
+                        placeholder="Digite sua senha" 
+                        value={senha} 
+                        onChange={handleSenhaChange}>
+
+                    </input>
+                    {mensagemErro && <p style={{color: 'red'}}>{mensagemErro}</p>}
+
+                    <span ><CiLock />{'\u00A0'}Digite a senha novamente</span>
+                    <input 
+                        type = "password"
+                        placeholder="Senha" 
+                        value={confirmarSenha} 
+                        onChange={handleConfirmarSenhaChange}>
+
+                    </input>
 
                 </div>
 

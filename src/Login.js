@@ -3,6 +3,7 @@ import cadeado from './cadeado.svg';
 import styles from './App.module.css';
 import { FcGoogle } from "react-icons/fc";
 import { Link } from 'react-router-dom';
+import { CiLock } from "react-icons/ci";
 
 function App() {
   return (
@@ -15,12 +16,10 @@ function App() {
           <span>@ E-mail</span>
           <input placeholder="Digite seu E-mail"></input>
 
-          <div className={styles.senha}>
-            <img src={cadeado} width="12px" heigth="12px" alt='Foto de um cadeado'></img>
-            <span className={styles.s}>Senha</span>
-          </div>
-
-          <input placeholder="Digite sua senha"></input>
+           <span ><CiLock />{'\u00A0'}Senha</span>
+                                        <input type = "password"
+                                          placeholder="Digite sua senha">
+                                        </input>
 
         </div>
 
@@ -40,7 +39,7 @@ function App() {
 
       <div className={styles.right}>
 
-        <img src={lobo} width="80%" heigth="80%" className={styles.lobo} alt='Logo de um lobo'></img>
+        <img src={lobo} width="50%" heigth="50%" className={styles.lobo} alt='Logo de um lobo'></img>
 
         <span>Ainda não possui cadastro? <Link to="/cadastro">Cadastre-se</Link></span>
 
