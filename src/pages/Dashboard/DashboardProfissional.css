@@ -1,0 +1,154 @@
+/* src/pages/Dashboard/DashboardProfissional.css */
+
+.app {
+  display: flex;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f3f4f6;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 2rem;
+  position: relative;
+  overflow-y: auto;
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.content-header h1 {
+  font-size: 1.8rem;
+  color: #333;
+}
+
+.notification-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4b5563;
+  transition: color 0.2s;
+}
+
+.notification-button:hover {
+  color: #111827;
+}
+
+
+.notifications-panel {
+  /* position: absolute;
+  background-color: #fff;
+  border-left: 4px solid #0fd850;
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05); */
+  position: absolute;
+  top: 60px;
+  right: 30px;
+  background-color: #fff;
+  padding: 15px;
+  border: 2px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  z-index: 1000;
+}
+
+.info-cards-container {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.info-card {
+  flex: 1;
+  min-width: 250px;
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-left: 4px solid #0fd850;
+}
+
+.info-card h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  color: #111827;
+}
+
+.info-card p {
+  color: #4b5563;
+  font-size: 0.95rem;
+}
+
+.relatos-feed {
+  margin-top: 2rem;
+}
+
+.relatos-feed h2 {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  color: #111827;
+}
+
+.relatos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.relato-card {
+  background-color: #ffffff;
+  padding: 1rem 1.2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+}
+
+.relato-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #374151;
+}
+
+.relato-texto {
+  font-size: 1rem;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.resposta-textarea {
+  resize: vertical;
+  min-height: 80px;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline-color: #0fd850;
+}
+
+.responder-button {
+  align-self: flex-end;
+  background-color: #0fd850;
+  color: white;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.responder-button:hover {
+  background-color: #0ac144;
+}

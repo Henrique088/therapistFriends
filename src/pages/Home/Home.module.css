@@ -1,0 +1,276 @@
+header {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, #E0FFE0, #A8D8EA);
+}
+
+.navButton {
+  position: relative;
+  display: inline-block;
+}
+
+.options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #ccf2d4;
+  border: 1px solid #ccc;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 1em;
+}
+
+.botao a,
+.log a {
+  display: block;
+  padding: 5px 10px;
+  text-decoration: none;
+  color: black;
+}
+
+.options a:hover {
+  background-image: linear-gradient(to right, #E0FFE0, #A8D8EA);
+  border-radius: 30em;
+}
+
+.topo {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  position: fixed;
+  background-color: white;
+  width: 100%;
+  height: 80px;
+  padding-top: 5px;
+  z-index: 1;
+}
+
+.img_topo {
+  text-decoration: none;
+  color: black;
+  display: flex;
+  align-items: center;
+}
+
+.head {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.loginCad {
+  gap: 10px;
+  display: flex;
+  justify-content: center;
+  padding-right: 15px;
+  height: 100%;
+}
+
+.logoNome {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 20px;
+}
+
+.log {
+  cursor: pointer;
+  width: 9em;
+  height: 3em;
+  border-radius: 30em;
+  font-size: 15px;
+  font-family: inherit;
+  position: relative;
+  text-align: center;
+  justify-content: center;
+  overflow: hidden;
+  text-decoration: none;
+  box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
+}
+
+.botao::before,
+.log::before {
+  content: '';
+  width: 0;
+  height: 3em;
+  border-radius: 30em;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-image: linear-gradient(to right, #E0FFE0, #A8D8EA);
+  transition: 0.5s ease;
+  display: block;
+}
+
+.options a:hover::before,
+.log:hover::before {
+  width: 9em;
+}
+
+.log a {
+  position: relative;
+  top: 10%;
+  padding: 10px;
+  color: black;
+}
+
+hr {
+  position: relative;
+  border-color: #aaaaaa25;
+  width: 100%;
+  box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
+  top: 14%;
+}
+
+.conteudo {
+  width: 100%;
+  height: 100%;
+}
+
+.bemVindo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 10%;
+  width: 100%;
+  height: 100%;
+}
+
+.bemVindo img {
+  max-width: 100%;
+  height: auto;
+}
+
+.texto {
+  line-height: 25px;
+  font-size: larger;
+}
+
+.comoFunciona {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  font-size: 50px;
+  padding-bottom: 80px;
+}
+
+.card {
+  position: relative;
+  width: 400px;
+  height: 300px;
+  background: linear-gradient(to right, #E0FFE0, #A8D8EA);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  gap: 10px;
+  line-height: 1;
+}
+.card .paragrafo {
+  font-size: 23px;
+}
+
+.card:hover {
+  transform: translateY(-10px); /* Eleva o card para cima */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Aumenta a sombra para dar efeito de elevação */
+}
+
+.card__content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: white;
+  opacity: 0;
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.card:hover .card__content {
+  transform: translate(-50%, -50%) rotate(0deg);
+  opacity: 1;
+}
+
+.card__title {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+  font-weight: 700;
+}
+
+.card__description {
+  margin: 10px 0 0;
+  font-size: 15px;
+  color: #080808;
+  line-height: 2.4;
+}
+
+.card:hover a {
+  scale: 0;
+  transform: rotate(-45deg);
+}
+
+.f {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 80px;
+  padding-bottom: 40px;
+}
+
+footer {
+  width: 100%;
+  background-color: #2c3e50; /* Um tom mais escuro para um visual profissional */
+  color: white; /* Cor do texto em branco para contraste */
+  padding: 30px 0; /* Espaçamento superior e inferior */
+  text-align: center;
+}
+
+footer .criador {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+footer .contato {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+footer .contato p {
+  font-size: 16px;
+  font-weight: 600;
+  margin-right: 10px;
+}
+
+footer .contato a {
+  text-decoration: none;
+  color: white;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+footer .contato a:hover {
+  color: #f39c12; /* Destaque com uma cor dourada */
+  transform: scale(1.1); /* Efeito de aumento ao passar o mouse */
+}
+
+footer .contato a svg {
+  margin-right: 10px;
+  font-size: 20px;
+}

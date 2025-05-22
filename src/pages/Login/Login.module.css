@@ -1,0 +1,121 @@
+.loginContainer {
+  display: flex;
+  height: 100vh;
+  background: linear-gradient(to right, #e0ffe0, #a8f0c6);
+}
+
+.formSection {
+  flex: 1;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.imageSection {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wolfImage {
+  max-width: 80%;
+  height: auto;
+}
+
+.title {
+  font-size: 3rem;
+  margin-bottom: 2rem;
+  font-family: 'Georgia', serif;
+}
+
+.inputGroup {
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid black;
+  margin-bottom: 1.5rem;
+}
+
+.icon {
+  margin-right: 0.5rem;
+  font-size: 1.5rem;
+  color: black;
+}
+
+.input {
+  flex: 1;
+  padding: 0.75rem 0;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+}
+
+.input:focus {
+  outline: none;
+}
+
+.loginButton {
+  background-color: #6fcf97; /* verde suave */
+  border: none;
+  padding: 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-top: 1rem;
+  font-weight: bold;
+  color: white;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.loginButton:hover {
+  background-color: #56b881; /* tom mais escuro no hover */
+  transform: scale(1.05);
+}
+
+.loginButtonGoogle {
+  background-color: #db4437; /* Cor do Google */
+  border: none;
+  padding: 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-top: 1rem;
+  font-weight: bold;
+  color: white;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loginButtonGoogle:hover {
+  background-color: #c1351d; /* Tom mais escuro do Google */
+  transform: scale(1.05);
+}
+
+.googleIcon {
+  width: 20px;
+  height: 20px;
+  margin-right: 0.5rem; /* Espaço entre o ícone e o texto */
+}
+
+.loginButtonGoogle span {
+  display: inline-block;
+  margin-left: 0.5rem; /* Espaçamento entre o ícone e o texto */
+}
+
+.cadastroText {
+  margin-top: 1.5rem;
+}
+
+.link {
+  color: #0044cc;
+  text-decoration: underline;
+}
+
+.backHome {
+  margin-top: 1rem;
+  display: block;
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+}
