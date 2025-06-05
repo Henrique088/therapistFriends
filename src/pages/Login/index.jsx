@@ -12,7 +12,7 @@ function Login() {
   try{
   const resposta = await fetch('http://localhost:3001/auth/login', {
   method: 'POST',
-  credentials: 'include', // 👈 garante envio/recebimento de cookies
+  credentials: 'include', // garante envio/recebimento de cookies
   headers: {
     'Content-Type': 'application/json',
   },

@@ -2,8 +2,14 @@ import React, { useState } from 'react';
 import './App.css';
 import MenuLateral from '../../Components/Menu/MenuLateral';
 import RelatoForm from '../../Components/FormularioRelatos/FormularioRelatos';
+import ModalCodinome from '../../Components/ModalCodinome/ModalCodinome';
+import { jwtDecode } from "jwt-decode";
+
 
 const PacienteDashboard = () => {
+  const token = localStorage.getItem('token');
+  const decoded = jwtDecode(token);
+  const codinome = useState(decoded.codinome || '');
   const [showForm, setShowForm] = useState(false);
   const [posts, setPosts] = useState([
     {
@@ -69,9 +75,9 @@ const PacienteDashboard = () => {
   e.preventDefault();
 
   try {
-    const resposta = await fetch('http://localhost:3001/protegidas/profissional', {
-      method: 'GET',
-      credentials: 'include', // 👈 ISSO FICA AQUI FORA
+    const resposta = await fetch('http://localhost:3001/auth/logout', {
+      method: 'POST',
+      credentials: 'include', 
       headers: {
         'Content-Type': 'application/json',
       },
@@ -80,7 +86,10 @@ const PacienteDashboard = () => {
     const dados = await resposta.json();
 
     if (resposta.ok) {
-      console.log('✅ Protegido acessado:', dados);
+      localStorage.removeItem('token');
+      window.location.href = '/login'; // Redireciona para a página de login
+      console.log('✅ Logout realizado com sucesso:', dados);
+      
     } else {
       console.log('❌ Erro ao acessar protegido:', dados);
     }
@@ -94,6 +103,7 @@ const PacienteDashboard = () => {
     <div className="app">
      <MenuLateral></MenuLateral>
       
+      {{codinome} && <ModalCodinome/>}
       {/* Conteúdo Principal */}
       <div className="main-content">
         <div className="content-header">

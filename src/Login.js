@@ -4,8 +4,18 @@ import styles from './App.module.css';
 import { FcGoogle } from "react-icons/fc";
 import { Link } from 'react-router-dom';
 import { CiLock } from "react-icons/ci";
+import { useLocation } from 'react-router-dom';
 
 function App() {
+
+  const location = useLocation();
+  useEffect(() => {
+    if (location.state?.showToast) {
+      toast.warning(location.state.toastMessage);
+      // Limpa o estado para não mostrar novamente
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
   return (
 
     <div className={styles.app}>
@@ -16,10 +26,10 @@ function App() {
           <span>@ E-mail</span>
           <input placeholder="Digite seu E-mail"></input>
 
-           <span ><CiLock />{'\u00A0'}Senha</span>
-                                        <input type = "password"
-                                          placeholder="Digite sua senha">
-                                        </input>
+          <span ><CiLock />{'\u00A0'}Senha</span>
+          <input type="password"
+            placeholder="Digite sua senha">
+          </input>
 
         </div>
 
