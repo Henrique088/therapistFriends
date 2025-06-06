@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { FiMail, FiLock } from 'react-icons/fi';
 import styles from './Login.module.css';
 import lobo from '../../img/lobo.png';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -29,7 +31,17 @@ function Login() {
           window.location.href = '/dashboard-Profissional';
         }
       } else {
-        alert(dados.msg || 'Erro ao fazer login.');
+
+        
+        if(dados.msg === 'Senha incorreta.'){
+          setSenha('');
+        }
+        else{
+          setEmail('');
+        }
+        
+        toast.error(dados.msg)
+        // alert(dados.msg || 'Erro ao fazer login.');
       }
     } catch (erro) {
       console.error('Erro ao logar:', erro);

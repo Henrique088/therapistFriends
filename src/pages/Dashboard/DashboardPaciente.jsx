@@ -55,14 +55,14 @@ const PacienteDashboard = () => {
   const handleCancel = () => {
     setShowForm(false);
     console.log('Formulário cancelado');
-    // Aqui você pode fechar o modal ou redirecionar
+    
   };
 
   const handleSubmit = (formData) => {
     
     console.log('Dados do relato:', formData);
     setShowForm(false);
-    // Aqui você pode enviar os dados para a API
+    
   };
   
 
@@ -71,33 +71,7 @@ const PacienteDashboard = () => {
     // setPosts([newPost, ...posts]);
   };
 
-  async function handleTeste(e) {
-  e.preventDefault();
-
-  try {
-    const resposta = await fetch('http://localhost:3001/auth/logout', {
-      method: 'POST',
-      credentials: 'include', 
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    const dados = await resposta.json();
-
-    if (resposta.ok) {
-      localStorage.removeItem('token');
-      window.location.href = '/login'; // Redireciona para a página de login
-      console.log('✅ Logout realizado com sucesso:', dados);
-      
-    } else {
-      console.log('❌ Erro ao acessar protegido:', dados);
-    }
-  } catch (erro) {
-    console.error('Erro ao acessar rota protegida:', erro);
-    alert('Erro no servidor.');
-  }
-}
+  
 
   return (
     <div className="app">
@@ -148,7 +122,7 @@ const PacienteDashboard = () => {
           ))}
         </div>
       </div>
-      <button onClick={handleTeste}>Clique aqui</button>
+      
     </div>
   );
 };

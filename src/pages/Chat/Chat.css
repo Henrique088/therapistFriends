@@ -76,14 +76,14 @@
 
 
 .mensagem.enviada {
-  background-color: #0fd850;
+  /* background-color: #0fd850; */
   color: white;
   align-self: flex-end;
   margin-left: auto;
 }
 
 .mensagem.recebida {
-  background-color: #e0ffe0;
+  /* background-color: #e0ffe0; */
   color: #333;
   align-self: flex-start;
 }
@@ -149,7 +149,7 @@
 /* Mensagem enviada pelo paciente */
 .mensagem.enviada {
   align-self: flex-end;
-  background-color: #0fd850;
+  background-color: #387ed4;
   color: white;
   border-bottom-right-radius: 0;
 }
@@ -157,7 +157,7 @@
 /* Mensagem recebida do profissional */
 .mensagem.recebida {
   align-self: flex-start;
-  background-color: #e0ffe0;
+  background-color: #3cc0ec;
   color: #333;
   border-bottom-left-radius: 0;
 }

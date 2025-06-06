@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import MenuLateral from '../../Components/Menu/MenuLateral';
+import { jwtDecode } from "jwt-decode";
+import './Chat.css';
 
 export default function Chats() {
   const [conversas, setConversas] = useState([]);
@@ -8,6 +10,9 @@ export default function Chats() {
   const [novaMensagem, setNovaMensagem] = useState('');
 
   const token = localStorage.getItem('token');
+  const decoded = jwtDecode(token)
+  const tipo_usuario = decoded.tipo_usuario;
+  const id_usuario = decoded.id;
 
   useEffect(() => {
     fetch('http://localhost:3001/conversas', {
@@ -17,8 +22,10 @@ export default function Chats() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log('conversas:'+ data)
+        
+
         setConversas(data);
+        console.log('Conversas:', JSON.stringify(data, null, 2));
       })
       .catch((err) => console.error('Erro ao buscar conversas:', err));
   }, [token]);
@@ -40,62 +47,79 @@ export default function Chats() {
   };
 
   const enviarMensagem = () => {
-  if (!novaMensagem.trim()) return;
-  
-  if (!conversaSelecionada) {
-    console.error('Nenhuma conversa selecionada');
-    return;
-  }
+    if (!novaMensagem.trim()) return;
 
-  fetch('http://localhost:3001/mensagens/enviarMensagem', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({
-      conversa_id: conversaSelecionada,
-      texto: novaMensagem,
-    }),
-  })
-  .then(response => {
-    if (!response.ok) {
-      return response.json().then(err => {
-        throw new Error(err.message || 'Erro ao enviar mensagem');
-      });
+    if (!conversaSelecionada) {
+      console.error('Nenhuma conversa selecionada');
+      return;
     }
-    return response.json();
-  })
-  .then(msg => {
-    setMensagens(prev => [...prev, msg]);
-    setNovaMensagem('');
-  })
-  .catch(err => {
-    console.error('Erro detalhado:', err);
-    
-  });
-};
+
+    fetch('http://localhost:3001/mensagens/enviarMensagem', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        conversa_id: conversaSelecionada,
+        texto: novaMensagem,
+      }),
+    })
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then(err => {
+            throw new Error(err.message || 'Erro ao enviar mensagem');
+          });
+        }
+        return response.json();
+      })
+      .then(msg => {
+        setMensagens(prev => [...prev, msg]);
+        setNovaMensagem('');
+      })
+      .catch(err => {
+        console.error('Erro detalhado:', err);
+
+      });
+  };
 
   return (
 
-    
+
     <div style={styles.container}>
       <MenuLateral></MenuLateral>
       <div style={styles.sidebar}>
         <h2>Conversas</h2>
         <ul style={styles.lista}>
-          {Array.isArray(conversas) && conversas.map((conv) => (
-            <li
-              key={conv.id}
-              style={{
-                ...styles.item,
-                backgroundColor: conversaSelecionada === conv.id ? '#e0ffe0' : '#fff',
-              }}
-              onClick={() => carregarMensagens(conv.id)}
-            >
-              Conversa #{conv.id}
-            </li>
-          ))}
+          {tipo_usuario === "paciente" ? (
+            // Renderização para Paciente
+            Array.isArray(conversas) && conversas.map((conv) => (
+              <li
+                key={conv.id}
+                style={{
+                  ...styles.item,
+                  backgroundColor: conversaSelecionada === conv.id ? '#e0ffe0' : '#fff',
+                }}
+                onClick={() => carregarMensagens(conv.id)}
+              > 
+                Conversa #{conv.profissional.usuario.nome}
+              </li>
+            ))
+          ) : (
+            // Renderização para outros tipos de usuário
+            Array.isArray(conversas) && conversas.map((conv) => (
+              <li
+                key={conv.id}
+                style={{
+                  ...styles.item,
+                  backgroundColor: conversaSelecionada === conv.id ? '#e0ffe0' : '#fff',
+                }}
+                onClick={() => carregarMensagens(conv.id)}
+              >
+                {conv.paciente.codinome}
+              </li>
+            ))
+          )}
         </ul>
       </div>
 
@@ -105,7 +129,14 @@ export default function Chats() {
             <div style={styles.mensagens}>
               {mensagens.map((msg) => (
                 <div key={msg.id} style={styles.mensagem}>
-                  <strong>{msg.remetente_id}:</strong> {msg.texto}
+
+                  {id_usuario === msg.remetente_id ?(
+                       <strong className='mensagem enviada'>{msg.remetente_id}:  {msg.texto}</strong>
+
+                  ):(
+                    <strong className='mensagem recebida'>{msg.remetente_id}:  {msg.texto}</strong> 
+                  )}
+                 
                 </div>
               ))}
             </div>
@@ -135,7 +166,7 @@ const styles = {
     fontFamily: 'Arial, sans-serif',
   },
   sidebar: {
-    width: '30%',
+    width: '20%',
     borderRight: '1px solid #ccc',
     padding: '10px',
     overflowY: 'auto',
@@ -161,14 +192,14 @@ const styles = {
     flex: 1,
     padding: '10px',
     overflowY: 'auto',
-    backgroundColor: '#f0f0f0',
+    // backgroundColor: '#f0f0f0',
   },
   mensagem: {
     padding: '8px',
     marginBottom: '5px',
-    backgroundColor: '#fff',
-    borderRadius: '5px',
-    border: '1px solid #ddd',
+    // backgroundColor: '#fff',
+    // borderRadius: '5px',
+    // border: '1px solid #ddd',
   },
   formEnvio: {
     display: 'flex',
@@ -191,4 +222,5 @@ const styles = {
     color: '#000',
     cursor: 'pointer',
   },
+
 };

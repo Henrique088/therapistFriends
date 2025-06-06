@@ -36,24 +36,30 @@
     flex: 1;
     padding: 20px 0;
     background: linear-gradient(to right, #E0FFE0, #A8D8EA);
+    display: flex;
+    flex-direction: column;
+    justify-content:space-between ;
     
   
   }
   
   .sidebar-menu ul {
     list-style: none;
+
     
   }
-  
+
   .sidebar-menu li a {
-    display: flex;
-    align-items: center;
+    display: flex; 
+    justify-content: left;
     padding: 12px 20px;
     color: white;
     text-decoration: none;
     transition: background-color 0.3s;
     gap: 10px;
     border-radius: 15px;
+    color: #3f3f41;
+    font-size: large;
   }
   
   .sidebar-menu li a:hover {
