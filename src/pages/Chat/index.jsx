@@ -2,6 +2,15 @@ import React, { useEffect, useState } from 'react';
 import MenuLateral from '../../Components/Menu/MenuLateral';
 import { jwtDecode } from "jwt-decode";
 import './Chat.css';
+import { io } from 'socket.io-client';
+
+
+const socket = io('http://localhost:3001', {
+  auth: {
+    token: localStorage.getItem('token')
+  },
+  withCredentials: true
+});
 
 export default function Chats() {
   const [conversas, setConversas] = useState([]);
@@ -22,7 +31,7 @@ export default function Chats() {
     })
       .then((res) => res.json())
       .then((data) => {
-        
+
 
         setConversas(data);
         console.log('Conversas:', JSON.stringify(data, null, 2));
@@ -31,6 +40,7 @@ export default function Chats() {
   }, [token]);
 
   const carregarMensagens = (conversaId) => {
+    socket.emit('entrar_conversa', conversaId);
     console.log(conversaId)
     fetch(`http://localhost:3001/mensagens/${conversaId}`, {
       headers: {
@@ -74,14 +84,30 @@ export default function Chats() {
         return response.json();
       })
       .then(msg => {
-        setMensagens(prev => [...prev, msg]);
+        // setMensagens(prev => [...prev, msg]);
         setNovaMensagem('');
+        console.log('Mensagem enviada:', msg);
+        // socket.emit('novaMensagem', msg);
       })
       .catch(err => {
         console.error('Erro detalhado:', err);
 
       });
   };
+  useEffect(() => {
+    socket.on('nova_mensagem', (mensagem) => {
+      if (mensagem.conversa_id === conversaSelecionada) {
+        setMensagens((prev) => [...prev, mensagem]);
+        
+
+      }
+    });
+
+    return () => {
+      socket.off('mensagemRecebida');
+    };
+  }, [conversaSelecionada]);
+
 
   return (
 
@@ -101,7 +127,7 @@ export default function Chats() {
                   backgroundColor: conversaSelecionada === conv.id ? '#e0ffe0' : '#fff',
                 }}
                 onClick={() => carregarMensagens(conv.id)}
-              > 
+              >
                 Conversa #{conv.profissional.usuario.nome}
               </li>
             ))
@@ -130,13 +156,13 @@ export default function Chats() {
               {mensagens.map((msg) => (
                 <div key={msg.id} style={styles.mensagem}>
 
-                  {id_usuario === msg.remetente_id ?(
-                       <strong className='mensagem enviada'>{msg.remetente_id}:  {msg.texto}</strong>
+                  {id_usuario === msg.remetente_id ? (
+                    <strong className='mensagem enviada'>{msg.remetente_id}:  {msg.texto}</strong>
 
-                  ):(
-                    <strong className='mensagem recebida'>{msg.remetente_id}:  {msg.texto}</strong> 
+                  ) : (
+                    <strong className='mensagem recebida'>{msg.remetente_id}:  {msg.texto}</strong>
                   )}
-                 
+
                 </div>
               ))}
             </div>
