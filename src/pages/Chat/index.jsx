@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import MenuLateral from '../../Components/Menu/MenuLateral';
 import { jwtDecode } from "jwt-decode";
-import './Chat.css';
+import styles from './Chat.module.css';
 import { io } from 'socket.io-client';
 
 
@@ -11,6 +11,8 @@ const socket = io('http://localhost:3001', {
   },
   withCredentials: true
 });
+
+
 
 export default function Chats() {
   const [conversas, setConversas] = useState([]);
@@ -56,6 +58,21 @@ export default function Chats() {
       .catch((err) => console.error('Erro ao buscar mensagens:', err));
   };
 
+  const formatarHora = (isoString) => {
+    if (!isoString) {
+      return ''; // Ou 'Data inválida' se preferir exibir algo
+    }
+    try {
+      const date = new Date(isoString);
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${hours}:${minutes}`;
+    } catch (error) {
+      console.error("Erro ao formatar hora:", error);
+      return 'Erro';
+    }
+  };
+
   const enviarMensagem = () => {
     if (!novaMensagem.trim()) return;
 
@@ -98,7 +115,7 @@ export default function Chats() {
     socket.on('nova_mensagem', (mensagem) => {
       if (mensagem.conversa_id === conversaSelecionada) {
         setMensagens((prev) => [...prev, mensagem]);
-        
+
 
       }
     });
@@ -112,18 +129,19 @@ export default function Chats() {
   return (
 
 
-    <div style={styles.container}>
+    <div className={styles.container}>
       <MenuLateral></MenuLateral>
-      <div style={styles.sidebar}>
+      <div className={styles.sidebar}>
         <h2>Conversas</h2>
-        <ul style={styles.lista}>
+        <ul className={styles.lista}>
           {tipo_usuario === "paciente" ? (
             // Renderização para Paciente
             Array.isArray(conversas) && conversas.map((conv) => (
               <li
                 key={conv.id}
+                className={styles.item}
                 style={{
-                  ...styles.item,
+                  
                   backgroundColor: conversaSelecionada === conv.id ? '#e0ffe0' : '#fff',
                 }}
                 onClick={() => carregarMensagens(conv.id)}
@@ -136,8 +154,10 @@ export default function Chats() {
             Array.isArray(conversas) && conversas.map((conv) => (
               <li
                 key={conv.id}
+                className={styles.item}
+                
                 style={{
-                  ...styles.item,
+                  
                   backgroundColor: conversaSelecionada === conv.id ? '#e0ffe0' : '#fff',
                 }}
                 onClick={() => carregarMensagens(conv.id)}
@@ -149,32 +169,39 @@ export default function Chats() {
         </ul>
       </div>
 
-      <div style={styles.chatArea}>
+      <div className={styles.chatArea}>
         {conversaSelecionada ? (
           <>
-            <div style={styles.mensagens}>
+            <div className={styles.mensagens}>
               {mensagens.map((msg) => (
-                <div key={msg.id} style={styles.mensagem}>
-
+                <div key={msg.id} className={styles.mensagem}>
                   {id_usuario === msg.remetente_id ? (
-                    <strong className='mensagem enviada'>{msg.remetente_id}:  {msg.texto}</strong>
-
+                    <div className={styles.direita}>
+                      <div className={`${styles.mensagem} ${styles.enviada}`}>
+                        <strong>{msg.remetente_id}: {msg.texto}</strong>
+                        <span className={styles.horario}>{formatarHora(msg.enviada_em)}</span>
+                      </div>
+                    </div>
                   ) : (
-                    <strong className='mensagem recebida'>{msg.remetente_id}:  {msg.texto}</strong>
+                    <div className={styles.esquerda}>
+                      <div className={`${styles.mensagem} ${styles.recebida}`}>
+                        <strong>{msg.remetente_id}: {msg.texto}</strong>
+                        <span className={styles.horario}>{formatarHora(msg.enviada_em)}</span>
+                      </div>
+                    </div>
                   )}
-
                 </div>
               ))}
             </div>
-            <div style={styles.formEnvio}>
+            <div className={styles.formEnvio}>
               <input
                 type="text"
                 value={novaMensagem}
                 onChange={(e) => setNovaMensagem(e.target.value)}
                 placeholder="Digite sua mensagem..."
-                style={styles.input}
+                className={styles.input}
               />
-              <button onClick={enviarMensagem} style={styles.botao}>Enviar</button>
+              <button onClick={enviarMensagem} className={styles.botao}>Enviar</button>
             </div>
           </>
         ) : (
@@ -185,68 +212,75 @@ export default function Chats() {
   );
 }
 
-const styles = {
-  container: {
-    display: 'flex',
-    height: '100vh',
-    fontFamily: 'Arial, sans-serif',
-  },
-  sidebar: {
-    width: '20%',
-    borderRight: '1px solid #ccc',
-    padding: '10px',
-    overflowY: 'auto',
-    backgroundColor: '#f8f8f8',
-  },
-  lista: {
-    listStyle: 'none',
-    padding: 0,
-  },
-  item: {
-    padding: '10px',
-    marginBottom: '5px',
-    cursor: 'pointer',
-    borderRadius: '5px',
-    border: '1px solid #ccc',
-  },
-  chatArea: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  mensagens: {
-    flex: 1,
-    padding: '10px',
-    overflowY: 'auto',
-    // backgroundColor: '#f0f0f0',
-  },
-  mensagem: {
-    padding: '8px',
-    marginBottom: '5px',
-    // backgroundColor: '#fff',
-    // borderRadius: '5px',
-    // border: '1px solid #ddd',
-  },
-  formEnvio: {
-    display: 'flex',
-    borderTop: '1px solid #ccc',
-    padding: '10px',
-    backgroundColor: '#fff',
-  },
-  input: {
-    flex: 1,
-    padding: '10px',
-    borderRadius: '5px',
-    border: '1px solid #ccc',
-    marginRight: '10px',
-  },
-  botao: {
-    padding: '10px 20px',
-    borderRadius: '5px',
-    border: 'none',
-    backgroundColor: '#0fd850',
-    color: '#000',
-    cursor: 'pointer',
-  },
+// const styles = {
+//   container: {
+//     display: 'flex',
+//     height: '100vh',
+//     fontFamily: 'Arial, sans-serif',
+//   },
+//   sidebar: {
+//     width: '20%',
+//     borderRight: '1px solid #ccc',
+//     padding: '10px',
+//     overflowY: 'auto',
+//     backgroundColor: '#f8f8f8',
 
-};
+
+//   },
+//   lista: {
+//     listStyle: 'none',
+//     padding: 0,
+
+//   },
+//   item: {
+//     padding: '10px',
+//     marginBottom: '5px',
+//     cursor: 'pointer',
+//     borderRadius: '5px',
+//     border: '1px solid #ccc',
+//   },
+//   chatArea: {
+//     flex: 1,
+//     display: 'flex',
+//     flexDirection: 'column',
+//   },
+//   mensagens: {
+//     flex: 1,
+//     padding: '10px',
+//     overflowY: 'auto',
+//     backgroundColor: '#f0f0f0',
+//   },
+//   mensagem: {
+//     // position: 'relative',
+//     width: '100%',
+//     display: 'flex',
+//     flexDirection: 'column',
+//     padding: '8px',
+//     marginBottom: '5px',
+//     backgroundColor: '#fff',
+//     borderRadius: '5px',
+//     border: '1px solid #ddd',
+//   },
+//   formEnvio: {
+//     display: 'flex',
+//     borderTop: '1px solid #ccc',
+//     padding: '10px',
+//     backgroundColor: '#fff',
+//   },
+//   input: {
+//     flex: 1,
+//     padding: '10px',
+//     borderRadius: '5px',
+//     border: '1px solid #ccc',
+//     marginRight: '10px',
+//   },
+//   botao: {
+//     padding: '10px 20px',
+//     borderRadius: '5px',
+//     border: 'none',
+//     backgroundColor: '#0fd850',
+//     color: '#000',
+//     cursor: 'pointer',
+//   },
+
+// };

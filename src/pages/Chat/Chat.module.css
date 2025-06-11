@@ -1,0 +1,204 @@
+.container {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    /* justify-content:left;  */
+   
+    font-Family:Arial, sans-serif;
+    /* gap: 10px; */
+    /* background-color: #1b6de9; */
+   }
+
+  /* Sidebar */
+.sidebar {
+  width: 30%;
+  border-right: 4px solid #ccc;
+  padding: 10px;
+  overflow-y: auto;
+  background-color: #f8f8f8;
+  
+}
+
+/* Lista de Conversas */
+.lista {
+  list-style: none;
+  padding: 0;
+}
+
+.item {
+  padding: 10px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  transition: background-color 0.4s;
+}
+
+
+
+/* Área do Chat */
+.chatArea {
+  flex: 1; /* Faz ocupar todo o espaço restante */
+  display: flex;
+  flex-direction: column;
+  background-color: black;
+  height: 100vh; /* Garante altura total */
+}
+
+/* Mensagens Individuais */
+.mensagem {
+  /* width: 100%; */
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  margin-bottom: 5px;
+  /* background-color: #fff; */
+  border: 1px solid #ddd;
+  max-width: 100%;
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  border-radius: 7.5px;
+  position: relative;
+  word-break: break-word;
+overflow-wrap: break-word;
+}
+
+/* Formulário de Envio */
+.formEnvio {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+  background-color: #98cfe1;
+}
+
+.input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px dashed  #5361e47a;
+  margin-right: 10px;
+}
+
+.botao {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: #06effbb5;
+  color: #000;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.botao:hover {
+  background-color: #d2ff5f;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  background-color: #0fd850;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.horario {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+
+
+/* Estilo geral do container de mensagens */
+.mensagens {
+  flex: 1; /* Ocupa todo o espaço vertical restante */
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  overflow-y: auto;
+  background-color: #e5ddd5;
+  background-image: url('https://web.whatsapp.com/img/bg-chat-tile-light_a4be512e7195b6b733d9110b408f075d.png');
+}
+
+
+
+/* Mensagens enviadas (à direita) */
+/* .direita {
+  display: flex;
+  justify-content: flex-end;
+} */
+
+.mensagem.enviada {
+  background-color: #c6e6f8;
+  color: #000;
+  margin-left: auto;
+  border-top-right-radius: 0;
+}
+
+/* Mensagens recebidas (à esquerda) */
+/* .esquerda {
+  display: flex;
+  justify-content: flex-start;
+} */
+
+.mensagem.recebida {
+  background-color: #fff;
+  color: #000;
+  margin-right: auto;
+  border-top-left-radius: 0;
+}
+
+/* Estilo para o horário */
+.horario {
+  font-size: 11px;
+  color: #667781;
+  margin-left: 8px;
+  margin-top: auto;
+  margin-bottom: -5px;
+  white-space: nowrap;
+}
+
+/* Alinhamento do horário nas mensagens enviadas */
+.direita .horario {
+  align-self: flex-end;
+}
+
+/* Alinhamento do horário nas mensagens recebidas */
+.esquerda .horario {
+  align-self: flex-end;
+}
+
+/* Estilo para o texto do remetente */
+.mensagem strong {
+  font-weight: 500;
+  display: inline-block;
+  margin-bottom: 2px;
+}
+
+/* Efeito de bolha no WhatsApp */
+.mensagem.enviada:after {
+  content: "";
+  position: absolute;
+  right: -5px;
+  top: 0;
+  width: 10px;
+  height: 10px;
+  background-color: #c6e6f8;
+  transform: rotate(45deg);
+}
+
+.mensagem.recebida:before {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: 0;
+  width: 10px;
+  height: 10px;
+  background-color: #fff;
+  transform: rotate(45deg);
+}

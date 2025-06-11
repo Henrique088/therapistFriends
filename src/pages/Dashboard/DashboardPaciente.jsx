@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import './App.css';
 import MenuLateral from '../../Components/Menu/MenuLateral';
 import RelatoForm from '../../Components/FormularioRelatos/FormularioRelatos';
-import ModalCodinome from '../../Components/ModalCodinome/ModalCodinome';
+// import ModalCodinome from '../../Components/ModalCodinome/ModalCodinome';
 import { jwtDecode } from "jwt-decode";
 
 
-const PacienteDashboard = () => {
+export default function DashboardPaciente () {
   const token = localStorage.getItem('token');
   const decoded = jwtDecode(token);
   const codinome = useState(decoded.codinome || '');
@@ -77,7 +77,7 @@ const PacienteDashboard = () => {
     <div className="app">
      <MenuLateral></MenuLateral>
       
-      {{codinome} && <ModalCodinome/>}
+      {/* {{codinome} && <ModalCodinome/>} */}
       {/* Conteúdo Principal */}
       <div className="main-content">
         <div className="content-header">
@@ -127,4 +127,3 @@ const PacienteDashboard = () => {
   );
 };
 
-export default PacienteDashboard;
