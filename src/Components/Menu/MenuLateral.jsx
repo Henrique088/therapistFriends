@@ -10,11 +10,15 @@ import { GiExitDoor } from "react-icons/gi";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Navigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+
 
 const MenuLateral = () => {
 
-  const [userData, setUserData] = useState({codinome: '', tipo:'Paciente' });
+  const [userData, setUserData] = useState({ codinome: '', tipo: 'Paciente' });
   const [redirect, setRedirect] = useState(null);
+  const location = useLocation();
+  const isChatPage = location.pathname === '/chat'; // ajuste se a rota for diferente
 
   const [menuCollapsed, setMenuCollapsed] = useState(false);
   const toggleMenu = () => {
@@ -41,9 +45,15 @@ const MenuLateral = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (isChatPage) {
+      setMenuCollapsed(true);
+    }
+  }, [isChatPage]);
+
   async function logout(e) {
     e.preventDefault();
-    
+
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -59,12 +69,12 @@ const MenuLateral = () => {
           'Authorization': `Bearer ${token}`
         },
       });
-      
-      if(resposta.ok){
-          localStorage.removeItem('token');
-          toast.success('Volte sempre! Saindo...');
+
+      if (resposta.ok) {
+        localStorage.removeItem('token');
+        toast.success('Volte sempre! Saindo...');
       }
-      
+
 
       setTimeout(() => setRedirect(true), 3000);
 
@@ -93,21 +103,21 @@ const MenuLateral = () => {
 
         <nav className="sidebar-menu">
           <ul>
-            <li><a href={`/dashboard-${userData.tipo}`}><span role="img" aria-label="home"><FaHome /></span> {!menuCollapsed && 'Início'}</a></li>
+            <li><a href={`/dashboard-${userData.tipo}`} title='Home'><span role="img" aria-label="home"><FaHome /></span> {!menuCollapsed && 'Início'}</a></li>
             {userData.tipo === 'Paciente' && (
-              <li><a href="/explorar"><span role="img" aria-label="explore"><MdPersonSearch /></span> {!menuCollapsed && 'Explorar'}</a></li>
+              <li><a href="/explorar" title='Explorar'><span role="img" aria-label="explore" ><MdPersonSearch /></span> {!menuCollapsed && 'Explorar'}</a></li>
             )}
 
-            <li><a href="/relatos"><span role="img" aria-label="relatos"><IoDocumentTextSharp /></span> {!menuCollapsed && 'Relatos'}</a></li>
-            <li><a href="/chat"><span role="img" aria-label="Chats"><RiChatSmile3Fill /></span> {!menuCollapsed && 'Chats'}</a></li>
-            <li><a href="#"><span role="img" aria-label="notifications"><IoNotificationsCircle /></span> {!menuCollapsed && 'Notificações'}</a></li>
-            <li><a href="#"><span role="img" aria-label="messages"><RiChatSmile3Fill /></span> {!menuCollapsed && 'Mensagens'}</a></li>
-            <li><a href="#"><span role="img" aria-label="profile"><IoPerson /></span> {!menuCollapsed && 'Perfil'}</a></li>
+            <li><a href="/relatos" title='Relatos'><span role="img" aria-label="relatos" ><IoDocumentTextSharp /></span> {!menuCollapsed && 'Relatos'}</a></li>
+            <li><a href="/chat" title='Chats'><span role="img" aria-label="Chats" ><RiChatSmile3Fill /></span> {!menuCollapsed && 'Chats'}</a></li>
+            <li><a href="#" title='Notificações'><span role="img" aria-label="notifications" ><IoNotificationsCircle /></span> {!menuCollapsed && 'Notificações'}</a></li>
+            {/* <li><a href="#"><span role="img" aria-label="messages"><RiChatSmile3Fill /></span> {!menuCollapsed && 'Mensagens'}</a></li> */}
+            <li><a href="#" title='Perfil'><span role="img" aria-label="profile" ><IoPerson /></span> {!menuCollapsed && 'Perfil'}</a></li>
 
           </ul>
 
           <ul>
-            <li className='exit'><a href="/" onClick={logout}><span role="img" aria-label="profile"><GiExitDoor /></span> {!menuCollapsed && 'Sair'}</a></li>
+            <li className='exit'><a href="/" onClick={logout} title='Sair' ><span role="img" aria-label="profile"><GiExitDoor /></span> {!menuCollapsed && 'Sair'}</a></li>
           </ul>
         </nav>
 
@@ -121,9 +131,12 @@ const MenuLateral = () => {
               </div>
             )}
           </div>
-          <button className="toggle-button" onClick={toggleMenu}>
-            {menuCollapsed ? '>' : '<'}
-          </button>
+          {!isChatPage && (
+            <button className="toggle-button" onClick={toggleMenu}>
+              {menuCollapsed ? '>' : '<'}
+            </button>
+          )}
+
         </div>
       </div>
 

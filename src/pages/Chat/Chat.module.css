@@ -11,12 +11,14 @@
 
   /* Sidebar */
 .sidebar {
-  width: 30%;
+  width: 25%;
+  min-width: 220px;
+  max-width: 300px;
+  flex-shrink: 0;
   border-right: 4px solid #ccc;
   padding: 10px;
   overflow-y: auto;
   background-color: #f8f8f8;
-  
 }
 
 /* Lista de Conversas */
@@ -42,7 +44,7 @@
   flex: 1; /* Faz ocupar todo o espaço restante */
   display: flex;
   flex-direction: column;
-  background-color: black;
+  /* background-color: black; */
   height: 100vh; /* Garante altura total */
 }
 
