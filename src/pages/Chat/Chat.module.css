@@ -63,7 +63,7 @@
   border-radius: 7.5px;
   position: relative;
   word-break: break-word;
-overflow-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Formulário de Envio */
@@ -124,7 +124,7 @@ overflow-wrap: break-word;
   padding: 10px;
   overflow-y: auto;
   background-color: #e5ddd5;
-  background-image: url('https://web.whatsapp.com/img/bg-chat-tile-light_a4be512e7195b6b733d9110b408f075d.png');
+  background-image: url('https://www.transparenttextures.com/patterns/white-wall-3.png');
 }
 
 
@@ -203,4 +203,69 @@ overflow-wrap: break-word;
   height: 10px;
   background-color: #fff;
   transform: rotate(45deg);
+}
+
+.nome{
+  color: #0f54df;
+}
+
+.nome_02{
+  color: #0cc033;
+  
+}
+
+/* .acoes {
+  margin-top: 5px;
+}
+.acoes button {
+  margin-right: 5px;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+} */
+
+.menuContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.menuBtn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.popupMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  border-radius: 4px;
+  z-index: 10;
+  min-width: 100px;
+}
+
+.popupMenu button {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.popupMenu button:hover {
+  background-color: #f0f0f0;
+}
+
+.mensagemTopo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }

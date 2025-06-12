@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import MenuLateral from '../../Components/Menu/MenuLateral';
 import { jwtDecode } from "jwt-decode";
 import styles from './Chat.module.css';
@@ -19,6 +19,8 @@ export default function Chats() {
   const [mensagens, setMensagens] = useState([]);
   const [conversaSelecionada, setConversaSelecionada] = useState(null);
   const [novaMensagem, setNovaMensagem] = useState('');
+  const mensagensRef = useRef(null);
+  const [menuAberto, setMenuAberto] = useState(null);
 
   const token = localStorage.getItem('token');
   const decoded = jwtDecode(token)
@@ -41,6 +43,16 @@ export default function Chats() {
       .catch((err) => console.error('Erro ao buscar conversas:', err));
   }, [token]);
 
+  useEffect(() => {
+    if (mensagensRef.current) {
+      mensagensRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [mensagens]);
+
+
+  const toggleMenu = (mensagemId) => {
+    setMenuAberto(menuAberto === mensagemId ? null : mensagemId);
+  };
   const carregarMensagens = (conversaId) => {
     socket.emit('entrar_conversa', conversaId);
     console.log(conversaId)
@@ -60,7 +72,7 @@ export default function Chats() {
 
   const formatarHora = (isoString) => {
     if (!isoString) {
-      return ''; // Ou 'Data inválida' se preferir exibir algo
+      return '';
     }
     try {
       const date = new Date(isoString);
@@ -71,6 +83,51 @@ export default function Chats() {
       console.error("Erro ao formatar hora:", error);
       return 'Erro';
     }
+  };
+
+  const podeEditarOuDeletar = (enviada_em) => {
+    const agora = new Date();
+    const enviada = new Date(enviada_em);
+    const diffMinutos = (agora - enviada) / 1000 / 60;
+
+    return diffMinutos <= 2; // por exemplo, 2 minutos
+  };
+  const deletarMensagem = (mensagemId) => {
+    fetch(`http://localhost:3001/mensagens/${mensagemId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(res => {
+        if (!res.ok) throw new Error("Erro ao deletar");
+        setMensagens(prev => prev.filter(msg => msg.id !== mensagemId));
+      })
+      .catch(err => console.error(err));
+  };
+
+  const editarMensagem = (mensagemId, textoAtual) => {
+    const novoTexto = prompt("Editar mensagem:", textoAtual);
+    if (!novoTexto || novoTexto === textoAtual) return;
+
+    fetch(`http://localhost:3001/mensagens/${mensagemId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ texto: novoTexto }),
+    })
+      .then(res => {
+        if (!res.ok) throw new Error("Erro ao editar");
+        return res.json();
+      })
+      .then(mensagemAtualizada => {
+        setMensagens(prev =>
+          prev.map(msg => (msg.id === mensagemId ? mensagemAtualizada : msg))
+        );
+      })
+      .catch(err => console.error(err));
   };
 
   const enviarMensagem = () => {
@@ -118,6 +175,12 @@ export default function Chats() {
 
 
       }
+
+
+    });
+
+    socket.on('connection_error', (err) => {
+      console.error('Erro de conexão:', err.message);
     });
 
     return () => {
@@ -141,7 +204,7 @@ export default function Chats() {
                 key={conv.id}
                 className={styles.item}
                 style={{
-                  
+
                   backgroundColor: conversaSelecionada === conv.id ? '#e0ffe0' : '#fff',
                 }}
                 onClick={() => carregarMensagens(conv.id)}
@@ -155,9 +218,9 @@ export default function Chats() {
               <li
                 key={conv.id}
                 className={styles.item}
-                
+
                 style={{
-                  
+
                   backgroundColor: conversaSelecionada === conv.id ? '#e0ffe0' : '#fff',
                 }}
                 onClick={() => carregarMensagens(conv.id)}
@@ -178,20 +241,41 @@ export default function Chats() {
                   {id_usuario === msg.remetente_id ? (
                     <div className={styles.direita}>
                       <div className={`${styles.mensagem} ${styles.enviada}`}>
-                        <strong>{msg.remetente_id}: {msg.texto}</strong>
+                        <div className={styles.mensagemTopo}>
+                          <strong><span className={styles.nome}>{msg.remetente.nome}</span></strong>
+                          <div className={styles.menuContainer}>
+                            {podeEditarOuDeletar(msg.enviada_em) && (
+                              <>
+                                <button onClick={() => toggleMenu(msg.id)} className={styles.menuBtn}>⋮</button>
+                                {menuAberto === msg.id && (
+                                  <div className={styles.popupMenu}>
+                                    <button onClick={() => editarMensagem(msg.id, msg.texto)}>Editar</button>
+                                    <button onClick={() => deletarMensagem(msg.id)}>Deletar</button>
+                                  </div>
+                                )}
+                              </>
+                            )}
+
+                          </div>
+                        </div>
+                        <div>{msg.texto}</div>
                         <span className={styles.horario}>{formatarHora(msg.enviada_em)}</span>
                       </div>
                     </div>
                   ) : (
                     <div className={styles.esquerda}>
                       <div className={`${styles.mensagem} ${styles.recebida}`}>
-                        <strong>{msg.remetente_id}: {msg.texto}</strong>
+                        <strong><span className={styles.nome_02}>{msg.remetente.nome}</span></strong>
+                        <div>{msg.texto}</div>
                         <span className={styles.horario}>{formatarHora(msg.enviada_em)}</span>
                       </div>
                     </div>
                   )}
                 </div>
+
               ))}
+              {/* marcador de rolagem */}
+              <div ref={mensagensRef}></div>
             </div>
             <div className={styles.formEnvio}>
               <input

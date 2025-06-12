@@ -7,6 +7,7 @@ import { MdPersonSearch } from "react-icons/md";
 import { IoDocumentTextSharp, IoNotificationsCircle, IoPerson } from "react-icons/io5";
 import { RiChatSmile3Fill } from "react-icons/ri";
 import { GiExitDoor } from "react-icons/gi";
+import { AiOutlineCaretRight, AiOutlineCaretLeft } from "react-icons/ai";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Navigate } from 'react-router-dom';
@@ -86,7 +87,7 @@ const MenuLateral = () => {
   }
 
   if (redirect) {
-    return <Navigate to="/login" replace />; // replacte substitui o histórico de navegação evitando voltar para a página anterior
+    return <Navigate to="/login" replace />; // replace substitui o histórico de navegação evitando voltar para a página anterior
   }
 
   return (
@@ -101,7 +102,7 @@ const MenuLateral = () => {
           </div>
         </div>
 
-        <nav className="sidebar-menu">
+        <nav className={`sidebar-menu ${menuCollapsed ? 'collapsed' : ''}`}>
           <ul>
             <li><a href={`/dashboard-${userData.tipo}`} title='Home'><span role="img" aria-label="home"><FaHome /></span> {!menuCollapsed && 'Início'}</a></li>
             {userData.tipo === 'Paciente' && (
@@ -123,9 +124,10 @@ const MenuLateral = () => {
 
         <div className="sidebar-footer">
           <div className="user-info">
-            <div className="avatar">JS</div>
+           
             {!menuCollapsed && (
               <div className="user-details">
+                <div className="avatar">JS</div>
                 <div className="username">{userData.codinome}</div>
                 <div className="user-email">{userData.email}</div>
               </div>
@@ -133,7 +135,7 @@ const MenuLateral = () => {
           </div>
           {!isChatPage && (
             <button className="toggle-button" onClick={toggleMenu}>
-              {menuCollapsed ? '>' : '<'}
+              {menuCollapsed ? <AiOutlineCaretRight/> : <AiOutlineCaretLeft/>}
             </button>
           )}
 

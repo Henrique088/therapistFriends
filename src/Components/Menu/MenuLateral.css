@@ -61,6 +61,10 @@
     color: #3f3f41;
     font-size: large;
   }
+
+  .sidebar.collapsed li a {
+    justify-content: center;
+  }
   
   .sidebar-menu li a:hover {
     background-color: #5da5ed;
