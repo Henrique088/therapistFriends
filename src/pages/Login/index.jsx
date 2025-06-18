@@ -51,7 +51,7 @@ function Login() {
   };
   return (
     <div className={styles.loginContainer}>
-      <div className={styles.formSection}>
+      <form className={styles.formSection} onSubmit={(e) => e.preventDefault()}>
         <h1 className={styles.title}>Login</h1>
 
         <div className={styles.inputGroup}>
@@ -89,7 +89,7 @@ function Login() {
         </p>
 
         <Link to="/" className={styles.backHome}>← Voltar para a Home</Link>
-      </div>
+      </form>
 
       <div className={styles.imageSection}>
         <img 

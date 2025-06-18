@@ -113,6 +113,19 @@
     background-color: #3a7bc8;
   }
   
+  .anonimo-checkbox {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    gap: 10px;
+  }
+
+  .anonimo-checkbox input {
+    margin-right: 10px;
+    width: 15px;
+    height: 20px;
+    cursor: pointer;
+  }
   /* Responsividade */
   @media (max-width: 480px) {
     .relato-form-container {

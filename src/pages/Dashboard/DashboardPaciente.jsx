@@ -1,16 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import MenuLateral from '../../Components/Menu/MenuLateral';
 import RelatoForm from '../../Components/FormularioRelatos/FormularioRelatos';
-// import ModalCodinome from '../../Components/ModalCodinome/ModalCodinome';
+import ModalCodinome from '../../Components/ModalCodinome/ModalCodinome';
 import { jwtDecode } from "jwt-decode";
 
-
-export default function DashboardPaciente () {
+export default function DashboardPaciente() {
   const token = localStorage.getItem('token');
   const decoded = jwtDecode(token);
-  const codinome = useState(decoded.codinome || '');
   const [showForm, setShowForm] = useState(false);
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [codinome, setCodinome] = useState(decoded.codinome || '');
+
+
+ useEffect(() => {
+  if (!codinome) setMostrarModal(true);
+}, [codinome]);
+
   const [posts, setPosts] = useState([
     {
       id: 1,
@@ -52,43 +58,41 @@ export default function DashboardPaciente () {
       content: 'Se estiver passando por momentos difíceis, não hesite em buscar ajuda profissional.'
     }
   ];
+
   const handleCancel = () => {
     setShowForm(false);
-    console.log('Formulário cancelado');
-    
   };
 
   const handleSubmit = (formData) => {
-    
     console.log('Dados do relato:', formData);
     setShowForm(false);
-    
   };
-  
 
   const createNewPost = () => {
     setShowForm(true);
-    // setPosts([newPost, ...posts]);
   };
-
-  
 
   return (
     <div className="app">
-     <MenuLateral></MenuLateral>
-      
-      {/* {{codinome} && <ModalCodinome/>} */}
-      {/* Conteúdo Principal */}
+      <MenuLateral />
+
+     {mostrarModal && (
+  <ModalCodinome
+    visible={mostrarModal}
+    onClose={() => setMostrarModal(false)}
+  />
+)}
+
       <div className="main-content">
         <div className="content-header">
-          <h1>Bem vindo, Henrique</h1>
+          <h1>Bem-vindo, {codinome || 'Paciente'}</h1>
           <button className="create-post-button" onClick={createNewPost}>
             + Criar Desabafo
           </button>
-
         </div>
-        {showForm && <RelatoForm onCancel={handleCancel} onSubmit={handleSubmit}/>}
-        {/* Lista de Desabafos */}
+
+        {showForm && <RelatoForm onCancel={handleCancel} onSubmit={handleSubmit} />}
+
         <h2>Feed</h2>
         <div className="posts-container">
           {posts.map(post => (
@@ -100,9 +104,7 @@ export default function DashboardPaciente () {
                   <div className="post-time">{post.time}</div>
                 </div>
               </div>
-              <div className="post-content">
-                {post.content}
-              </div>
+              <div className="post-content">{post.content}</div>
               <div className="post-actions">
                 <button className="like-button">👍 {post.likes}</button>
                 <button className="comment-button">💬 {post.comments}</button>
@@ -111,8 +113,7 @@ export default function DashboardPaciente () {
             </div>
           ))}
         </div>
-        
-        {/* Cards Informativos */}
+
         <div className="info-cards-container">
           {infoCards.map((card, index) => (
             <div key={index} className="info-card">
@@ -122,8 +123,6 @@ export default function DashboardPaciente () {
           ))}
         </div>
       </div>
-      
     </div>
   );
-};
-
+}

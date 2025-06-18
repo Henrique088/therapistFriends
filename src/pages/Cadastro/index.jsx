@@ -8,7 +8,7 @@ function Cadastro() {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [tipoUsuario, setTipoUsuario] = useState('Paciente'); // valor padrão
+  const [tipoUsuario, setTipoUsuario] = useState('paciente'); // valor padrão
 
   async function handleCadastro(e) {
     e.preventDefault();
@@ -83,8 +83,8 @@ function Cadastro() {
             <input
               type="radio"
               value="Paciente"
-              checked={tipoUsuario === 'Paciente'}
-              onChange={() => setTipoUsuario('Paciente')}
+              checked={tipoUsuario === 'paciente'}
+              onChange={() => setTipoUsuario('paciente')}
             />
             Paciente
           </label>
@@ -92,8 +92,8 @@ function Cadastro() {
             <input
               type="radio"
               value="profissional"
-              checked={tipoUsuario === 'Profissional'}
-              onChange={() => setTipoUsuario('Profissional')}
+              checked={tipoUsuario === 'profissional'}
+              onChange={() => setTipoUsuario('profissional')}
             />
             Profissional
           </label>

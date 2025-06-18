@@ -109,7 +109,7 @@ const MenuLateral = () => {
               <li><a href="/explorar" title='Explorar'><span role="img" aria-label="explore" ><MdPersonSearch /></span> {!menuCollapsed && 'Explorar'}</a></li>
             )}
 
-            <li><a href="/relatos" title='Relatos'><span role="img" aria-label="relatos" ><IoDocumentTextSharp /></span> {!menuCollapsed && 'Relatos'}</a></li>
+            <li><a href="/relato" title='Relatos'><span role="img" aria-label="relatos" ><IoDocumentTextSharp /></span> {!menuCollapsed && 'Relatos'}</a></li>
             <li><a href="/chat" title='Chats'><span role="img" aria-label="Chats" ><RiChatSmile3Fill /></span> {!menuCollapsed && 'Chats'}</a></li>
             <li><a href="#" title='Notificações'><span role="img" aria-label="notifications" ><IoNotificationsCircle /></span> {!menuCollapsed && 'Notificações'}</a></li>
             {/* <li><a href="#"><span role="img" aria-label="messages"><RiChatSmile3Fill /></span> {!menuCollapsed && 'Mensagens'}</a></li> */}

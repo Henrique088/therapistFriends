@@ -21,6 +21,7 @@ export default function Chats() {
   const [novaMensagem, setNovaMensagem] = useState('');
   const mensagensRef = useRef(null);
   const [menuAberto, setMenuAberto] = useState(null);
+  const menuRef = useRef(null);
 
   const token = localStorage.getItem('token');
   const decoded = jwtDecode(token)
@@ -49,6 +50,18 @@ export default function Chats() {
     }
   }, [mensagens]);
 
+  useEffect(() => {
+    const handleClickFora = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuAberto(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickFora);
+    return () => {
+      document.removeEventListener('mousedown', handleClickFora);
+    };
+  }, []);
 
   const toggleMenu = (mensagemId) => {
     setMenuAberto(menuAberto === mensagemId ? null : mensagemId);
@@ -101,7 +114,7 @@ export default function Chats() {
     })
       .then(res => {
         if (!res.ok) throw new Error("Erro ao deletar");
-        setMensagens(prev => prev.filter(msg => msg.id !== mensagemId));
+        console.log("Mensagem deletada com sucesso.");
       })
       .catch(err => console.error(err));
   };
@@ -123,9 +136,7 @@ export default function Chats() {
         return res.json();
       })
       .then(mensagemAtualizada => {
-        setMensagens(prev =>
-          prev.map(msg => (msg.id === mensagemId ? mensagemAtualizada : msg))
-        );
+
       })
       .catch(err => console.error(err));
   };
@@ -172,19 +183,32 @@ export default function Chats() {
     socket.on('nova_mensagem', (mensagem) => {
       if (mensagem.conversa_id === conversaSelecionada) {
         setMensagens((prev) => [...prev, mensagem]);
-
-
       }
-
-
     });
 
     socket.on('connection_error', (err) => {
       console.error('Erro de conexão:', err.message);
     });
 
+    socket.on('edicao_mensagem', (mensagemAtualizada) => {
+      setMensagens((prev) =>
+        prev.map((msg) =>
+          msg.id === mensagemAtualizada.id ? mensagemAtualizada : msg
+        )
+      );
+    }
+    );
+
+    socket.on('excluir_mensagem', ({ id }) => {
+      setMensagens((prev) => prev.filter((msg) => msg.id !== id));
+    });
+
+
     return () => {
-      socket.off('mensagemRecebida');
+      socket.off('nova_mensagem');
+      socket.off('connection_error');
+      socket.off('edicao_mensagem');
+      socket.off('excluir_mensagem');
     };
   }, [conversaSelecionada]);
 
@@ -248,7 +272,7 @@ export default function Chats() {
                               <>
                                 <button onClick={() => toggleMenu(msg.id)} className={styles.menuBtn}>⋮</button>
                                 {menuAberto === msg.id && (
-                                  <div className={styles.popupMenu}>
+                                  <div ref={menuRef} className={styles.popupMenu}>
                                     <button onClick={() => editarMensagem(msg.id, msg.texto)}>Editar</button>
                                     <button onClick={() => deletarMensagem(msg.id)}>Deletar</button>
                                   </div>
@@ -284,8 +308,14 @@ export default function Chats() {
                 onChange={(e) => setNovaMensagem(e.target.value)}
                 placeholder="Digite sua mensagem..."
                 className={styles.input}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    enviarMensagem();
+                  }
+                }}
               />
-              <button onClick={enviarMensagem} className={styles.botao}>Enviar</button>
+              <button onClick={enviarMensagem} className={styles.botao} >Enviar</button>
             </div>
           </>
         ) : (
@@ -296,75 +326,3 @@ export default function Chats() {
   );
 }
 
-// const styles = {
-//   container: {
-//     display: 'flex',
-//     height: '100vh',
-//     fontFamily: 'Arial, sans-serif',
-//   },
-//   sidebar: {
-//     width: '20%',
-//     borderRight: '1px solid #ccc',
-//     padding: '10px',
-//     overflowY: 'auto',
-//     backgroundColor: '#f8f8f8',
-
-
-//   },
-//   lista: {
-//     listStyle: 'none',
-//     padding: 0,
-
-//   },
-//   item: {
-//     padding: '10px',
-//     marginBottom: '5px',
-//     cursor: 'pointer',
-//     borderRadius: '5px',
-//     border: '1px solid #ccc',
-//   },
-//   chatArea: {
-//     flex: 1,
-//     display: 'flex',
-//     flexDirection: 'column',
-//   },
-//   mensagens: {
-//     flex: 1,
-//     padding: '10px',
-//     overflowY: 'auto',
-//     backgroundColor: '#f0f0f0',
-//   },
-//   mensagem: {
-//     // position: 'relative',
-//     width: '100%',
-//     display: 'flex',
-//     flexDirection: 'column',
-//     padding: '8px',
-//     marginBottom: '5px',
-//     backgroundColor: '#fff',
-//     borderRadius: '5px',
-//     border: '1px solid #ddd',
-//   },
-//   formEnvio: {
-//     display: 'flex',
-//     borderTop: '1px solid #ccc',
-//     padding: '10px',
-//     backgroundColor: '#fff',
-//   },
-//   input: {
-//     flex: 1,
-//     padding: '10px',
-//     borderRadius: '5px',
-//     border: '1px solid #ccc',
-//     marginRight: '10px',
-//   },
-//   botao: {
-//     padding: '10px 20px',
-//     borderRadius: '5px',
-//     border: 'none',
-//     backgroundColor: '#0fd850',
-//     color: '#000',
-//     cursor: 'pointer',
-//   },
-
-// };

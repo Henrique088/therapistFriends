@@ -102,7 +102,7 @@ export default function App() {
         } />
 
         <Route path="/relato" element={
-          <ProtectedRoute allowedTypes={['paciente']}>
+          <ProtectedRoute allowedTypes={['paciente', 'profissional']}>
             <Relato />
           </ProtectedRoute>
         } />
