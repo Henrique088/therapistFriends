@@ -4,6 +4,7 @@ import { jwtDecode } from "jwt-decode";
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { SocketProvider } from './contexts/SocketContext';
 
 
 import Home from './pages/Home';

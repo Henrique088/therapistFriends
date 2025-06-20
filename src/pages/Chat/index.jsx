@@ -3,14 +3,15 @@ import MenuLateral from '../../Components/Menu/MenuLateral';
 import { jwtDecode } from "jwt-decode";
 import styles from './Chat.module.css';
 import { io } from 'socket.io-client';
+import { useSocket } from './../../contexts/SocketContext'; // Importando o hook personalizado
 
 
-const socket = io('http://localhost:3001', {
-  auth: {
-    token: localStorage.getItem('token')
-  },
-  withCredentials: true
-});
+// const socket = io('http://localhost:3001', {
+//   auth: {
+//     token: localStorage.getItem('token')
+//   },
+//   withCredentials: true
+// });
 
 
 
@@ -22,6 +23,7 @@ export default function Chats() {
   const mensagensRef = useRef(null);
   const [menuAberto, setMenuAberto] = useState(null);
   const menuRef = useRef(null);
+  const socket = useSocket();
 
   const token = localStorage.getItem('token');
   const decoded = jwtDecode(token)
