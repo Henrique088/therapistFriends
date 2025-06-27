@@ -3,11 +3,12 @@ import './Relatos.css';
 import MenuLateral from '../../Components/Menu/MenuLateral';
 import RelatoForm from '../../Components/FormularioRelatos/FormularioRelatos';
 import { jwtDecode } from 'jwt-decode';
-
+import { useUsuario } from '../../contexts/UserContext';
 const Relatos = () => {
 
   const [showForm, setShowForm] = useState(false);
   const [relato, setRelato] = useState();
+  const { usuario } = useUsuario();
   const [relatos, setRelatos] = useState([
     {
       id: 1,
@@ -25,16 +26,15 @@ const Relatos = () => {
     }
   ]);
 
-  const token = localStorage.getItem('token');
-  const decoded = jwtDecode(token)
-  const tipo_usuario = decoded.tipo_usuario;
-  const id_usuario = decoded.id;
+  
 
   useEffect(() => {
-    fetch('http://localhost:3001/relatos', {
+    fetch('http://localhost:3001/relatos/', {
       headers: {
-        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+         
       },
+      credentials: 'include',
     })
       .then((res) => res.json())
       .then((data) => {
@@ -43,8 +43,8 @@ const Relatos = () => {
         setRelato(data);
         console.log('Relatos:', JSON.stringify(data, null, 2));
       })
-      .catch((err) => console.error('Erro ao buscar conversas:', err));
-  }, [token]);
+      .catch((err) => console.error('Erro ao buscar relatos:', err));
+  }, []);
 
   const [titulo, setTitulo] = useState('');
   const [texto, setTexto] = useState('');
@@ -89,7 +89,7 @@ const Relatos = () => {
 
       <div className="main-content">
         <h1 className="titulo-pagina">Relatos da Comunidade</h1>
-        {tipo_usuario === 'paciente' && (
+        {usuario?.tipo_usuario === 'paciente' && (
           <button className="create-post-button" onClick={createNewPost}>
             + Criar Desabafo
           </button>

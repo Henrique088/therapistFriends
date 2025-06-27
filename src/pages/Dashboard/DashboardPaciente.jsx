@@ -3,19 +3,44 @@ import './App.css';
 import MenuLateral from '../../Components/Menu/MenuLateral';
 import RelatoForm from '../../Components/FormularioRelatos/FormularioRelatos';
 import ModalCodinome from '../../Components/ModalCodinome/ModalCodinome';
-import { jwtDecode } from "jwt-decode";
+
+import { useUsuario } from '../../contexts/UserContext';
 
 export default function DashboardPaciente() {
-  const token = localStorage.getItem('token');
-  const decoded = jwtDecode(token);
+
+
   const [showForm, setShowForm] = useState(false);
   const [mostrarModal, setMostrarModal] = useState(false);
-  const [codinome, setCodinome] = useState(decoded.codinome || '');
-
+  const [relato, setRelato] = useState([]);
+  // const [codinome, setCodinome] = useState(infos.codinome || '');
+  // console.log(infos.codinome);
+  const { usuario } = useUsuario();
+  // console.log(usuario);
 
  useEffect(() => {
-  if (!codinome) setMostrarModal(true);
-}, [codinome]);
+     fetch('http://localhost:3001/relatos/', {
+       headers: {
+         'Content-Type': 'application/json',
+          
+       },
+       credentials: 'include',
+     })
+       .then((res) => res.json())
+       .then((data) => {
+        const relatosRecentes = data
+        .sort((a, b) => new Date(b.data_envio) - new Date(a.data_envio)) 
+        .slice(0, 3); 
+ 
+         setRelato(relatosRecentes);
+         console.log('Relatos:', JSON.stringify(data, null, 2));
+       })
+       .catch((err) => console.error('Erro ao buscar relatos:', err));
+   }, []);
+
+
+
+  if (!usuario.codinome) setMostrarModal(true);
+
 
   const [posts, setPosts] = useState([
     {
@@ -31,7 +56,7 @@ export default function DashboardPaciente() {
       user: 'Maria Oliveira',
       content: 'Precisando de um conselho: como vocês lidam com a ansiedade antes de apresentações importantes?',
       time: '5 horas atrás',
-      likes: 32,
+      
       comments: 12
     },
     {
@@ -76,16 +101,16 @@ export default function DashboardPaciente() {
     <div className="app">
       <MenuLateral />
 
-     {mostrarModal && (
-  <ModalCodinome
-    visible={mostrarModal}
-    onClose={() => setMostrarModal(false)}
-  />
-)}
+      {mostrarModal && (
+        <ModalCodinome
+          visible={mostrarModal}
+          onClose={() => setMostrarModal(false)}
+        />
+      )}
 
       <div className="main-content">
         <div className="content-header">
-          <h1>Bem-vindo, {codinome || 'Paciente'}</h1>
+          <h1>Bem-vindo, {usuario?.codinome || 'Paciente'}</h1>
           <button className="create-post-button" onClick={createNewPost}>
             + Criar Desabafo
           </button>
@@ -95,20 +120,19 @@ export default function DashboardPaciente() {
 
         <h2>Feed</h2>
         <div className="posts-container">
-          {posts.map(post => (
-            <div key={post.id} className="post-card">
+          {relato.map(relatos => (
+            <div key={relatos.id} className="post-card">
               <div className="post-header">
-                <div className="user-avatar">{post.user.substring(0, 2)}</div>
+                <div className="user-avatar">{relatos?.paciente.codinome.substring(0, 2)}</div>
                 <div className="user-info">
-                  <div className="username">{post.user}</div>
-                  <div className="post-time">{post.time}</div>
+                  <div className="username">{relatos?.paciente.codinome}</div>
+                  <div className="post-time">{relatos?.data_envio}</div>
                 </div>
               </div>
-              <div className="post-content">{post.content}</div>
+              <div className="post-content">{relatos?.texto}</div>
               <div className="post-actions">
-                <button className="like-button">👍 {post.likes}</button>
-                <button className="comment-button">💬 {post.comments}</button>
-                <button className="share-button">↗️ Compartilhar</button>
+                <button className="like-button">👍 {relatos?.likes || 0}</button>
+                
               </div>
             </div>
           ))}

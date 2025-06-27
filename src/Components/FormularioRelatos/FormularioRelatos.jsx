@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import './FormularioRelatos.css';
-import { jwtDecode } from "jwt-decode";
+import { useUsuario } from '../../contexts/UserContext';
 
 const RelatoForm = ({ onCancel, onSubmit }) => {
-  const token = localStorage.getItem('token');
-  const decoded = jwtDecode(token)
-  const id_usuario = decoded.id;
-
+  
+  const { usuario } = useUsuario();
   const [titulo, setTitulo] = useState('');
   const [categoria, setCategoria] = useState('');
   const [relato, setRelato] = useState('');
@@ -52,9 +50,10 @@ const RelatoForm = ({ onCancel, onSubmit }) => {
   const enviarRelato = () => {
   fetch('http://localhost:3001/relatos/criarRelato', {
     method: 'POST',
+    credentials: 'include', 
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+     
     },
     body: JSON.stringify({
       titulo,

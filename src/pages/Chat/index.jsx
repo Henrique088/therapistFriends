@@ -4,6 +4,7 @@ import { jwtDecode } from "jwt-decode";
 import styles from './Chat.module.css';
 import { io } from 'socket.io-client';
 import { useSocket } from './../../contexts/SocketContext'; // Importando o hook personalizado
+import { useUsuario } from '../../contexts/UserContext';
 
 
 // const socket = io('http://localhost:3001', {
@@ -24,17 +25,19 @@ export default function Chats() {
   const [menuAberto, setMenuAberto] = useState(null);
   const menuRef = useRef(null);
   const socket = useSocket();
+  const { usuario } = useUsuario();
 
-  const token = localStorage.getItem('token');
-  const decoded = jwtDecode(token)
-  const tipo_usuario = decoded.tipo_usuario;
-  const id_usuario = decoded.id;
+  // const token = localStorage.getItem('token');
+  // const decoded = jwtDecode(token)
+  // const tipo_usuario = decoded.tipo_usuario;
+  // const id_usuario = decoded.id;
 
   useEffect(() => {
     fetch('http://localhost:3001/conversas', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      credentials: 'include', // garante envio/recebimento de cookies
+  headers: {
+    'Content-Type': 'application/json',
+  },
     })
       .then((res) => res.json())
       .then((data) => {
@@ -44,7 +47,7 @@ export default function Chats() {
         console.log('Conversas:', JSON.stringify(data, null, 2));
       })
       .catch((err) => console.error('Erro ao buscar conversas:', err));
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     if (mensagensRef.current) {
@@ -72,9 +75,10 @@ export default function Chats() {
     socket.emit('entrar_conversa', conversaId);
     console.log(conversaId)
     fetch(`http://localhost:3001/mensagens/${conversaId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      credentials: 'include', // garante envio/recebimento de cookies
+  headers: {
+    'Content-Type': 'application/json',
+  },
     })
       .then((res) => res.json())
       .then((data) => {
@@ -110,9 +114,10 @@ export default function Chats() {
   const deletarMensagem = (mensagemId) => {
     fetch(`http://localhost:3001/mensagens/${mensagemId}`, {
       method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      credentials: 'include', // garante envio/recebimento de cookies
+  headers: {
+    'Content-Type': 'application/json',
+  },
     })
       .then(res => {
         if (!res.ok) throw new Error("Erro ao deletar");
@@ -127,10 +132,10 @@ export default function Chats() {
 
     fetch(`http://localhost:3001/mensagens/${mensagemId}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
+      credentials: 'include', // garante envio/recebimento de cookies
+  headers: {
+    'Content-Type': 'application/json',
+  },
       body: JSON.stringify({ texto: novoTexto }),
     })
       .then(res => {
@@ -153,10 +158,10 @@ export default function Chats() {
 
     fetch('http://localhost:3001/mensagens/enviarMensagem', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
+      credentials: 'include', // garante envio/recebimento de cookies
+  headers: {
+    'Content-Type': 'application/json',
+  },
       body: JSON.stringify({
         conversa_id: conversaSelecionada,
         texto: novaMensagem,
@@ -223,7 +228,7 @@ export default function Chats() {
       <div className={styles.sidebar}>
         <h2>Conversas</h2>
         <ul className={styles.lista}>
-          {tipo_usuario === "paciente" ? (
+          {usuario.tipo_usuario === "paciente" ? (
             // Renderização para Paciente
             Array.isArray(conversas) && conversas.map((conv) => (
               <li
@@ -264,7 +269,7 @@ export default function Chats() {
             <div className={styles.mensagens}>
               {mensagens.map((msg) => (
                 <div key={msg.id} className={styles.mensagem}>
-                  {id_usuario === msg.remetente_id ? (
+                  {usuario.id === msg.remetente_id ? (
                     <div className={styles.direita}>
                       <div className={`${styles.mensagem} ${styles.enviada}`}>
                         <div className={styles.mensagemTopo}>

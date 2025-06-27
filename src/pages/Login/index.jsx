@@ -22,12 +22,13 @@ function Login() {
 });
   const dados = await resposta.json();
       console.log(dados);
-      if (resposta.ok && dados.token) {
-        localStorage.setItem('token', dados.token);
+      if (resposta.ok && dados.info) {
+        localStorage.setItem('info', JSON.stringify(dados.info));
         // Redireciona com base no tipo do usuário
-        if (dados.tipo_usuario === 'paciente') {
+        if (dados.info.tipo_usuario === 'paciente') {
           window.location.href = '/dashboard-Paciente';
         } else {
+          
           window.location.href = '/dashboard-Profissional';
         }
       } else {

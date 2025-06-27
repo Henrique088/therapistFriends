@@ -7,8 +7,7 @@ import './ModalCodinome.css';
 Modal.setAppElement('#root');
 
 export default function ModalCodinome({ visible, onClose }) {
-  const token = localStorage.getItem('token');
-  const decoded = jwtDecode(token || '{}');
+  
 
   const [codinome, setCodinome] = useState('');
   const [telefone, setTelefone] = useState('');
@@ -28,9 +27,10 @@ export default function ModalCodinome({ visible, onClose }) {
 
     fetch('http://localhost:3001/pacientes', {
       method: 'POST',
+       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+        
       },
       body: JSON.stringify({
         codinome: codinome.trim(),
