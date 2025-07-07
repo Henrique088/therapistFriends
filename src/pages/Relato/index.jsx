@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import './Relatos.css';
 import MenuLateral from '../../Components/Menu/MenuLateral';
+import ExibirRelatos from '../../Components/Relatos/RelatosComponente';
 import RelatoForm from '../../Components/FormularioRelatos/FormularioRelatos';
 import { jwtDecode } from 'jwt-decode';
 import { useUsuario } from '../../contexts/UserContext';
+import {formatarData} from '../../Utils';
 const Relatos = () => {
 
   const [showForm, setShowForm] = useState(false);
@@ -86,7 +88,7 @@ const Relatos = () => {
     <div className="app-container">
       <MenuLateral />
 
-
+    
       <div className="main-content">
         <h1 className="titulo-pagina">Relatos da Comunidade</h1>
         {usuario?.tipo_usuario === 'paciente' && (
@@ -115,7 +117,7 @@ const Relatos = () => {
           </button>
         </div> */}
 
-        <div className="relatos-feed">
+        {/* <div className="relatos-feed">
           {Array.isArray(relato) && relato.map((relatos) => (
             <div key={relatos.id} className="relato-card">
               <div className="relato-info">
@@ -127,11 +129,12 @@ const Relatos = () => {
               <p>{relatos.texto}</p>
               <div className="relato-info">
                 <span>{relatos.paciente.codinome}</span>
-                <span>{relatos.data_envio}</span>
+                <span>{formatarData(relatos?.data_envio)}</span>
               </div>
             </div>
           ))}
-        </div>
+        </div> */}
+        <ExibirRelatos numRelatos={0} />
       </div>
     </div>
   );

@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import MenuLateral from '../../Components/Menu/MenuLateral';
-import { jwtDecode } from "jwt-decode";
 import styles from './Chat.module.css';
-import { io } from 'socket.io-client';
 import { useSocket } from './../../contexts/SocketContext'; // Importando o hook personalizado
 import { useUsuario } from '../../contexts/UserContext';
 

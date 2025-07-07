@@ -109,7 +109,7 @@ function Home() {
                     <div class={styles.card__content} style={{ backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url(${agenda})` }}>
                         <p class={styles.card__title}>Agendamento</p>
                         <p class={styles.card__description}>
-                            Caso o usuário e o profissional concordem, é possível marcar uma consulta, que pode ser realizada online ou presencialmente, conforme a preferência e disponibilidade de ambos.
+                            Caso o usuário e o profissional concordem, é possível marcar uma consulta, que pode ser realizada de forma online, conforme a preferência e disponibilidade de ambos.
                         </p>
                     </div>
                 </div>

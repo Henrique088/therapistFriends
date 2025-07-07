@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './FormularioRelatos.css';
-import { useUsuario } from '../../contexts/UserContext';
+// import { useUsuario } from '../../contexts/UserContext';
 
-const RelatoForm = ({ onCancel, onSubmit }) => {
+const RelatoForm = ({ onCancel, onSubmit, relatoEditando }) => {
   
-  const { usuario } = useUsuario();
+  // const { usuario } = useUsuario();
   const [titulo, setTitulo] = useState('');
   const [categoria, setCategoria] = useState('');
   const [relato, setRelato] = useState('');
@@ -33,23 +33,40 @@ const RelatoForm = ({ onCancel, onSubmit }) => {
     'Outros'
   ];
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData(prev => ({
+  //     ...prev,
+  //     [name]: value
+  //   }));
+  // };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert('Relato enviado com sucesso!' + formData.anonimo);
-    onSubmit(formData);
-  };
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   alert('Relato enviado com sucesso!' + formData.anonimo);
+  //   onSubmit(formData);
+  // };
+
+  useEffect(() => {
+    if (relatoEditando) {
+      setTitulo(relatoEditando.titulo || '');
+      setRelato(relatoEditando.texto || '');
+      setCategoria(relatoEditando.categoria || '');
+      setAnonimo(relatoEditando.anonimo || false);
+    }
+  }, [relatoEditando]);
 
   const enviarRelato = () => {
-  fetch('http://localhost:3001/relatos/criarRelato', {
-    method: 'POST',
+
+    const url = relatoEditando
+        ? `http://localhost:3001/relatos/${relatoEditando.id}`
+        : `http://localhost:3001/relatos/criarRelato`;
+
+      const method = relatoEditando ? 'PUT' : 'POST';
+
+
+  fetch(url, {
+    method: method,
     credentials: 'include', 
     headers: {
       'Content-Type': 'application/json',
@@ -86,7 +103,7 @@ const RelatoForm = ({ onCancel, onSubmit }) => {
   return (
     <div className="relato-modal-overlay">
       <div className="relato-form-container">
-        <h1>Escrever Novo Relato</h1>
+        <h1>{relatoEditando ? 'Editar Relato' : 'Escrever Novo Relato'}</h1>
         
         <form onSubmit={enviarRelato}>
           <div className="form-group">

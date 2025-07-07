@@ -10,14 +10,15 @@ import { AiOutlineCaretRight, AiOutlineCaretLeft } from "react-icons/ai";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useUsuario } from '../../contexts/UserContext'; 
-
+import { useUsuario } from '../../contexts/UserContext';
+import { useSocket } from '../../contexts/SocketContext';
 const MenuLateral = () => {
   const { usuario, setUsuario } = useUsuario();
   const [redirect, setRedirect] = useState(null);
   const location = useLocation();
-  const isChatPage = location.pathname === '/chat'; 
+  const isChatPage = location.pathname === '/chat';
   const [menuCollapsed, setMenuCollapsed] = useState(false);
+  const socket = useSocket();
 
   const toggleMenu = () => {
     setMenuCollapsed(!menuCollapsed);
@@ -42,20 +43,24 @@ const MenuLateral = () => {
       });
 
       if (resposta.ok) {
-        toast.success('Volte sempre! Saindo...');
-        setUsuario(null);
+        toast.success('Volte sempre! Saindo...', { autoClose: 2000 });
+        socket.disconnect();
+        setTimeout(() => {
+          setRedirect(true);
+          
+        }, 2000); // Tempo igual ao do toast
       }
-
-      setTimeout(() => setRedirect(true), 3000);
 
     } catch (erro) {
       console.error('Erro no logout:', erro);
-      setUsuario(null);
+      // setUsuario(null);
       setRedirect(true);
     }
   }
 
   if (redirect) {
+    setUsuario(null);
+    console.log('Usuário desconectado');
     return <Navigate to="/login" replace />;
   }
 

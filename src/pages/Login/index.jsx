@@ -11,6 +11,10 @@ function Login() {
   const [senha, setSenha] = useState('');
 
   async function handleLogin(e) {
+    if (email === '' || senha === '') {
+      toast.error('Por favor, preencha todos os campos.');
+      return;
+    }
   try{
   const resposta = await fetch('http://localhost:3001/auth/login', {
   method: 'POST',

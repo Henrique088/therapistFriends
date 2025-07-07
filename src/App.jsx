@@ -33,8 +33,8 @@ function ProtectedRoute({ children, allowedTypes }) {
 
         if (!resposta.ok) {
            if (!exibiuToastExpirado) {
-          toast.warning('Sessão expirada. Faça login novamente.');
-          exibiuToastExpirado = true;
+              toast.warning('Sessão expirada. Faça login novamente.');
+              exibiuToastExpirado = true;
         }
           setTimeout(() => setRedirect(true), 3000);
           return;
