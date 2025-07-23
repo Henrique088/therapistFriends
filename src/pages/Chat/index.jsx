@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import MenuLateral from '../../Components/Menu/MenuLateral';
 import styles from './Chat.module.css';
 import { useSocket } from './../../contexts/SocketContext'; // Importando o hook personalizado
-import { useUsuario } from '../../contexts/UserContext';
+import { useUser } from '../../contexts/UserContext';
 
 
 // const socket = io('http://localhost:3001', {
@@ -23,7 +23,7 @@ export default function Chats() {
   const [menuAberto, setMenuAberto] = useState(null);
   const menuRef = useRef(null);
   const socket = useSocket();
-  const { usuario } = useUsuario();
+  const { usuario } = useUser();
 
   // const token = localStorage.getItem('token');
   // const decoded = jwtDecode(token)

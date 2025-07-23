@@ -35,9 +35,10 @@ export default function ModalCadastroProfissional({ isOpen, onClose, token }) {
     try {
       const response = await fetch('http://localhost:3001/profissionais', {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+
         },
         body: JSON.stringify(form)
       });
@@ -106,9 +107,7 @@ export default function ModalCadastroProfissional({ isOpen, onClose, token }) {
           required
         />
         <div className="modal-actions">
-          <button type="button" onClick={onClose} className="cancel-btn">
-            Cancelar
-          </button>
+
           <button type="submit" className="submit-btn">
             Salvar
           </button>

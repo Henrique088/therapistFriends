@@ -75,7 +75,7 @@ const RelatoForm = ({ onCancel, onSubmit, relatoEditando }) => {
     body: JSON.stringify({
       titulo,
       categoria,
-      texto: relato, // <- corrigido aqui
+      texto: relato, 
       anonimo: anonimo || false,
     }),
   })

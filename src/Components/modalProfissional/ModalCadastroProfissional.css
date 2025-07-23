@@ -1,16 +1,19 @@
 .modal {
-  width: 400px;
-  background: white;
+  width: 450px;
+  background: linear-gradient(to right, #E0FFE0, #A8D8EA);
   padding: 20px;
   border-radius: 8px;
   margin: auto;
-  top: 50%;
-  transform: translateY(50%);
+  /* top: 50%; */
+  /* transform: translateY(50%); */
   position: relative;
+  /* display: flex; */
+  justify-content: center;
+  align-items: center;
 }
 
 .overlay {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.95);
   position: fixed;
   inset: 0;
   display: flex;

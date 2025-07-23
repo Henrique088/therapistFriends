@@ -1,18 +1,30 @@
-/* ModalCodinome.css */
-.modal {
-  background: white;
-  padding: 20px;
-  width: 400px;
-  margin: auto;
-  border-radius: 8px;
-  position: relative;
-}
+/* Exemplo de CSS para React-Modal */
 
-.overlay {
-  background: rgba(0, 0, 0, 0.6);
+.modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+  background-color: rgba(0, 0, 0, 0.95); /* Fundo cinza escuro semi-transparente */
+  display: flex; /* Para centralizar o conteúdo */
+  align-items: center; /* Centraliza verticalmente */
+  justify-content: center; /* Centraliza horizontalmente */
+  z-index: 1000; /* Garante que o overlay esteja acima de outros elementos */
 }
+
+.modal-content {
+  background: linear-gradient(to right, #E0FFE0, #A8D8EA);
+
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 500px; /* Largura máxima do modal */
+  width: 90%; /* Largura responsiva */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  outline: none; /* Remove o contorno padrão do foco */
+  position: relative; /* Pode ser útil para posicionamento interno */
+  z-index: 1001; /* Garante que o conteúdo esteja acima do overlay */
+}
+
+/* Você também pode precisar de estilos específicos para animação ou transição,
+   mas esses são os básicos para que o modal seja visível. */

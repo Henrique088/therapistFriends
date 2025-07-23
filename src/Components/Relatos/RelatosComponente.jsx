@@ -5,7 +5,7 @@ import { FcLikePlaceholder, FcLike } from "react-icons/fc";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { formatarData } from '../../Utils/index';
 import { darLikeNoRelato } from '../../Utils/likeUtils';
-import { useUsuario } from '../../contexts/UserContext';
+import { useUser } from '../../contexts/UserContext';
 import RelatoForm from '../../Components/FormularioRelatos/FormularioRelatos';
 
 
@@ -15,7 +15,7 @@ export default function ExibirRelatos({ numRelatos }) {
   const [relatoEditando, setRelatoEditando] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [loadingLikeId, setLoadingLikeId] = useState(null);
-  const { usuario } = useUsuario();
+  const { usuario } = useUser();
 
  
 useEffect(() => {
@@ -34,7 +34,7 @@ useEffect(() => {
           .slice(0, numRelatos);
 
         setRelatos(relatosRecentes);
-        console.log('Relatos:', JSON.stringify(data, null, 2));
+        // console.log('Relatos:', JSON.stringify(data, null, 2));
         }
         else{
             setRelatos(data);
@@ -132,7 +132,46 @@ const editarRelato = (relato) => {
     console.log('Dados do relato:', formData);
     setShowForm(false);
   };
-  return (
+
+  const entrarEmContato = (relato) => {
+    if (usuario.tipo_usuario === 'paciente') {
+      toast.info('Você não pode entrar em contato com relatos de pacientes.');
+      return; 
+    }
+    if (relato.profissional_id) {
+      toast.info('Este relato já está vinculado a um profissional.');
+      return; 
+    }
+
+    fetch('http://localhost:3001/solicitacoes/solicitarConversa', {
+      method: 'POST',
+       credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        
+      },
+      body: JSON.stringify({
+         pacienteId : relato.paciente.id_usuario, 
+         relatoId: relato.id,
+      }),
+    })
+      .then(async (resp) => {
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.erro || 'Erro ao solicitar conversa');
+        toast.success('Solicitação de conversa enviada com sucesso!');
+        
+      })
+      .catch((err) => {
+        toast.error(err.message);
+        console.error(err);
+      })
+     
+
+    
+
+
+  };
+  return (  
 
     
     <div className="posts-container">
@@ -150,6 +189,8 @@ const editarRelato = (relato) => {
                   </div>
                   <div className="post-content">{relatos?.texto}</div>
                   <div className="post-actions">
+
+                    <div className='like-contat'> 
                     <button
                       className="like-button"
                       onClick={() => darLike(relatos.id)}
@@ -164,6 +205,16 @@ const editarRelato = (relato) => {
                         </>
                       )}
                     </button>
+                      {relatos.profissional_id === null && usuario.tipo_usuario === 'profissional'? (
+                        <button onClick={() => entrarEmContato(relatos)}>
+                        <span>Entrar em contato</span>
+                        </button>
+                      ):(
+                        <> </>
+                      )}
+                    
+
+                    </div>
     
                     {relatos.paciente.id_usuario === usuario.id && (
                       <div className="post-actions-extra">

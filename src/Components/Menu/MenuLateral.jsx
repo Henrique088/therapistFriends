@@ -10,14 +10,16 @@ import { AiOutlineCaretRight, AiOutlineCaretLeft } from "react-icons/ai";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useUsuario } from '../../contexts/UserContext';
+import { useUser } from '../../contexts/UserContext';
 import { useSocket } from '../../contexts/SocketContext';
 const MenuLateral = () => {
-  const { usuario, setUsuario } = useUsuario();
+  const { usuario, setUsuario } = useUser();
   const [redirect, setRedirect] = useState(null);
   const location = useLocation();
   const isChatPage = location.pathname === '/chat';
   const [menuCollapsed, setMenuCollapsed] = useState(false);
+  const [temNotificacaoNova, setTemNotificacaoNova] = useState(false);
+  const [totalNotificacoes, setTotalNotificacoes] = useState(0);
   const socket = useSocket();
 
   const toggleMenu = () => {
@@ -29,6 +31,29 @@ const MenuLateral = () => {
       setMenuCollapsed(true);
     }
   }, [isChatPage]);
+
+  useEffect(() => {
+    fetch('http://localhost:3001/notificacoes/nao-lidas', {
+      credentials: 'include',
+    })
+      .then(res => res.json())
+      .then(data => {
+       
+        setTemNotificacaoNova(data.total > 0); // você controla um estado como esse
+        setTotalNotificacoes(data.total);
+      });
+  }, []);
+
+  useEffect(() => {
+    socket.on('nova_notificacao', (data) => {
+      setTemNotificacaoNova(true);
+    });
+
+    return () => {
+      socket.off('nova_notificacao');
+    };
+  }, [socket]);
+
 
   async function logout(e) {
     e.preventDefault();
@@ -47,7 +72,7 @@ const MenuLateral = () => {
         socket.disconnect();
         setTimeout(() => {
           setRedirect(true);
-          
+
         }, 2000); // Tempo igual ao do toast
       }
 
@@ -86,7 +111,11 @@ const MenuLateral = () => {
 
             <li><a href="/relato" title='Relatos'><IoDocumentTextSharp /> {!menuCollapsed && 'Relatos'}</a></li>
             <li><a href="/chat" title='Chats'><RiChatSmile3Fill /> {!menuCollapsed && 'Chats'}</a></li>
-            <li><a href="#" title='Notificações'><IoNotificationsCircle /> {!menuCollapsed && 'Notificações'}</a></li>
+            <li><a href="/notificacao"><IoNotificationsCircle />
+              {!menuCollapsed && 'Notificações'}
+              {temNotificacaoNova && <span className="badge-dot">{totalNotificacoes}</span>}
+            </a></li>
+
             <li><a href="#" title='Perfil'><IoPerson /> {!menuCollapsed && 'Perfil'}</a></li>
           </ul>
 

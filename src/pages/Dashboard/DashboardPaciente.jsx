@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import MenuLateral from '../../Components/Menu/MenuLateral';
 import ExibirRelatos from '../../Components/Relatos/RelatosComponente';
-import ModalCodinome from '../../Components/ModalCodinome/ModalCodinome';
+
 import RelatoForm from '../../Components/FormularioRelatos/FormularioRelatos';
-import { useUsuario } from '../../contexts/UserContext';
+import { useUser } from '../../contexts/UserContext';
 
 export default function DashboardPaciente() {
 
   const [mostrarModal, setMostrarModal] = useState(false);
-  const { usuario } = useUsuario();
+  const { usuario } = useUser();
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
@@ -56,9 +56,7 @@ export default function DashboardPaciente() {
       <MenuLateral />
 
       {showForm && <RelatoForm onCancel={handleCancel} onSubmit={handleSubmit} />}
-      {mostrarModal && (
-        <ModalCodinome visible={mostrarModal} onClose={() => setMostrarModal(false)} />
-      )}
+     
 
       <div className="main-content">
         <div className="content-header">

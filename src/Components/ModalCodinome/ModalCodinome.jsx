@@ -6,8 +6,8 @@ import './ModalCodinome.css';
 
 Modal.setAppElement('#root');
 
-export default function ModalCodinome({ visible, onClose }) {
-  
+export default function ModalCodinome({ isOpen, onClose }) {
+
 
   const [codinome, setCodinome] = useState('');
   const [telefone, setTelefone] = useState('');
@@ -27,10 +27,10 @@ export default function ModalCodinome({ visible, onClose }) {
 
     fetch('http://localhost:3001/pacientes', {
       method: 'POST',
-       credentials: 'include',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
-        
+
       },
       body: JSON.stringify({
         codinome: codinome.trim(),
@@ -40,6 +40,7 @@ export default function ModalCodinome({ visible, onClose }) {
       .then(async (resp) => {
         const data = await resp.json();
         if (!resp.ok) throw new Error(data.erro || 'Erro ao salvar');
+        localStorage.setItem('info', JSON.stringify(data.info));
         toast.success('Codinome salvo com sucesso!');
         onClose();          // fecha o modal no componente pai
       })
@@ -52,32 +53,46 @@ export default function ModalCodinome({ visible, onClose }) {
 
   return (
     <Modal
-      isOpen={visible}
-      onRequestClose={onClose}
-      contentLabel="Defina seu Codinome"
-      className="modal"
-      overlayClassName="overlay"
+      // A prop 'isOpen' do componente `<Modal>` DO REACT-MODAL
+      // DEVE ser a mesma 'isOpen' que você recebe nas props do seu ModalCodinome.
+      isOpen={isOpen} // <-- ESSA É A CHAVE!
+      onRequestClose={onClose} // Permite fechar com ESC ou clique fora, se quiser. Se é obrigatório, defina shouldCloseOnOverlayClick/Esc como false.
+      shouldCloseOnOverlayClick={false} // Para garantir que o usuário preencha.
+      shouldCloseOnEsc={false}         // Para garantir que o usuário preencha.
+      className="modal-content"        // Sua classe CSS para o conteúdo do modal
+      overlayClassName="modal-overlay" // Sua classe CSS para o overlay
     >
-      <h2>Escolha seu codinome</h2>
-      <p>Esse será seu nome anônimo visível aos profissionais.</p>
-
-      <input
-        type="text"
-        value={codinome}
-        onChange={(e) => setCodinome(e.target.value)}
-        placeholder="Ex: Viajante da Lua"
-      />
-
-      <input
-        type="text"
-        value={telefone}
-        onChange={(e) => setTelefone(e.target.value)}
-        placeholder="Telefone (ex: (31) 91234-5678)"
-      />
-
-      <button onClick={salvarCodinome} disabled={salvando}>
-        {salvando ? 'Salvando…' : 'Salvar'}
-      </button>
+      <div className="modal-header">
+        <h2>Complete Seu Perfil</h2>
+      </div>
+      <div className="modal-body">
+        <p>Por favor, complete as informações do seu perfil para continuar.</p>
+        <div className="form-group">
+          <label htmlFor="codinome">Codinome:</label>
+          <input
+            type="text"
+            id="codinome"
+            value={codinome}
+            onChange={(e) => setCodinome(e.target.value)}
+            disabled={salvando}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="telefone">Telefone:</label>
+          <input
+            type="text"
+            id="telefone"
+            value={telefone}
+            onChange={(e) => setTelefone(e.target.value)}
+            disabled={salvando}
+          />
+        </div>
+      </div>
+      <div className="modal-footer">
+        <button onClick={salvarCodinome} disabled={salvando}>
+          {salvando ? 'Salvando...' : 'Salvar'}
+        </button>
+      </div>
     </Modal>
   );
 }

@@ -4,32 +4,14 @@ import MenuLateral from '../../Components/Menu/MenuLateral';
 import ExibirRelatos from '../../Components/Relatos/RelatosComponente';
 import RelatoForm from '../../Components/FormularioRelatos/FormularioRelatos';
 import { jwtDecode } from 'jwt-decode';
-import { useUsuario } from '../../contexts/UserContext';
+import { useUser } from '../../contexts/UserContext';
 import {formatarData} from '../../Utils';
 const Relatos = () => {
 
   const [showForm, setShowForm] = useState(false);
   const [relato, setRelato] = useState();
-  const { usuario } = useUsuario();
-  const [relatos, setRelatos] = useState([
-    {
-      id: 1,
-      autor: 'Anônimo',
-      titulo: 'Ansiedade no trabalho',
-      texto: 'Tenho enfrentado muitos desafios no ambiente de trabalho e isso tem me deixado ansioso todos os dias.',
-      data: 'Há 2 dias'
-    },
-    {
-      id: 2,
-      autor: 'Anônimo',
-      titulo: 'Dificuldade para dormir',
-      texto: 'Há semanas não consigo dormir direito. Minha mente não para, e acordo sempre cansado.',
-      data: 'Há 5 dias'
-    }
-  ]);
-
+  const { usuario } = useUser();
   
-
   useEffect(() => {
     fetch('http://localhost:3001/relatos/', {
       headers: {

@@ -26,11 +26,11 @@ export function SocketProvider({ children }) {
     };
   }, []);
   
-  // useEffect(() => {
-  //   return () => {
-  //     if (socketRef.current) socketRef.current.disconnect();
-  //   };
-  // }, []);
+  useEffect(() => {
+    return () => {
+      if (!socketRef.current) socketRef.current.disconnect();
+    };
+  }, []);
 
   return (
     <SocketContext.Provider value={socketRef.current}>

@@ -1,0 +1,76 @@
+.container {
+  display: flex;
+}
+
+.conteudo {
+  flex: 1;
+  padding: 2rem;
+  background-color: #f9f9f9;
+}
+
+h2 {
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.lista {
+  list-style-type: none;
+  padding: 0;
+}
+
+.item {
+  background-color: #fff;
+  border-left: 5px solid #0fd850;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.titulo {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.mensagem {
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.data {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.botoes {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.botao-aceitar {
+  background-color: #0fd850;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.botao-recusar {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.botao-aceitar:hover {
+  background-color: #0cbd45;
+}
+
+.botao-recusar:hover {
+  background-color: #d32f2f;
+}
