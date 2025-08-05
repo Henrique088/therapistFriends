@@ -1,0 +1,49 @@
+/* src/pages/AgendaProfissional.css */
+
+.agenda-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f4f6f9;
+}
+
+.agenda-content {
+  flex: 1;
+  padding: 2rem;
+}
+
+.agenda-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.agenda-header h1 {
+  font-size: 1.8rem;
+  color: #333;
+}
+
+.btn-disponibilidade {
+  padding: 0.5rem 1rem;
+  background-color: #0fd850;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-disponibilidade:hover {
+  background-color: #0cb745;
+}
+
+.calendario-placeholder {
+  height: 500px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+}

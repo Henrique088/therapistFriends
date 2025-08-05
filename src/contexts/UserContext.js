@@ -16,21 +16,21 @@ export function UserProvider({ children }) {
       if (response.ok) {
         const data = await response.json();
         setUsuario(data.info);
-        console.log('Usuário autenticado:', data.info);
+        
         localStorage.setItem('userAuthInfo', JSON.stringify(data.info));
       } else {
         console.error('Erro ao buscar usuário:', response.statusText);
         setUsuario(null);
         localStorage.removeItem('userAuthInfo');
-        localStorage.removeItem('infoPaciente');
-        localStorage.removeItem('infoProfissional');
+        // localStorage.removeItem('infoPaciente');
+        // localStorage.removeItem('infoProfissional');
       }
     } catch (error) {
       console.error('Erro ao buscar usuário:', error);
       setUsuario(null);
       localStorage.removeItem('userAuthInfo');
-      localStorage.removeItem('infoPaciente');
-      localStorage.removeItem('infoProfissional');
+      // localStorage.removeItem('infoPaciente');
+      // localStorage.removeItem('infoProfissional');
     } finally {
       setLoadingUsuario(false);
     }

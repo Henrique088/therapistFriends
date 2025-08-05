@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import MenuLateral from '../../Components/Menu/MenuLateral';
 import ExibirRelatos from '../../Components/Relatos/RelatosComponente';
-
+import MyCalendar from '../Calendario';
 import RelatoForm from '../../Components/FormularioRelatos/FormularioRelatos';
 import { useUser } from '../../contexts/UserContext';
 
@@ -57,7 +57,7 @@ export default function DashboardPaciente() {
 
       {showForm && <RelatoForm onCancel={handleCancel} onSubmit={handleSubmit} />}
      
-
+      
       <div className="main-content">
         <div className="content-header">
           <h1>Bem-vindo, {usuario?.codinome || 'Paciente'}</h1>

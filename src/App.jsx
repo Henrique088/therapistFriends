@@ -17,12 +17,13 @@ import DashboardProfissional from './pages/Dashboard/DashboardProfissional';
 import Relato from './pages/Relato';
 import RelatosRecebidos from './pages/RelatosRecebidos';
 import Chat from './pages/Chat';
-import Perfil from './pages/Perfil';
+import PerfilPaciente from './pages/Perfil/PerfilPaciente';
+import PerfilProfissional from './pages/Perfil/PerfilProfissional';
 import Explorar from './pages/Explorar';
 import Notificacoes from './pages/Notificacoes';
-
 import ModalCodinome from './Components/ModalCodinome/ModalCodinome';
 import ModalCadastroProfissional from './Components/modalProfissional/ModalCadastroProfissional';
+import Agenda from './Components/Agenda/Agenda';
 
 // Rota protegida com verificação de tipo de usuário
 function ProtectedRoute({ children, allowedTypes }) {
@@ -182,9 +183,7 @@ export default function App() {
           toast.success('Informações de profissional salvas!');
           fetchUsuario();
         }}
-        // Certifique-se de que essas props estão definidas em ModalCadastroProfissional.jsx
-        shouldCloseOnOverlayClick={false}
-        shouldCloseOnEsc={false}
+        
       />
 
       <Routes>
@@ -231,9 +230,14 @@ export default function App() {
             <Chat />
           </ProtectedRoute>
         } />
-        <Route path="/perfil" element={
-          <ProtectedRoute allowedTypes={['paciente', 'profissional']}>
-            <Perfil />
+        <Route path="/perfil-paciente" element={
+          <ProtectedRoute allowedTypes={['paciente']}>
+            <PerfilPaciente />
+          </ProtectedRoute>
+        } />
+        <Route path="/perfil-profissional" element={
+          <ProtectedRoute allowedTypes={['profissional']}>
+            <PerfilProfissional />
           </ProtectedRoute>
         } />
         <Route path="/explorar" element={
@@ -244,6 +248,12 @@ export default function App() {
         <Route path="/notificacao" element={
           <ProtectedRoute allowedTypes={['paciente', 'profissional']}>
             <Notificacoes />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/agenda" element={
+          <ProtectedRoute allowedTypes={['profissional', 'paciente']}>
+            <Agenda />
           </ProtectedRoute>
         } />
 

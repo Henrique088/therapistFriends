@@ -7,11 +7,13 @@ import { IoDocumentTextSharp, IoNotificationsCircle, IoPerson } from "react-icon
 import { RiChatSmile3Fill } from "react-icons/ri";
 import { GiExitDoor } from "react-icons/gi";
 import { AiOutlineCaretRight, AiOutlineCaretLeft } from "react-icons/ai";
+import { ImBook } from "react-icons/im";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useUser } from '../../contexts/UserContext';
 import { useSocket } from '../../contexts/SocketContext';
+
 const MenuLateral = () => {
   const { usuario, setUsuario } = useUser();
   const [redirect, setRedirect] = useState(null);
@@ -115,8 +117,20 @@ const MenuLateral = () => {
               {!menuCollapsed && 'Notificações'}
               {temNotificacaoNova && <span className="badge-dot">{totalNotificacoes}</span>}
             </a></li>
+            {/* se profissional ou paciente */}
 
-            <li><a href="#" title='Perfil'><IoPerson /> {!menuCollapsed && 'Perfil'}</a></li>
+            {tipo === 'Profissional' && (
+              <>
+              <li><a href="/perfil-profissional" title='Perfil Profissional'><IoPerson /> {!menuCollapsed && 'Perfil'}</a></li>
+              <li><a href="/agenda" title='Agenda Profissional'><ImBook/> {!menuCollapsed && 'Agenda'}</a></li>
+              </>
+            )}
+            {tipo === 'Paciente' && (
+              <li><a href="/perfil-paciente" title='Perfil Paciente'><IoPerson /> {!menuCollapsed && 'Perfil'}</a></li>
+            )}
+
+
+            
           </ul>
 
           <ul>

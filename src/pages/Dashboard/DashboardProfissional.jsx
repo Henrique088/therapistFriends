@@ -3,12 +3,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import MenuLateral from '../../Components/Menu/MenuLateral';
 import './DashboardProfissional.css';
 import { FiBell } from 'react-icons/fi';
+import { useUser } from '../../contexts/UserContext';
 
 export default function DashboardProfissional() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [respostas, setRespostas] = useState({});
   const [respostasEnviadas, setRespostasEnviadas] = useState({});
   const [modoEdicao, setModoEdicao] = useState({});
+  const { usuario } = useUser();
 
   // Referência para o painel de notificações
   const notificationsRef = useRef(null);
@@ -118,7 +120,7 @@ export default function DashboardProfissional() {
       <MenuLateral />
       <div className="main-content">
         <div className="content-header">
-          <h1>Bem-vinda, Maria Psicóloga 👩‍⚕️</h1>
+          <h1>Bem-vindo(a), {usuario.nome}</h1>
           <button
             className="notification-button"
             ref={notificationButtonRef}
