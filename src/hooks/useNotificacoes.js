@@ -7,15 +7,19 @@ export default function useNotificacoes() {
   const socket = useSocket();
 
   useEffect(() => {
+    if (!socket) return; // Adicione esta verificação
+
     const handleNotificacao = ({ mensagem }) => {
       toast.info(mensagem);
     };
 
     const setupListeners = () => {
+      // Remove listeners antigos primeiro para evitar duplicação
+      socket.off('nova_notificacao', handleNotificacao);
       socket.on('nova_notificacao', handleNotificacao);
-      console.log('Listeners configurados');
     };
 
+    // Configura listeners inicialmente
     setupListeners();
     
     // Reconfigura listeners quando reconecta
@@ -25,5 +29,5 @@ export default function useNotificacoes() {
       socket.off('nova_notificacao', handleNotificacao);
       socket.off('connect', setupListeners);
     };
-  }, [socket]);
+  }, [socket]); // Certifique-se de que 'socket' é estável entre renderizações
 }

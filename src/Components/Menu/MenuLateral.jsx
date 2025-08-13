@@ -113,7 +113,7 @@ const MenuLateral = () => {
 
             <li><a href="/relato" title='Relatos'><IoDocumentTextSharp /> {!menuCollapsed && 'Relatos'}</a></li>
             <li><a href="/chat" title='Chats'><RiChatSmile3Fill /> {!menuCollapsed && 'Chats'}</a></li>
-            <li><a href="/notificacao"><IoNotificationsCircle />
+            <li><a href="/notificacao" title='Notificações'><IoNotificationsCircle />
               {!menuCollapsed && 'Notificações'}
               {temNotificacaoNova && <span className="badge-dot">{totalNotificacoes}</span>}
             </a></li>
@@ -121,8 +121,9 @@ const MenuLateral = () => {
 
             {tipo === 'Profissional' && (
               <>
-              <li><a href="/perfil-profissional" title='Perfil Profissional'><IoPerson /> {!menuCollapsed && 'Perfil'}</a></li>
               <li><a href="/agenda" title='Agenda Profissional'><ImBook/> {!menuCollapsed && 'Agenda'}</a></li>
+              <li><a href="/perfil-profissional" title='Perfil Profissional'><IoPerson /> {!menuCollapsed && 'Perfil'}</a></li>
+              
               </>
             )}
             {tipo === 'Paciente' && (

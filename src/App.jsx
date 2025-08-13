@@ -23,7 +23,7 @@ import Explorar from './pages/Explorar';
 import Notificacoes from './pages/Notificacoes';
 import ModalCodinome from './Components/ModalCodinome/ModalCodinome';
 import ModalCadastroProfissional from './Components/modalProfissional/ModalCadastroProfissional';
-import Agenda from './Components/Agenda/Agenda';
+import Agenda from './pages/Agenda/AgendaProfissional';
 
 // Rota protegida com verificação de tipo de usuário
 function ProtectedRoute({ children, allowedTypes }) {
@@ -97,9 +97,7 @@ function PublicRoute({ children }) {
 }
 
 
-// src/App.js
 
-// ... (imports existentes) ...
 
 export default function App() {
   const { usuario, loadingUsuario, fetchUsuario } = useUser();
@@ -112,7 +110,7 @@ export default function App() {
     // Só tentamos determinar o modal se não estiver carregando e tivermos dados de usuário
     if (!loadingUsuario && usuario) {
       console.log("Objeto usuario no App.js:", usuario);
-      // AQUI É A GRANDE MUDANÇA: Usamos a flag 'dados_completos' do backend!
+     
       if (!usuario.dadosCompletos) {
           if (usuario.tipo_usuario === 'paciente') {
               setShowInitialModal(true);

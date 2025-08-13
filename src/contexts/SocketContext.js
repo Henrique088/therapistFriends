@@ -11,6 +11,7 @@ export function SocketProvider({ children }) {
   if (!socketRef.current) {
     socketRef.current = io('http://localhost:3001', {
       withCredentials: true,
+      autoConnect: true,
     });
   }
 

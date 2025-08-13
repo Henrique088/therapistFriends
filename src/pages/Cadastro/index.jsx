@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { FiMail, FiLock, FiUser } from 'react-icons/fi';
 import styles from './Cadastro.module.css';
 import lobo from '../../img/lobo.png';
+import { toast } from 'react-toastify';
 
 function Cadastro() {
   const [nome, setNome] = useState('');
@@ -25,7 +26,7 @@ function Cadastro() {
       const dados = await resposta.json();
 
       if (resposta.ok) {
-        alert('Cadastro realizado com sucesso!');
+        toast.done('Cadastro realizado com sucesso!');
         window.location.href = '/login';
       } else {
         alert(dados.msg || 'Erro ao cadastrar.');

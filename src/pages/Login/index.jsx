@@ -50,7 +50,7 @@ function Login() {
       }
     } catch (erro) {
       console.error('Erro ao logar:', erro);
-      alert('Erro no servidor.');
+      toast.error('Erro no servidor.');
     }
   
   };
