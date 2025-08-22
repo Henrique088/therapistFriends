@@ -24,6 +24,7 @@ import Notificacoes from './pages/Notificacoes';
 import ModalCodinome from './Components/ModalCodinome/ModalCodinome';
 import ModalCadastroProfissional from './Components/modalProfissional/ModalCadastroProfissional';
 import Agenda from './pages/Agenda/AgendaProfissional';
+import AgendaPaciente from './pages/Agenda/AgendaPaciente';
 
 // Rota protegida com verificação de tipo de usuário
 function ProtectedRoute({ children, allowedTypes }) {
@@ -49,6 +50,12 @@ function ProtectedRoute({ children, allowedTypes }) {
     if (!allowedTypes.includes(usuario.tipo_usuario)) {
       toast.error('Acesso não autorizado.');
       setTimeout(() => setRedirect(true), 3000);
+      return;
+    }
+
+    // Se dados incompletos, redirecione para o modal de preenchimento
+    if (!usuario.dadosCompletos) {
+       setTimeout(() => setRedirect(true), 3000);
       return;
     }
 
@@ -252,6 +259,12 @@ export default function App() {
         <Route path="/agenda" element={
           <ProtectedRoute allowedTypes={['profissional', 'paciente']}>
             <Agenda />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/agenda-paciente/:profissionalId/:profissionalNome" element={
+          <ProtectedRoute allowedTypes={['paciente']}>
+            <AgendaPaciente />
           </ProtectedRoute>
         } />
 

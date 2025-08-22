@@ -238,7 +238,7 @@ export default function Chats() {
                 }}
                 onClick={() => carregarMensagens(conv.id)}
               >
-                Conversa #{conv.profissional.usuario.nome}
+                Conversa #<a href='/home'>{conv.profissional.usuario.nome}</a>
               </li>
             ))
           ) : (
@@ -271,7 +271,7 @@ export default function Chats() {
                     <div className={styles.direita}>
                       <div className={`${styles.mensagem} ${styles.enviada}`}>
                         <div className={styles.mensagemTopo}>
-                          <strong><span className={styles.nome}>{msg.remetente.nome}</span></strong>
+                          <strong><span className={styles.nome}><a href='/home'>{msg.remetente.nome}</a></span></strong>
                           <div className={styles.menuContainer}>
                             {podeEditarOuDeletar(msg.enviada_em) && (
                               <>

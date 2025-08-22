@@ -69,3 +69,11 @@
 .rbc-current-time-indicator {
   display: none !important;
 }
+
+.ReactModal__Overlay {
+  z-index: 9998 !important; 
+}
+
+.ReactModal__Content {
+  z-index: 9999 !important;
+}

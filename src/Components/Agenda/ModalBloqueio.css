@@ -1,0 +1,159 @@
+/* Estilos para o cabeçalho do modal */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  z-index: 1001;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #aaa;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.close-button:hover {
+  color: #333;
+}
+
+/* Estilos para o formulário */
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.form-group input[type="time"] {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+/* Estilos para a seção de recorrência */
+.form-group-checkbox {
+  margin-top: 10px;
+  display: flex;
+  justify-content: left;
+  
+}
+
+.form-group-checkbox label {
+  font-weight: normal;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-group-dias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+  align-items: center;
+}
+
+.form-group-dias p {
+  margin: 0;
+  font-weight: bold;
+  color: #555;
+}
+
+.form-group-dias label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  padding: 5px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  transition: background-color 0.2s;
+}
+
+.form-group-dias label:hover {
+  background-color: #e9e9e9;
+}
+
+.form-group-dias input[type="checkbox"] {
+  margin: 0;
+}
+
+/* Estilos para o rodapé e botões */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.modal-footer button {
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.submit-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+}
+
+.submit-button:hover {
+  background-color: #45a049;
+}
+
+.submit-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.remover-button {
+  background-color: #f44336;
+  color: white;
+  border: none;
+}
+
+.remover-button:hover {
+  background-color: #d32f2f;
+}
+
+.remover-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.cancelar-button {
+  background-color: #f0f0f0;
+  color: #555;
+  border: 1px solid #ccc;
+}
+
+.cancelar-button:hover {
+  background-color: #e0e0e0;
+}

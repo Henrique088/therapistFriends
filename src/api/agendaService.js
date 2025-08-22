@@ -26,12 +26,12 @@ export const AgendaService = {
     const response = await api.get('bloqueio/', {
       params: { profissional_id: profissionalId, data_inicio: start, data_fim: end }
     });
-    return response;
+    return response.data;
   },
 
   async createBloqueio(bloqueio) {
     const response = await api.post('bloqueio/', bloqueio);
-    return response;
+    return response.data;
   },
 
   async deleteBloqueio(id) {
@@ -42,6 +42,6 @@ export const AgendaService = {
     const response = await api.get('agendamento/profissional', {
       params: { profissional_id: profissionalId, data_inicio: start, data_fim: end }
     });
-    return response;
+    return response.data;
   },
 };

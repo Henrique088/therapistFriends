@@ -122,12 +122,13 @@ const ModalBloqueio = ({
         {/* Lógica de Recorrência */}
         <div className="form-group-checkbox">
           <label>
+            Bloqueio Recorrente
             <input
               type="checkbox"
               checked={formData.recorrente}
               onChange={handleRecorrenciaChange}
             />
-            Bloqueio Recorrente
+            
           </label>
         </div>
 

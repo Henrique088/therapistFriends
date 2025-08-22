@@ -95,9 +95,11 @@ function AgendaProfissional() {
 
       const [bloqueios, agendamentos] = await Promise.all([
         AgendaService.getBloqueios(usuario.id, inicio.toISOString(), fim.toISOString()),
-        // AgendaService.getAgendamentos(usuario.id, inicio.toISOString(), fim.toISOString())
+        AgendaService.getAgendamentos(usuario.id, inicio.toISOString(), fim.toISOString())
       ]);
 
+      console.log('Bloqueios:', bloqueios);
+      console.log('Agendamentos:', agendamentos);
       const bloqueiosFormatados = Array.isArray(bloqueios)
         ? bloqueios.map(b => ({
           ...b,
@@ -121,6 +123,7 @@ function AgendaProfissional() {
         : [];
 
       const todosEventos = [...bloqueiosFormatados, ...agendamentosFormatados];
+      console.log('Todos os eventos formatados:', todosEventos);
       setEventos(todosEventos);
 
       if (todosEventos.length === 0) {
@@ -209,9 +212,11 @@ function AgendaProfissional() {
         profissional_id: usuario.id,
         data_inicio: inicio.toISOString(),
         data_fim: fim.toISOString(),
-        recorrente,
+        recorrente: dias_recorrencia.length > 0 ? true : false,
         dias_recorrencia
       };
+
+      console.log('Dados do novo bloqueio:', novoBloqueio);
 
       await AgendaService.createBloqueio(novoBloqueio);
 
@@ -382,7 +387,7 @@ function AgendaProfissional() {
               today: 'Hoje',
               noEventsInRange: 'Sem eventos neste intervalo',
             }}
-            views={['month', 'week', 'day']}
+            views={['month', 'week', 'day','agenda']}
             defaultView="week"
             selectable
             onSelectSlot={handleSelectSlot}
@@ -394,6 +399,8 @@ function AgendaProfissional() {
             resizable
             toolbar
             onNavigate={onNavigate}
+            min={new Date(2023, 0, 1, 7, 0, 0)} // Início do dia
+                max={new Date(2023, 0, 1, 21, 0, 0)} // Fim do dia
           // onEventResize={handleEventResize}
           // onEventDrop={handleEventDrop}
           />

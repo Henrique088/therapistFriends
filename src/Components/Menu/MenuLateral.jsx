@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import lobo from '../../img/lobo.png';
-import './MenuLateral.css';
+import styles from './MenuLateral.module.css';
 import { FaHome } from "react-icons/fa";
 import { MdPersonSearch } from "react-icons/md";
 import { IoDocumentTextSharp, IoNotificationsCircle, IoPerson } from "react-icons/io5";
@@ -94,17 +94,17 @@ const MenuLateral = () => {
   const tipo = usuario?.tipo_usuario === 'paciente' ? 'Paciente' : 'Profissional';
 
   return (
-    <div className="container">
+    <div className={styles.container}>
       {/* Menu Lateral */}
-      <div className={`sidebar ${menuCollapsed ? 'collapsed' : ''}`}>
-        <div className="sidebar-header">
-          <div className="logo">
+      <div className={`${styles.sidebar} ${menuCollapsed ? styles.collapsed : ''}`}>
+        <div className={styles['sidebar-header']}>
+          <div className={styles.logo}>
             <img src={lobo} width={30} alt='logo do lobo' />
             {!menuCollapsed && <span>TherapistFriend</span>}
           </div>
         </div>
 
-        <nav className={`sidebar-menu ${menuCollapsed ? 'collapsed' : ''}`}>
+        <nav className={`${styles['sidebar-menu']} ${menuCollapsed ? styles.collapsed : ''}`}>
           <ul>
             <li><a href={`/dashboard-${tipo}`} title='Home'><FaHome /> {!menuCollapsed && 'Início'}</a></li>
             {tipo === 'Paciente' && (
@@ -115,7 +115,7 @@ const MenuLateral = () => {
             <li><a href="/chat" title='Chats'><RiChatSmile3Fill /> {!menuCollapsed && 'Chats'}</a></li>
             <li><a href="/notificacao" title='Notificações'><IoNotificationsCircle />
               {!menuCollapsed && 'Notificações'}
-              {temNotificacaoNova && <span className="badge-dot">{totalNotificacoes}</span>}
+              {temNotificacaoNova && <span className={styles['badge-dot']}>{totalNotificacoes}</span>}
             </a></li>
             {/* se profissional ou paciente */}
 
@@ -135,22 +135,22 @@ const MenuLateral = () => {
           </ul>
 
           <ul>
-            <li className='exit'><a href="/" onClick={logout} title='Sair'><GiExitDoor /> {!menuCollapsed && 'Sair'}</a></li>
+            <li className={styles.exit}><a href="/" onClick={logout} title='Sair'><GiExitDoor /> {!menuCollapsed && 'Sair'}</a></li>
           </ul>
         </nav>
 
-        <div className="sidebar-footer">
-          <div className="user-info">
+        <div className={styles['sidebar-footer']}>
+          <div className={styles['user-info']}>
             {!menuCollapsed && (
-              <div className="user-details">
-                <div className="avatar">JS</div>
-                <div className="username">{usuario?.codinome || usuario?.nome}</div>
-                <div className="user-email">{usuario?.email}</div>
+              <div className={styles['user-details']}>
+                <div className={styles.avatar}>JS</div>
+                <div className={styles.username}>{usuario?.codinome || usuario?.nome}</div>
+                <div className={styles['user-email']}>{usuario?.email}</div>
               </div>
             )}
           </div>
           {!isChatPage && (
-            <button className="toggle-button" onClick={toggleMenu}>
+            <button className={styles['toggle-button']} onClick={toggleMenu}>
               {menuCollapsed ? <AiOutlineCaretRight /> : <AiOutlineCaretLeft />}
             </button>
           )}

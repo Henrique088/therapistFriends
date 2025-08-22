@@ -26,5 +26,3 @@
   z-index: 1001; /* Garante que o conteúdo esteja acima do overlay */
 }
 
-/* Você também pode precisar de estilos específicos para animação ou transição,
-   mas esses são os básicos para que o modal seja visível. */

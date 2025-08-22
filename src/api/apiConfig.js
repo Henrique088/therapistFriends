@@ -19,7 +19,7 @@ api.interceptors.response.use(
     // Se a resposta tiver dados, retorne-os.
     // Caso contrário, retorne a resposta completa para que você possa verificar o status
     // Por exemplo, uma resposta 204 (No Content)
-    return response.data !== undefined ? response.data : response;
+    return response !== undefined ? response : response.msg;
   },
   (error) => {
     // ... restante do seu código de tratamento de erro
