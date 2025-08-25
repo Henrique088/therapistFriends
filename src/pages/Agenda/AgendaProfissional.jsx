@@ -8,10 +8,11 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import { toast } from 'react-toastify';
-import ModalDisponibilidade from '../../Components/Agenda/ModalDisponibilidade';
+import ModalStatusAgendamento from '../../Components/Agenda/ModalStatusAgendamento';
 import ModalBloqueio from '../../Components/Agenda/ModalBloqueio';
 import { AgendaService } from '../../api/agendaService';
 import './AgendaProfissional.css';
+
 
 
 
@@ -20,10 +21,11 @@ const DragAndDropCalendar = withDragAndDrop(Calendar);
 function AgendaProfissional() {
   const { usuario } = useUser();
   const [eventos, setEventos] = useState([]);
-  const [mostrarModalDisponibilidade, setMostrarModalDisponibilidade] = useState(false);
   const [mostrarModalBloqueio, setMostrarModalBloqueio] = useState(false);
   const [slotSelecionado, setSlotSelecionado] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [mostrarModalStatus, setMostrarModalStatus] = useState(false);
+  const [eventoSelecionado, setEventoSelecionado] = useState(null);
 
   // Carregar dados da agenda
   // useEffect(() => {
@@ -114,10 +116,10 @@ function AgendaProfissional() {
       const agendamentosFormatados = Array.isArray(agendamentos)
         ? agendamentos.map(a => ({
           ...a,
-          title: 'AGENDADO',
+          title: a.paciente.codinome,
           start: new Date(a.data_inicio),
           end: new Date(a.data_fim),
-          color: '#a0d8f6',
+          color: a.status == 'pendente'? '#a0d8f6': '#57ef2dff',
           bloqueado: false,
         }))
         : [];
@@ -157,6 +159,23 @@ function AgendaProfissional() {
     setMostrarModalBloqueio(true);
   };
 
+  const onSelectEvent = (evento) => {
+    // Armazena o evento e abre o modal para o profissional
+    setEventoSelecionado(evento);
+    if(evento.title === 'BLOQUEADO') {
+      setSlotSelecionado({
+        id: evento.id,
+        start: evento.start,
+        end: evento.end
+      });
+      setMostrarModalBloqueio(true);
+    }
+    else {
+      setMostrarModalStatus(true);
+    }
+    
+  };
+
   const handleSelectEvent = (event) => {
     if (event.bloqueado) {
       setSlotSelecionado({
@@ -168,39 +187,8 @@ function AgendaProfissional() {
     }
   };
 
-  // Salvar nova disponibilidade
-  const handleSalvarDisponibilidade = async (dados) => {
-    try {
-      setLoading(true);
-      const { inicio, fim, tipo } = dados;
 
-      const novoEvento = {
-        profissional_id: usuario.id,
-        data_inicio: inicio.toISOString(),
-        data_fim: fim.toISOString(),
-        tipo
-      };
 
-      const response = await AgendaService.createDisponibilidade(novoEvento);
-      console.log('Nova disponibilidade:', response);
-      setEventos(prev => [...prev, {
-        ...response,
-        title: tipo === 'disponivel' ? 'Disponível' : 'Consulta',
-        start: new Date(response.data_inicio),
-        end: new Date(response.data_fim),
-        color: tipo === 'disponivel' ? '#ccffcc' : '#a0d8f6',
-        bloqueado: false
-      }]);
-
-      toast.success('Disponibilidade cadastrada com sucesso!');
-      setMostrarModalDisponibilidade(false);
-    } catch (error) {
-      toast.error('Erro ao salvar disponibilidade');
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Função para salvar um novo bloqueio (pontual ou recorrente)
   const handleSalvarBloqueio = async (dados) => {
@@ -296,7 +284,7 @@ function AgendaProfissional() {
       }]);
 
       toast.success('Horário bloqueado com sucesso!');
-      setMostrarModalDisponibilidade(false);
+     
     } catch (error) {
       toast.error('Erro ao bloquear horário');
       console.error(error);
@@ -341,6 +329,20 @@ function AgendaProfissional() {
         slot={slotSelecionado}
       />
 
+      {mostrarModalStatus && (
+        <ModalStatusAgendamento
+          evento={eventoSelecionado}
+          onClose={() => setMostrarModalStatus(false)}
+          onStatusChange={() => {
+            // Recarregue a agenda após a mudança de status
+            setMostrarModalStatus(false);
+            const hoje = moment().startOf('week');
+    const fimDaSemana = moment().endOf('week');
+    carregarAgenda(hoje, fimDaSemana);
+          }}
+        />
+      )}
+
       <div className="agenda-content">
         <header className="agenda-header">
           <h1>Agenda de {usuario.nome}</h1>
@@ -349,7 +351,7 @@ function AgendaProfissional() {
               className="btn-disponibilidade"
               onClick={() => {
                 setSlotSelecionado(null);
-                setMostrarModalDisponibilidade(true);
+                
               }}
             >
               + Nova Disponibilidade
@@ -361,7 +363,7 @@ function AgendaProfissional() {
                   start: new Date(),
                   end: moment().add(1, 'hour').toDate()
                 });
-                setMostrarModalDisponibilidade(true);
+                
               }}
             >
               + Bloquear Horário
@@ -387,20 +389,17 @@ function AgendaProfissional() {
               today: 'Hoje',
               noEventsInRange: 'Sem eventos neste intervalo',
             }}
-            views={['month', 'week', 'day','agenda']}
+            views={['month', 'week', 'day', 'agenda']}
             defaultView="week"
             selectable
             onSelectSlot={handleSelectSlot}
-            onSelectEvent={(event) => {
-              setSlotSelecionado(event);
-              setMostrarModalBloqueio(true);
-            }}
+            onSelectEvent={onSelectEvent}
             eventPropGetter={eventStyleGetter}
             resizable
             toolbar
             onNavigate={onNavigate}
-            min={new Date(2023, 0, 1, 7, 0, 0)} // Início do dia
-                max={new Date(2023, 0, 1, 21, 0, 0)} // Fim do dia
+            min={new Date(2025, 0, 1, 7, 0, 0)} // Início do dia
+            max={new Date(2025, 0, 1, 21, 0, 0)} // Fim do dia
           // onEventResize={handleEventResize}
           // onEventDrop={handleEventDrop}
           />

@@ -5,17 +5,17 @@ export const AgendaService = {
     const response = await api.get('disponibilidade/', {
       params: { profissional_id: profissionalId, data_inicio: start, data_fim: end }
     });
-    return response;
+    return response.data;
   },
 
   async createDisponibilidade(disponibilidade) {
     const response = await api.post('disponibilidade/', disponibilidade);
-    return response;
+    return response.data;
   },
 
   async updateDisponibilidade(id, updates) {
     const response = await api.put(`disponibilidade/${id}`, updates);
-    return response;
+    return response.data;
   },
 
   async deleteDisponibilidade(id) {
@@ -44,4 +44,19 @@ export const AgendaService = {
     });
     return response.data;
   },
+
+  
+  //carregarAgenda do profissional
+  async getAgenda(profissionalId, start, end) {
+    const response = await api.get(`/agendamento/agenda/${profissionalId}`, {
+      params: { data_inicio: start, data_fim: end }
+    });
+    return response;
+  },
+
+  //Atualiza status do agendamento
+  async updateAgendamentoStatus(agendamentoId, status) {
+    const response = await api.patch(`agendamento/${agendamentoId}/status`, { status });
+    return response.data;
+  }
 };

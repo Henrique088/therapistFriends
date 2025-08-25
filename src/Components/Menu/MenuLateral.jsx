@@ -19,6 +19,7 @@ const MenuLateral = () => {
   const [redirect, setRedirect] = useState(null);
   const location = useLocation();
   const isChatPage = location.pathname === '/chat';
+  const isAgendaPage = location.pathname === '/agenda';
   const [menuCollapsed, setMenuCollapsed] = useState(false);
   const [temNotificacaoNova, setTemNotificacaoNova] = useState(false);
   const [totalNotificacoes, setTotalNotificacoes] = useState(0);
@@ -29,10 +30,10 @@ const MenuLateral = () => {
   };
 
   useEffect(() => {
-    if (isChatPage) {
+    if (isChatPage || isAgendaPage) {
       setMenuCollapsed(true);
     }
-  }, [isChatPage]);
+  }, [isChatPage, isAgendaPage]);
 
   useEffect(() => {
     fetch('http://localhost:3001/notificacoes/nao-lidas', {
@@ -40,7 +41,7 @@ const MenuLateral = () => {
     })
       .then(res => res.json())
       .then(data => {
-       
+
         setTemNotificacaoNova(data.total > 0); // você controla um estado como esse
         setTotalNotificacoes(data.total);
       });
@@ -121,9 +122,9 @@ const MenuLateral = () => {
 
             {tipo === 'Profissional' && (
               <>
-              <li><a href="/agenda" title='Agenda Profissional'><ImBook/> {!menuCollapsed && 'Agenda'}</a></li>
-              <li><a href="/perfil-profissional" title='Perfil Profissional'><IoPerson /> {!menuCollapsed && 'Perfil'}</a></li>
-              
+                <li><a href="/agenda" title='Agenda Profissional'><ImBook /> {!menuCollapsed && 'Agenda'}</a></li>
+                <li><a href="/perfil-profissional" title='Perfil Profissional'><IoPerson /> {!menuCollapsed && 'Perfil'}</a></li>
+
               </>
             )}
             {tipo === 'Paciente' && (
@@ -131,7 +132,7 @@ const MenuLateral = () => {
             )}
 
 
-            
+
           </ul>
 
           <ul>
@@ -149,7 +150,7 @@ const MenuLateral = () => {
               </div>
             )}
           </div>
-          {!isChatPage && (
+          {!isChatPage && !isAgendaPage && (
             <button className={styles['toggle-button']} onClick={toggleMenu}>
               {menuCollapsed ? <AiOutlineCaretRight /> : <AiOutlineCaretLeft />}
             </button>

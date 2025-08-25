@@ -7,8 +7,9 @@ import localizer from '../../Utils/calendarLocalizer';
 import 'moment/locale/pt-br';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { toast } from 'react-toastify';
-import api from '../../api/apiConfig';
+
 import ModalAgendamento from '../../Components/Agenda/ModalAgendamento';
+import { AgendaService } from '../../api/agendaService';
 
 
 
@@ -26,12 +27,7 @@ const AgendaPaciente = () => {
 
         try {
             setLoading(true);
-            const response = await api.get(`/agendamento/agenda/${profissionalId}`, {
-                params: {
-                    data_inicio: inicio.toISOString(),
-                    data_fim: fim.toISOString(),
-                }
-            });
+            const response = await AgendaService.getAgenda(profissionalId, inicio.toISOString(), fim.toISOString());
 
             const eventosFormatados = response.data.map(evento => ({
                 ...evento,
@@ -57,13 +53,19 @@ const AgendaPaciente = () => {
 
 
 
-    const handleSelectSlot = ({ start, end }) => {
-        const inicioInteiro = moment(start).startOf('hour');
-            
-        const fimInteiro = moment(end).startOf('hour').add(1, 'hour');
-        setSlotSelecionado({ start: inicioInteiro.toDate(), end: fimInteiro.toDate() });
-        setMostrarModalAgendamento(true);
-    };
+    const handleSelectSlot = ({ start, end, action }) => {
+  // Bloqueia arrastes - apenas permite clicks
+  if (action === 'select') {
+    return;
+  }
+  
+  // Permite apenas clicks (action === 'click' ou undefined)
+  const inicioInteiro = moment(start).startOf('hour');
+  const fimInteiro = moment(inicioInteiro).add(1, 'hour');
+  
+  setSlotSelecionado({ start: inicioInteiro.toDate(), end: fimInteiro.toDate() });
+  setMostrarModalAgendamento(true);
+};
 
     const onNavigate = (newDate) => {
         // Apenas atualize a data no estado
@@ -74,7 +76,7 @@ const AgendaPaciente = () => {
     const eventStyleGetter = (event) => {
         return {
             style: {
-                backgroundColor: '#a0a0a0', // Cor genérica para eventos ocupados
+                backgroundColor: event?.title == 'Ocupado'?'#a0a0a0': event?.color, // Cor genérica para eventos ocupados
                 color: 'white',
                 borderRadius: '0px',
                 border: 'none',
@@ -118,6 +120,9 @@ const AgendaPaciente = () => {
                 onNavigate={onNavigate}
                 min={new Date(2023, 0, 1, 7, 0, 0)} // Início do dia
                 max={new Date(2023, 0, 1, 21, 0, 0)} // Fim do dia
+                step={60} // Seleção mínima de 60 minutos
+  timeslots={1} // Apenas 1 slot por hora
+  reziseable={false} // Desabilita redimensionamento de eventos
             />
             {loading && <p>Carregando...</p>}
 

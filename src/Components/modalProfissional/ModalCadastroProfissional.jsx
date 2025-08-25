@@ -3,10 +3,12 @@ import Modal from 'react-modal';
 import { toast } from 'react-toastify';
 import './ModalCadastroProfissional.css';
 
+
 Modal.setAppElement('#root');
 
 export default function ModalCadastroProfissional({ isOpen, onClose, token }) {
   const [salvando, setSalvando] = useState(false);
+  const [cpfValido, setCpfValido] = useState(true);
   const [form, setForm] = useState({
     telefone: '',
     cpf: '',
@@ -15,8 +17,49 @@ export default function ModalCadastroProfissional({ isOpen, onClose, token }) {
     especialidades: ''
   });
 
+  const validateCPF = (cpf) => {
+    // Remove caracteres não numéricos
+    cpf = cpf.replace(/[^\d]/g, '');
+    
+    // Verifica se tem 11 dígitos
+    if (cpf.length !== 11) return false;
+    
+    // Verifica se todos os dígitos são iguais
+    if (/^(\d)\1{10}$/.test(cpf)) return false;
+    
+    // Validação dos dígitos verificadores
+    let sum = 0;
+    let remainder;
+    
+    // Primeiro dígito verificador
+    for (let i = 1; i <= 9; i++) {
+      sum += parseInt(cpf.substring(i-1, i)) * (11 - i);
+    }
+    
+    remainder = (sum * 10) % 11;
+    if (remainder === 10 || remainder === 11) remainder = 0;
+    if (remainder !== parseInt(cpf.substring(9, 10))) return false;
+    
+    // Segundo dígito verificador
+    sum = 0;
+    for (let i = 1; i <= 10; i++) {
+      sum += parseInt(cpf.substring(i-1, i)) * (12 - i);
+    }
+    
+    remainder = (sum * 10) % 11;
+    if (remainder === 10 || remainder === 11) remainder = 0;
+    if (remainder !== parseInt(cpf.substring(10, 11))) return false;
+    
+    return true;
+  };
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleChangeCpf = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+    setCpfValido(validateCPF(e.target.value));
   };
 
   const validarCRP = (crp) => {
@@ -24,18 +67,27 @@ export default function ModalCadastroProfissional({ isOpen, onClose, token }) {
     const regex = /^CRP-\d{2}\/\d{5}$/;
     return regex.test(crp);
   };
-const formatarCPF = (cpf) => {
-  return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-};
+const formatCPF = (value) => {
+    return value
+      .replace(/\D/g, '')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+  };
 
 const formatarTelefone = (telefone) => {
-  return telefone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-};
+    return telefone
+      .replace(/\D/g, '')
+      .replace(/(\d{0})(\d)/, '$1$2')
+      .replace(/(\d{2})(\d)/, '($1) $2')
+      .replace(/(\d{5})(\d)/, '$1-$2')
+      .slice(0, 15);
+  };
 
 const SalvarDados = async (event) => {
   event.preventDefault();
   const telefoneFormatado = formatarTelefone(form.telefone);
-  const cpfFormatado = formatarCPF(form.cpf);
+  const cpfFormatado = formatCPF(form.cpf);
 
   setSalvando(true);
   fetch('http://localhost:3001/profissionais', {
@@ -80,7 +132,7 @@ const SalvarDados = async (event) => {
           type="text"
           name="telefone"
           placeholder="Telefone"
-          value={form.telefone}
+          value={formatarTelefone(form.telefone)}
           onChange={handleChange}
           required
         />
@@ -88,14 +140,16 @@ const SalvarDados = async (event) => {
           type="text"
           name="cpf"
           placeholder="CPF"
-          value={form.cpf}
-          onChange={handleChange}
+          value={formatCPF(form.cpf)}
+          onChange={handleChangeCpf}
+          maxLength={14}
           required
         />
+        {!cpfValido && <span className="error">CPF inválido</span>}
         <input
           type="text"
           name="crp"
-          placeholder="CRP (ex: CRP-12/12345)"
+          placeholder="CRP (ex: 12/12345)"
           value={form.crp}
           onChange={handleChange}
           required
