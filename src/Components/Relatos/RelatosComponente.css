@@ -101,3 +101,23 @@
     flex-direction: row;
     gap: 40px;
 }
+
+.titulo-relato{
+  /* font-size: 1.2rem; */
+  font-weight: bold;
+  /* margin-top: 5px; */
+  margin-bottom: 8px;
+  /* margin-left: 10px; */
+}
+
+.grave{
+  background-color: rgba(231, 76, 60, 0.3); /* 30% de opacidade */
+}
+
+.leve{
+  background-color: rgba(241, 196, 15, 0.3); /* 30% de opacidade */
+}
+
+.mediano{
+  background-color: rgba(243, 156, 18, 0.3); /* 30% de opacidade */
+}

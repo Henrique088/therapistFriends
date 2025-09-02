@@ -1,20 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './FormularioRelatos.css';
-// import { useUsuario } from '../../contexts/UserContext';
 
-const RelatoForm = ({ onCancel, onSubmit, relatoEditando }) => {
-  
-  // const { usuario } = useUsuario();
+const RelatoForm = ({ onCancel, onSubmit, relatoEditando}) => {
   const [titulo, setTitulo] = useState('');
   const [categoria, setCategoria] = useState('');
   const [relato, setRelato] = useState('');
   const [anonimo, setAnonimo] = useState(false);
-  const [formData, setFormData] = useState({
-    titulo: '',
-    categoria: '',
-    relato: '',
-    anonimo: false,
-  });
+  const [enviando, setEnviando] = useState(false);
 
   const categorias = [
     'Solidão',
@@ -33,20 +25,6 @@ const RelatoForm = ({ onCancel, onSubmit, relatoEditando }) => {
     'Outros'
   ];
 
-  // const handleChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData(prev => ({
-  //     ...prev,
-  //     [name]: value
-  //   }));
-  // };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   alert('Relato enviado com sucesso!' + formData.anonimo);
-  //   onSubmit(formData);
-  // };
-
   useEffect(() => {
     if (relatoEditando) {
       setTitulo(relatoEditando.titulo || '');
@@ -56,56 +34,70 @@ const RelatoForm = ({ onCancel, onSubmit, relatoEditando }) => {
     }
   }, [relatoEditando]);
 
-  const enviarRelato = () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault(); 
+    
+    if (enviando) return;
+    
+    setEnviando(true);
 
-    const url = relatoEditando
+    try {
+      const url = relatoEditando
         ? `http://localhost:3001/relatos/${relatoEditando.id}`
         : `http://localhost:3001/relatos/criarRelato`;
 
       const method = relatoEditando ? 'PUT' : 'POST';
 
+      const response = await fetch(url, {
+        method: method,
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          titulo,
+          categoria,
+          texto: relato,
+          anonimo: anonimo,
+        }),
+      });
 
-  fetch(url, {
-    method: method,
-    credentials: 'include', 
-    headers: {
-      'Content-Type': 'application/json',
-     
-    },
-    body: JSON.stringify({
-      titulo,
-      categoria,
-      texto: relato, 
-      anonimo: anonimo || false,
-    }),
-  })
-    .then(async response => {
       if (!response.ok) {
         const err = await response.json();
         throw new Error(err.message || 'Erro ao enviar relato');
       }
-      return response.json();
-    })
-    .then(msg => {
+
+      const data = await response.json();
+      
+      // Limpa o formulário
       setRelato('');
       setTitulo('');
       setCategoria('');
       setAnonimo(false);
-      onCancel(); 
-      console.log('Relato enviado:', msg);
-    })
-    .catch(err => {
+      
+      // Chama a função onSubmit passada como prop para atualizar a UI
+      if (onSubmit) {
+        onSubmit(data, relatoEditando ? 'editado' : 'criado');
+      }
+      
+      onCancel(); // Fecha o modal
+      
+      console.log('Relato enviado:', data);
+      
+    } catch (err) {
       console.error('Erro detalhado:', err);
-    });
-};
-
+      alert(err.message || 'Erro ao enviar relato');
+    } finally {
+      setEnviando(false);
+    }
+  };
 
   return (
     <div className="relato-modal-overlay">
       <div className="relato-form-container">
         <h1>{relatoEditando ? 'Editar Relato' : 'Escrever Novo Relato'}</h1>
         
-        <form onSubmit={enviarRelato}>
+        <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Título</label>
             <input
@@ -113,9 +105,9 @@ const RelatoForm = ({ onCancel, onSubmit, relatoEditando }) => {
               name="titulo"
               placeholder="Ex: Pressão no trabalho"
               value={titulo}
-              
               onChange={(e) => setTitulo(e.target.value)}
               required
+              disabled={enviando}
             />
           </div>
           
@@ -126,6 +118,7 @@ const RelatoForm = ({ onCancel, onSubmit, relatoEditando }) => {
               value={categoria}
               onChange={(e) => setCategoria(e.target.value)}
               required
+              disabled={enviando}
             >
               <option value="">Selecione uma categoria</option>
               {categorias.map((cat, index) => (
@@ -143,25 +136,38 @@ const RelatoForm = ({ onCancel, onSubmit, relatoEditando }) => {
               onChange={(e) => setRelato(e.target.value)}
               rows={6}
               required
+              disabled={enviando}
             />
           </div>
 
           <div className="form-group anonimo-checkbox">
-            <label>Compartilhar de forma anônima</label>
-            <input
-              type="checkbox"
-              name="anonimo"
-              checked={anonimo || false}
-              onChange={(e) => setAnonimo(e.target.value)}
-            />
+            <label>
+              <input
+                type="checkbox"
+                name="anonimo"
+                checked={anonimo}
+                onChange={(e) => setAnonimo(e.target.checked)} 
+                disabled={enviando}
+              />
+              Compartilhar de forma anônima
+            </label>
           </div>
           
           <div className="form-actions">
-            <button type="button" className="cancel-button" onClick={onCancel}>
+            <button 
+              type="button" 
+              className="cancel-button" 
+              onClick={onCancel}
+              disabled={enviando}
+            >
               Cancelar
             </button>
-            <button type="submit" className="submit-button" >
-              Enviar Relato
+            <button 
+              type="submit" 
+              className="submit-button" 
+              disabled={enviando}
+            >
+              {enviando ? 'Enviando...' : 'Enviar Relato'}
             </button>
           </div>
         </form>

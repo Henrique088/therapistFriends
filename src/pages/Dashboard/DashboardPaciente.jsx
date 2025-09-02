@@ -11,6 +11,7 @@ export default function DashboardPaciente() {
   const [mostrarModal, setMostrarModal] = useState(false);
   const { usuario } = useUser();
   const [showForm, setShowForm] = useState(false);
+  const [recarregarRelatos, setRecarregarRelatos] = useState(0);
 
   useEffect(() => {
     if (!usuario?.codinome) {
@@ -40,7 +41,7 @@ export default function DashboardPaciente() {
   };
 
   const handleSubmit = (formData) => {
-
+    setRecarregarRelatos(prev => prev + 1);
     console.log('Dados do relato:', formData);
     setShowForm(false);
 
@@ -55,7 +56,7 @@ export default function DashboardPaciente() {
     <div className="app">
       <MenuLateral />
 
-      {showForm && <RelatoForm onCancel={handleCancel} onSubmit={handleSubmit} />}
+      {showForm && <RelatoForm onCancel={handleCancel} onSubmit={handleSubmit}  />}
      
       
       <div className="main-content">
@@ -70,7 +71,7 @@ export default function DashboardPaciente() {
 
         <h2>Relatos Recentes</h2>
        
-       <ExibirRelatos numRelatos={3} />
+       <ExibirRelatos numRelatos={3} recarregar={recarregarRelatos}/>
 
         <div className="info-cards-container">
           {infoCards.map((card, index) => (

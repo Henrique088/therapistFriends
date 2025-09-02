@@ -23,11 +23,20 @@ export default function PerfilPaciente() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // lógica para enviar alteração ao backend
+        
         toast.success('Perfil atualizado com sucesso!'+ form.codinome + ' ' + form.telefone + ' ' + form.nome);
         
         setEditando(false);
     };
+
+    const formatarTelefone = (telefone) => {
+    return telefone
+      .replace(/\D/g, '')
+      .replace(/(\d{0})(\d)/, '$1$2')
+      .replace(/(\d{2})(\d)/, '($1) $2')
+      .replace(/(\d{5})(\d)/, '$1-$2')
+      .slice(0, 15);
+  };
 
 
     useEffect(() => {
@@ -107,13 +116,13 @@ export default function PerfilPaciente() {
                         {!editando ? (
                             <div className="dadosUsuario">
                                 <p><strong>Nome:</strong> {usuario.nome}</p>
-                                <p><strong>Telefone:</strong> {usuario.telefone}</p>
+                                <p><strong>Telefone:</strong> {formatarTelefone(usuario.telefone)}</p>
                                 <p><strong>Codinome:</strong> {usuario.codinome}</p>
                             </div>
                         ) : (
                             <form onSubmit={atualizarDados} className="formEditar">
                                 <input type="text" name="nome" value={form.nome} onChange={handleChange} placeholder="Nome" />
-                                <input type="text" mask="+1 (999) 999-9999" name="telefone" value={form.telefone} onChange={handleChange} placeholder="Telefone" />
+                                <input type="text"  name="telefone" value={formatarTelefone(form.telefone)} onChange={handleChange} placeholder="Telefone" />
                                 <input type="text" name="codinome" value={form.codinome} onChange={handleChange} placeholder="Codinome" />
                                 <button type="submit" disabled={salvando}>Salvar</button>
                             </form>
@@ -123,7 +132,7 @@ export default function PerfilPaciente() {
 
                 <div className="relatosUsuario">
                     <h2>Seus Relatos</h2>
-                    <ExibirRelatos numRelatos={5} />
+                    <ExibirRelatos numRelatos={5} relatosPessoais={true} />
                     {/* Aqui você renderiza os relatos do usuário */}
                 </div>
             </div>

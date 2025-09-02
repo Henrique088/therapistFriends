@@ -21,6 +21,7 @@ const AgendaPaciente = () => {
     const [dataAtual, setDataAtual] = useState(moment().toDate());
     const [mostrarModalAgendamento, setMostrarModalAgendamento] = useState(false);
     const [slotSelecionado, setSlotSelecionado] = useState(null);
+    
 
     const carregarAgenda = async (inicio, fim) => {
         if (!profissionalId) return;

@@ -25,11 +25,20 @@ export default function PerfilProfissional() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // lógica para enviar alteração ao backend
+        
         toast.success('Perfil atualizado com sucesso!'+ form.codinome + ' ' + form.telefone + ' ' + form.nome);
         
         setEditando(false);
     };
+
+    const formatarTelefone = (telefone) => {
+    return telefone
+      .replace(/\D/g, '')
+      .replace(/(\d{0})(\d)/, '$1$2')
+      .replace(/(\d{2})(\d)/, '($1) $2')
+      .replace(/(\d{5})(\d)/, '$1-$2')
+      .slice(0, 15);
+  };
 
 
     useEffect(() => {
@@ -123,7 +132,7 @@ export default function PerfilProfissional() {
                         {!editando ? (
                             <div className="dadosUsuario">
                                 <p><strong>Nome:</strong> {usuario.nome}</p>
-                                <p><strong>Telefone:</strong> {usuario.telefone}</p>
+                                <p><strong>Telefone:</strong> {formatarTelefone(usuario.telefone)}</p>
                                 <p><strong>CPF:</strong> {usuario.cpf}</p>
                                 <p><strong>CRP:</strong> {usuario.crp}</p>
                                 <p><strong>Bio:</strong> {usuario.bio}</p>
@@ -133,7 +142,7 @@ export default function PerfilProfissional() {
                         ) : (
                             <form onSubmit={atualizarDados} className="formEditar">
                                 <input type="text" name="nome" value={form.nome} onChange={handleChange} placeholder="Nome" />
-                                <input type="text" name="telefone" value={form.telefone} onChange={handleChange} placeholder="Telefone" />
+                                <input type="text" name="telefone" value={formatarTelefone(form.telefone)} onChange={handleChange} placeholder="Telefone" />
                                 <input type="text" name="cpf" value={form.cpf} onChange={handleChange} placeholder="CPF" readOnly className='ler' />
                                 <input type="text" name="crp" value={form.crp} onChange={handleChange} placeholder="CRP (ex: CRP-12/12345)" readOnly className='ler'/>
                                 <input type="text" name="especialidades" value={form.especialidades} onChange={handleChange} placeholder="Especialidades" />

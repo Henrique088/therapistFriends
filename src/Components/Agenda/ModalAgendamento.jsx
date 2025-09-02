@@ -27,7 +27,7 @@ const ModalAgendamento = ({ profissionalId, slot, onClose, onAgendamentoConcluid
             toast.success('Agendamento solicitado com sucesso!');
             onAgendamentoConcluido();
         } catch (error) {
-            toast.error('Erro ao agendar horário.');
+            toast.error(error.response?.data?.erro || 'Erro ao solicitar agendamento.');
             console.error(error);
         }
     };

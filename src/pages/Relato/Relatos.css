@@ -86,4 +86,71 @@
 
   .create-post-button{
     margin-bottom: 10px;
+    height: 50%;
   }
+
+  .tags {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  /* background-color: #93d5e3;
+  border-radius: 10px; */
+}
+
+.tags-title,
+.disponiveis-text {
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 4px;
+  /* background-color: #b1b1b1; */
+  background: linear-gradient(to right, #E0FFE0, #A8D8EA);
+}
+
+.tags-selecionadas,
+.tags-disponiveis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  
+}
+
+.tag-selecionada {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 9999px; /* Tailwind 'rounded-full' */
+  background-color: #3b82f6; /* bg-blue-500 */
+  color: #ffffff;
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 600; /* font-semibold */
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.tag-selecionada:hover {
+  background-color: #2563eb; /* bg-blue-600 */
+}
+
+.criarDesabafo-tags{
+  margin-bottom: 20px;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tags-dispo {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 9999px; /* Tailwind 'rounded-full' */
+  background-color: #e5e7eb; /* bg-gray-200 */
+  color: #1f2937; /* text-gray-800 */
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 600; /* font-semibold */
+  transition: background-color 0.2s;
+  cursor: pointer;
+}

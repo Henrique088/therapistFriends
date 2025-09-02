@@ -87,7 +87,11 @@ function AgendaProfissional() {
 
   //   carregarAgenda();
   // }, [usuario.id]);
-
+  const statusColors = {
+  'pendente': '#a0d8f6',
+  'confirmado': '#57ef2dff',
+  
+};
 
   const carregarAgenda = async (inicio, fim) => {
     if (!usuario?.id) return;
@@ -119,7 +123,7 @@ function AgendaProfissional() {
           title: a.paciente.codinome,
           start: new Date(a.data_inicio),
           end: new Date(a.data_fim),
-          color: a.status == 'pendente'? '#a0d8f6': '#57ef2dff',
+          color: statusColors[a.status] || '#e1e129ff',
           bloqueado: false,
         }))
         : [];
