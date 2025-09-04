@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { toast } from 'react-toastify';
-import './RelatosComponente.css';
+import './Relatos.module.css';
 import { FcLikePlaceholder, FcLike } from "react-icons/fc";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { formatarData } from '../../Utils/index';
@@ -30,8 +30,19 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
           const relatosUsuario = data.filter((relato) => 
             relato.paciente.id_usuario === usuario.id
           );
+
+          
           setRelatos(relatosUsuario);
         }
+
+        //filtra os relatos para mostrar apenas o número definido por numRelatos e tira os que forem do usuario logado
+        if (numRelatos && relatosPessoais !== true) {
+          const relatosFiltrados = data
+            .filter((relato) => relato.paciente.id_usuario !== usuario.id)
+            .slice(0, numRelatos);
+          setRelatos(relatosFiltrados);
+        }
+          
       })
       .catch((err) => console.error('Erro ao buscar relatos:', err));
   };
@@ -75,7 +86,7 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
     });
   }, [relatos, tagsSelecionadas]);
 
-  //filtrar relatosFiltrados se a tag "Disponivéis" estiver selecionada e o usuario for profissional
+
    
    
 
@@ -201,7 +212,7 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
     <div className="posts-container">
       {showForm && <RelatoForm onCancel={handleCancel} onSubmit={handleSubmit} relatoEditando={relatoEditando} />}
       
-      {/* ✅ MOSTRA MENSAGEM QUANDO NÃO HÁ RELATOS FILTRADOS */}
+      
       {relatosFiltrados.length === 0 ? (
         <div className="no-results">
           {tagsSelecionadas.length > 0 ? (
@@ -213,7 +224,7 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
       ) : (
        
         relatosFiltrados.map((relato) => (
-          <div key={relato.id} className={`post-card ${relato.resultado_ia || ''}`}>
+          <div key={relato.id} className={`post-card ${usuario.tipo_usuario ==='profissional' ? relato.resultado_ia : ''}`}>
             <div className="post-header">
               <div className="user-info">
                 <div className="user-avatar">

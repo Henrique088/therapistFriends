@@ -93,6 +93,9 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  margin-bottom: 20px;
+  /* width: 60%; */
+  position: sticky;
   /* background-color: #93d5e3;
   border-radius: 10px; */
 }

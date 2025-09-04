@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './FormularioRelatos.css';
+import { toast } from 'react-toastify';
+import EmojiPicker from '../../Utils/emojiPicker';
 
 const RelatoForm = ({ onCancel, onSubmit, relatoEditando}) => {
   const [titulo, setTitulo] = useState('');
@@ -13,6 +15,8 @@ const RelatoForm = ({ onCancel, onSubmit, relatoEditando}) => {
     'Ansiedade',
     'Depressão',
     'Timidez',
+    'Autoestima',
+    'Saúde Mental',
     'Estresse',
     'Relacionamentos',
     'Transtornos Alimentares',
@@ -33,6 +37,10 @@ const RelatoForm = ({ onCancel, onSubmit, relatoEditando}) => {
       setAnonimo(relatoEditando.anonimo || false);
     }
   }, [relatoEditando]);
+
+  const handleEmojiSelect = (emoji) => {
+    setRelato(prevMessage => prevMessage + emoji);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault(); 
@@ -88,6 +96,7 @@ const RelatoForm = ({ onCancel, onSubmit, relatoEditando}) => {
       console.error('Erro detalhado:', err);
       alert(err.message || 'Erro ao enviar relato');
     } finally {
+      toast.success(relatoEditando ? 'Relato editado com sucesso!' : 'Relato enviado com sucesso!');
       setEnviando(false);
     }
   };
@@ -139,6 +148,8 @@ const RelatoForm = ({ onCancel, onSubmit, relatoEditando}) => {
               disabled={enviando}
             />
           </div>
+
+          <EmojiPicker onEmojiSelect={handleEmojiSelect} position="top-center" />
 
           <div className="form-group anonimo-checkbox">
             <label>

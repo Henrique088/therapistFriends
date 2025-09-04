@@ -72,14 +72,23 @@
   padding: 10px;
   border-top: 1px solid #ccc;
   background-color: #98cfe1;
+  gap: 10px;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
 }
 
 .input {
+  position: relative;
   flex: 1;
   padding: 10px;
   border-radius: 5px;
   border: 1px dashed  #5361e47a;
   margin-right: 10px;
+  top: 6px;
+  
+  
+
 }
 
 .botao {
@@ -268,4 +277,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.nome_profissional {
+  color: #0f54df;
+  text-decoration: none;
+}
+
+.nome_remetente {
+  color: #0f54df;
+  text-decoration: none;
 }

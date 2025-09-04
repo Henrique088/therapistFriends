@@ -3,7 +3,7 @@ import MenuLateral from '../../Components/Menu/MenuLateral';
 import styles from './Chat.module.css';
 import { useSocket } from './../../contexts/SocketContext'; // Importando o hook personalizado
 import { useUser } from '../../contexts/UserContext';
-
+import EmojiPicker from '../../Utils/emojiPicker';
 
 // const socket = io('http://localhost:3001', {
 //   auth: {
@@ -24,6 +24,7 @@ export default function Chats() {
   const menuRef = useRef(null);
   const socket = useSocket();
   const { usuario } = useUser();
+  const tipo = usuario?.tipo_usuario === 'paciente' ? 'paciente' : 'profissional';
 
   // const token = localStorage.getItem('token');
   // const decoded = jwtDecode(token)
@@ -100,6 +101,10 @@ export default function Chats() {
       console.error("Erro ao formatar hora:", error);
       return 'Erro';
     }
+  };
+
+  const handleEmojiSelect = (emoji) => {
+    setNovaMensagem(prevMessage => prevMessage + emoji);
   };
 
   const podeEditarOuDeletar = (enviada_em) => {
@@ -238,7 +243,7 @@ export default function Chats() {
                 }}
                 onClick={() => carregarMensagens(conv.id)}
               >
-                Conversa #<a href='/home'>{conv.profissional.usuario.nome}</a>
+                Conversa #<a href='/home' className={styles.nome_profissional}>{conv.profissional.usuario.nome}</a>
               </li>
             ))
           ) : (
@@ -271,7 +276,7 @@ export default function Chats() {
                     <div className={styles.direita}>
                       <div className={`${styles.mensagem} ${styles.enviada}`}>
                         <div className={styles.mensagemTopo}>
-                          <strong><span className={styles.nome}><a href='/home'>{msg.remetente.nome}</a></span></strong>
+                          <strong><span className={styles.nome}><a href={`perfil-${tipo}`} className={styles.nome_remetente}>{msg.remetente.nome}</a></span></strong>
                           <div className={styles.menuContainer}>
                             {podeEditarOuDeletar(msg.enviada_em) && (
                               <>
@@ -294,7 +299,7 @@ export default function Chats() {
                   ) : (
                     <div className={styles.esquerda}>
                       <div className={`${styles.mensagem} ${styles.recebida}`}>
-                        <strong><span className={styles.nome_02}>{msg.remetente.nome}</span></strong>
+                        <strong><span className={styles.nome_02}><a href='#' className={styles.nome_remetente}>{msg.remetente.nome}</a></span></strong>
                         <div>{msg.texto}</div>
                         <span className={styles.horario}>{formatarHora(msg.enviada_em)}</span>
                       </div>
@@ -307,6 +312,7 @@ export default function Chats() {
               <div ref={mensagensRef}></div>
             </div>
             <div className={styles.formEnvio}>
+              <EmojiPicker onEmojiSelect={handleEmojiSelect} position="top-center" />
               <input
                 type="text"
                 value={novaMensagem}

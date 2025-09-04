@@ -6,6 +6,7 @@ import RelatoForm from '../../Components/FormularioRelatos/FormularioRelatos';
 import { jwtDecode } from 'jwt-decode';
 import { useUser } from '../../contexts/UserContext';
 import { formatarData } from '../../Utils';
+import { ta } from 'date-fns/locale';
 
 const Relatos = () => {
   const [showForm, setShowForm] = useState(false);
@@ -18,11 +19,12 @@ const Relatos = () => {
   const [tagsSelecionadas, setTagsSelecionadas] = useState([]);
 
   // Tags disponíveis para o filtro
-  let tagsDisponiveis = ['Grave', 'Leve', 'Mediano'];
+  let tagsDisponiveis = ['Ansiedade', 'Depressão', 'Estresse', 'Felicidade', 'Tristeza', 'Raiva', 'Medo', 'Solidão', 'Esperança', 'Culpa', 'Vergonha', 'Alívio', 'Gratidão', 'Frustração', 'Confiança', 'Insegurança'];
 
   //se usuario for profissional colocar Disponiveis na tagsSelecionadas
   if (usuario?.tipo_usuario === 'profissional') {
-    tagsDisponiveis.push('Disponivéis');
+    tagsDisponiveis.push('Disponivéis','Grave', 'Moderado', 'Leve');
+   
   }
 
   // ✅ Função para lidar com a seleção e deseleção das tags
@@ -71,13 +73,15 @@ const Relatos = () => {
       <MenuLateral />
 
       <div className="main-content">
-        <h1 className="titulo-pagina">Relatos da Comunidade</h1>
         <div className='criarDesabafo-tags'>
-          {usuario?.tipo_usuario === 'paciente' && (
+        <h1 className="titulo-pagina">Relatos da Comunidade</h1>
+        {usuario?.tipo_usuario === 'paciente' && (
             <button className="create-post-button" onClick={createNewPost}>
               + Criar Desabafo
             </button>
           )}
+        
+          </div>
 
           <div className="tags">
 
@@ -99,7 +103,7 @@ const Relatos = () => {
               )}
             </div>
 
-            {/* ✅ Tags disponíveis para seleção */}
+            
             <p className="disponiveis-text">Tags disponíveis:</p>
             <div className="tags-disponiveis">
               {tagsDisponiveis.map(tag => (
@@ -117,7 +121,7 @@ const Relatos = () => {
               ))}
             </div>
           </div>
-        </div>
+        
 
 
         {showForm && (

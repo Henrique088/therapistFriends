@@ -21,7 +21,7 @@ const AgendaPaciente = () => {
     const [dataAtual, setDataAtual] = useState(moment().toDate());
     const [mostrarModalAgendamento, setMostrarModalAgendamento] = useState(false);
     const [slotSelecionado, setSlotSelecionado] = useState(null);
-    
+
 
     const carregarAgenda = async (inicio, fim) => {
         if (!profissionalId) return;
@@ -32,6 +32,7 @@ const AgendaPaciente = () => {
 
             const eventosFormatados = response.data.map(evento => ({
                 ...evento,
+                title: evento.paciente ? `Agendado com ${evento.paciente}` : '',
                 start: new Date(evento.start),
                 end: new Date(evento.end),
             }));
@@ -46,6 +47,8 @@ const AgendaPaciente = () => {
         }
     };
 
+    console.log('Eventos carregados:', eventos);
+
     useEffect(() => {
         const inicio = moment(dataAtual).startOf('week');
         const fim = moment(dataAtual).endOf('week');
@@ -55,18 +58,18 @@ const AgendaPaciente = () => {
 
 
     const handleSelectSlot = ({ start, end, action }) => {
-  // Bloqueia arrastes - apenas permite clicks
-  if (action === 'select') {
-    return;
-  }
-  
-  // Permite apenas clicks (action === 'click' ou undefined)
-  const inicioInteiro = moment(start).startOf('hour');
-  const fimInteiro = moment(inicioInteiro).add(1, 'hour');
-  
-  setSlotSelecionado({ start: inicioInteiro.toDate(), end: fimInteiro.toDate() });
-  setMostrarModalAgendamento(true);
-};
+        // Bloqueia arrastes - apenas permite clicks
+        if (action === 'select') {
+            return;
+        }
+
+        // Permite apenas clicks (action === 'click' ou undefined)
+        const inicioInteiro = moment(start).startOf('hour');
+        const fimInteiro = moment(inicioInteiro).add(1, 'hour');
+
+        setSlotSelecionado({ start: inicioInteiro.toDate(), end: fimInteiro.toDate() });
+        setMostrarModalAgendamento(true);
+    };
 
     const onNavigate = (newDate) => {
         // Apenas atualize a data no estado
@@ -77,7 +80,8 @@ const AgendaPaciente = () => {
     const eventStyleGetter = (event) => {
         return {
             style: {
-                backgroundColor: event?.title == 'Ocupado'?'#a0a0a0': event?.color, // Cor genérica para eventos ocupados
+
+                backgroundColor: event?.title == 'Ocupado' ? '#a0a0a0' : event?.color, // Cor genérica para eventos ocupados
                 color: 'white',
                 borderRadius: '0px',
                 border: 'none',
@@ -85,9 +89,9 @@ const AgendaPaciente = () => {
             }
         };
     };
-     const EventComponent = () => {
-  return null; // ou <></>; - ele não renderiza nada
-};
+    const EventComponent = () => {
+        return null; // ou <></>; - ele não renderiza nada
+    };
     return (
         <div style={{ padding: '20px' }}>
             <h1>Agenda do Profissional {profissionalNome}</h1>
@@ -98,9 +102,9 @@ const AgendaPaciente = () => {
                 startAccessor="start"
                 endAccessor="end"
                 style={{ height: 800 }}
-                components={{
-        event: EventComponent // Usa o componente vazio para todos os eventos
-      }}
+                // components={{
+                //     event: EventComponent // Usa o componente vazio para todos os eventos
+                // }}
                 messages={{
                     week: 'Semana',
                     day: 'Dia',
@@ -110,20 +114,20 @@ const AgendaPaciente = () => {
                     today: 'Hoje',
                     noEventsInRange: 'Sem eventos neste intervalo',
                 }}
-                views={['week', 'day']}
+                views={['week', 'day', 'agenda']}
                 defaultView="week"
                 selectable
                 onSelectSlot={handleSelectSlot}
                 onSelectEvent={null} // Desabilitado para o paciente
                 eventPropGetter={eventStyleGetter}
-                toolbar 
+                toolbar
                 scrollToTime={new Date()}
                 onNavigate={onNavigate}
                 min={new Date(2023, 0, 1, 7, 0, 0)} // Início do dia
                 max={new Date(2023, 0, 1, 21, 0, 0)} // Fim do dia
                 step={60} // Seleção mínima de 60 minutos
-  timeslots={1} // Apenas 1 slot por hora
-  reziseable={false} // Desabilita redimensionamento de eventos
+                timeslots={1} // Apenas 1 slot por hora
+                reziseable={false} // Desabilita redimensionamento de eventos
             />
             {loading && <p>Carregando...</p>}
 
@@ -134,7 +138,7 @@ const AgendaPaciente = () => {
                     slot={slotSelecionado}
                     onClose={() => setMostrarModalAgendamento(false)}
                     onAgendamentoConcluido={() => {
-                        // Recarregue a agenda após o agendamento
+                        // Recarrega a agenda após o agendamento
                         setMostrarModalAgendamento(false);
                         const inicio = moment(dataAtual).startOf('week');
                         const fim = moment(dataAtual).endOf('week');

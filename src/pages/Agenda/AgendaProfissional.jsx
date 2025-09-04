@@ -300,6 +300,8 @@ function AgendaProfissional() {
   // Estilização dos eventos
   // Estilização dos eventos do calendário
   const eventStyleGetter = (event) => {
+
+    
     return {
       style: {
         backgroundColor: event.color,
@@ -350,7 +352,27 @@ function AgendaProfissional() {
       <div className="agenda-content">
         <header className="agenda-header">
           <h1>Agenda de {usuario.nome}</h1>
-          <div className="agenda-actions">
+
+          <table>
+            <thead ></thead>
+            <tbody>
+              <tr>
+                <td><span className="indicativo disponivel"></span> Disponível</td>
+                {/* <td><span className="indicativo disponivel"></span> Podem agendar</td> */}
+                <td><span className="indicativo confirmado"></span> Confirmado</td>
+                {/* <td><span className="indicativo Confirmado"></span> Horário confirmado</td> */}
+              </tr>
+
+              <tr>
+                <td><span className="indicativo bloqueado"></span> Bloqueado</td>
+                {/* <td><span className="indicativo bloqueado"></span> Indisponível</td> */}
+                <td><span className="indicativo aguardando"></span> Aguardando</td>
+                {/* <td><span className="indicativo aguardando"></span> Pedente de confirmarção</td> */}
+              </tr>
+
+            </tbody>
+          </table>
+          {/* <div className="agenda-actions">
             <button
               className="btn-disponibilidade"
               onClick={() => {
@@ -372,7 +394,7 @@ function AgendaProfissional() {
             >
               + Bloquear Horário
             </button>
-          </div>
+          </div> */}
         </header>
 
         <section className="agenda-calendario">

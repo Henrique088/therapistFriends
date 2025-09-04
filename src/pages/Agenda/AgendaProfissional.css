@@ -77,3 +77,39 @@
 .ReactModal__Content {
   z-index: 9999 !important;
 }
+
+
+.indicativo {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    margin-right: 8px;
+    border: 1px solid #ddd;
+}
+
+.indicativo.disponivel {
+    background-color: white;
+    border: 1px solid #ccc;
+}
+
+.indicativo.bloqueado {
+    background-color: #ffcccc; /* Vermelho */
+    border: 1px solid #ff0000;
+}
+
+.indicativo.aguardando {
+    background-color: #a0d8f6; /* Azul */
+    border: 1px solid #0066cc;
+}
+
+.indicativo.confirmado {
+    background-color: #57ef2dff; /* Verde */
+    border: 1px solid #00cc44;
+}
+
+/* Para melhor visualização da cor branca */
+td {
+    padding: 5px 10px;
+    background-color: #f8f9fa;
+}
