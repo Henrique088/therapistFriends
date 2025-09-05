@@ -1,0 +1,28 @@
+/* From Uiverse.io by necatimertmetin */ 
+.z {
+  position: absolute;
+  font-size: 32px;
+  opacity: 0;
+}
+.z1 {
+  animation: swayUpToRight 2s ease-out infinite;
+}
+.z2 {
+  animation: swayUpToRight 2s ease-out 0.5s infinite;
+}
+.z3 {
+  animation: swayUpToRight 2s ease-out 1s infinite;
+}
+.z4 {
+  animation: swayUpToRight 2s ease-out 1.5s infinite;
+}
+@keyframes swayUpToRight {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(80px, -100px) rotate(30deg);
+    opacity: 0;
+  }
+}

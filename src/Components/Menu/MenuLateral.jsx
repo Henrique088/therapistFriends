@@ -1,3 +1,4 @@
+// Components/Menu/MenuLateral.js
 import React, { useState, useEffect } from 'react';
 import lobo from '../../img/lobo.png';
 import styles from './MenuLateral.module.css';
@@ -13,16 +14,16 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useUser } from '../../contexts/UserContext';
 import { useSocket } from '../../contexts/SocketContext';
+import { useNotifications } from '../../contexts/NotificationContext'; // Importar o hook
 
 const MenuLateral = () => {
   const { usuario, setUsuario } = useUser();
+  const { unreadCount, hasNewNotification } = useNotifications(); // Usar o contexto
   const [redirect, setRedirect] = useState(null);
   const location = useLocation();
   const isChatPage = location.pathname === '/chat';
   const isAgendaPage = location.pathname === '/agenda';
   const [menuCollapsed, setMenuCollapsed] = useState(false);
-  const [temNotificacaoNova, setTemNotificacaoNova] = useState(false);
-  const [totalNotificacoes, setTotalNotificacoes] = useState(0);
   const socket = useSocket();
 
   const toggleMenu = () => {
@@ -34,29 +35,6 @@ const MenuLateral = () => {
       setMenuCollapsed(true);
     }
   }, [isChatPage, isAgendaPage]);
-
-  useEffect(() => {
-    fetch('http://localhost:3001/notificacoes/nao-lidas', {
-      credentials: 'include',
-    })
-      .then(res => res.json())
-      .then(data => {
-
-        setTemNotificacaoNova(data.total > 0); // você controla um estado como esse
-        setTotalNotificacoes(data.total);
-      });
-  }, []);
-
-  useEffect(() => {
-    socket.on('nova_notificacao', (data) => {
-      setTemNotificacaoNova(true);
-    });
-
-    return () => {
-      socket.off('nova_notificacao');
-    };
-  }, [socket]);
-
 
   async function logout(e) {
     e.preventDefault();
@@ -75,13 +53,10 @@ const MenuLateral = () => {
         socket.disconnect();
         setTimeout(() => {
           setRedirect(true);
-
-        }, 2000); // Tempo igual ao do toast
+        }, 2000);
       }
-
     } catch (erro) {
       console.error('Erro no logout:', erro);
-      // setUsuario(null);
       setRedirect(true);
     }
   }
@@ -114,25 +89,21 @@ const MenuLateral = () => {
 
             <li><a href="/relato" title='Relatos'><IoDocumentTextSharp /> {!menuCollapsed && 'Relatos'}</a></li>
             <li><a href="/chat" title='Chats'><RiChatSmile3Fill /> {!menuCollapsed && 'Chats'}</a></li>
-            <li><a href="/notificacao" title='Notificações'><IoNotificationsCircle />
+            <li><a href="/notificacao" title='Notificações'>
+              {!menuCollapsed && <IoNotificationsCircle />}
               {!menuCollapsed && 'Notificações'}
-              {temNotificacaoNova && <span className={styles['badge-dot']}>{totalNotificacoes}</span>}
+              {hasNewNotification && <span className={styles['badge-dot']}>{unreadCount === 0 ? "!" : unreadCount}</span>}
             </a></li>
-            {/* se profissional ou paciente */}
 
             {tipo === 'Profissional' && (
               <>
                 <li><a href="/agenda" title='Agenda Profissional'><ImBook /> {!menuCollapsed && 'Agenda'}</a></li>
                 <li><a href="/perfil-profissional" title='Perfil Profissional'><IoPerson /> {!menuCollapsed && 'Perfil'}</a></li>
-
               </>
             )}
             {tipo === 'Paciente' && (
               <li><a href="/perfil-paciente" title='Perfil Paciente'><IoPerson /> {!menuCollapsed && 'Perfil'}</a></li>
             )}
-
-
-
           </ul>
 
           <ul>
@@ -155,7 +126,6 @@ const MenuLateral = () => {
               {menuCollapsed ? <AiOutlineCaretRight /> : <AiOutlineCaretLeft />}
             </button>
           )}
-
         </div>
       </div>
     </div>

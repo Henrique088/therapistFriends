@@ -35,6 +35,7 @@
 .user-info {
   display: flex;
   flex-direction: row;
+  gap: 7px;
   
 }
 
@@ -102,9 +103,23 @@
     gap: 40px;
 }
 
+.titulo_categoria{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 8px;
+}
+
+.titulo-relato a{
+  font-weight: bold;
+  color: #f5b70d;
+}
+
 .titulo-relato{
   /* font-size: 1.2rem; */
   font-weight: bold;
+  color: #0daff5;
   /* margin-top: 5px; */
   margin-bottom: 8px;
   /* margin-left: 10px; */

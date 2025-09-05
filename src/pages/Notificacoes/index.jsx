@@ -2,13 +2,17 @@
 import React, { useEffect, useState } from 'react';
 import MenuLateral from '../../Components/Menu/MenuLateral';
 import './Notificacoes.css';
-// import { useSocket } from './../../contexts/SocketContext';
+import { useNotifications } from '../../contexts/NotificationContext'; // Importar o hook
 
 export default function Notificacoes() {
   const [notificacoes, setNotificacoes] = useState([]);
-  // const socket = useSocket();
+  const { fetchNotifications, markAsRead } = useNotifications(); // Usar o contexto
 
   useEffect(() => {
+    fetchNotificacoes();
+  }, []);
+
+  const fetchNotificacoes = () => {
     fetch('http://localhost:3001/notificacoes', {
       credentials: 'include',
       headers: {
@@ -21,24 +25,13 @@ export default function Notificacoes() {
         setNotificacoes(data);
       })
       .catch((err) => console.error('Erro ao buscar notificações:', err));
-  }, []);
+  };
 
-  const marcarComoLida = (notificacaoId) => {
-    fetch(`http://localhost:3001/notificacoes/${notificacaoId}`, {
-      method: 'PUT',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error('Erro ao marcar como lida');
-        // Remove do estado para atualizar a tela
-        setNotificacoes((prev) =>
-          prev.filter((n) => n.id !== notificacaoId)
-        );
-      })
-      .catch((err) => console.error(err));
+  const handleMarcarComoLida = (notificacaoId) => {
+    markAsRead(notificacaoId).then(() => {
+      // Atualizar a lista local
+      setNotificacoes((prev) => prev.filter((n) => n.id !== notificacaoId));
+    });
   };
 
   const atualizarStatus = (idSolicitacao, status, notificacaoId) => {
@@ -55,7 +48,7 @@ export default function Notificacoes() {
         return res.json();
       })
       .then(() => {
-        marcarComoLida(notificacaoId); // <- marca como lida após atualização
+        handleMarcarComoLida(notificacaoId);
       })
       .catch((err) => console.error(err));
   };
@@ -100,13 +93,12 @@ export default function Notificacoes() {
                   <div className="botoes">
                     <button
                       className="botao-marcar-lida"
-                      onClick={() => marcarComoLida(notificacao.id)}
+                      onClick={() => handleMarcarComoLida(notificacao.id)}
                     >
                       Marcar como lida
                     </button>
                   </div>
                 )}
-
               </li>
             ))
           )}

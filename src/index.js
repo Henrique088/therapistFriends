@@ -6,11 +6,11 @@ import { SocketProvider } from './contexts/SocketContext';
 import { UserProvider } from './contexts/UserContext';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <UserProvider>
       <SocketProvider> {/* Provedor do Socket.IO */}
         <App />
       </SocketProvider>
     </UserProvider>
-  </React.StrictMode>
+  // </React.StrictMode>
 );

@@ -6,6 +6,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import useNotificacoes from './hooks/useNotificacoes';
 import { UserProvider, useUser } from '../src/contexts/UserContext';
+import { NotificationProvider } from './contexts/NotificationContext';
 
 
 
@@ -28,7 +29,7 @@ import AgendaPaciente from './pages/Agenda/AgendaPaciente';
 
 // Rota protegida com verificação de tipo de usuário
 function ProtectedRoute({ children, allowedTypes }) {
-  const {usuario, loadingUsuario} = useUser();
+  const { usuario, loadingUsuario } = useUser();
   const [redirect, setRedirect] = useState(null); // null = carregando, false = autorizado, true = redirecionar
   let exibiuToastExpirado = false;
 
@@ -55,7 +56,7 @@ function ProtectedRoute({ children, allowedTypes }) {
 
     // Se dados incompletos, redirecione para o modal de preenchimento
     if (!usuario.dadosCompletos) {
-       setTimeout(() => setRedirect(true), 3000);
+      setTimeout(() => setRedirect(true), 3000);
       return;
     }
 
@@ -67,7 +68,7 @@ function ProtectedRoute({ children, allowedTypes }) {
     return <Navigate to="/login" />;
   }
 
-  if (redirect === null || loadingUsuario) { 
+  if (redirect === null || loadingUsuario) {
     return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontSize: '1.5em' }}>Carregando...</div>;
   }
 
@@ -93,7 +94,12 @@ function PublicRoute({ children }) {
   }, [usuario, loadingUsuario]);
 
   if (redirectTo === null || loadingUsuario) {
-    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontSize: '1.5em' }}>Carregando...</div>; // Ou um spinner
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontSize: '1.5em' }}>
+      <div class="z z-1">Z</div>
+      <div class="z z-2">Z</div>
+      <div class="z z-3">Z</div>
+      <div class="z z-4">Z</div>
+    </div>
   }
 
   if (redirectTo) {
@@ -117,15 +123,15 @@ export default function App() {
     // Só tentamos determinar o modal se não estiver carregando e tivermos dados de usuário
     if (!loadingUsuario && usuario) {
       console.log("Objeto usuario no App.js:", usuario);
-     
+
       if (!usuario.dadosCompletos) {
-          if (usuario.tipo_usuario === 'paciente') {
-              setShowInitialModal(true);
-              setModalType('paciente');
-          } else if (usuario.tipo_usuario === 'profissional') {
-              setShowInitialModal(true);
-              setModalType('profissional');
-          }
+        if (usuario.tipo_usuario === 'paciente') {
+          setShowInitialModal(true);
+          setModalType('paciente');
+        } else if (usuario.tipo_usuario === 'profissional') {
+          setShowInitialModal(true);
+          setModalType('profissional');
+        }
       } else {
         // Se os dados estiverem completos (para qualquer tipo de usuário), não mostra modal
         setShowInitialModal(false);
@@ -155,6 +161,7 @@ export default function App() {
   // 2. Renderizar a aplicação principal (Rotas) E os modais, mas controlar a visibilidade dos modais com `isOpen`
   return (
     <Router>
+      <NotificationProvider>
       <ToastContainer
         position="top-right"
         autoClose={4000}
@@ -188,7 +195,7 @@ export default function App() {
           toast.success('Informações de profissional salvas!');
           fetchUsuario();
         }}
-        
+
       />
 
       <Routes>
@@ -271,6 +278,7 @@ export default function App() {
         {/* Rota padrão */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
+      </NotificationProvider>
     </Router>
   );
 }

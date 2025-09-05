@@ -1,7 +1,7 @@
 .cadastroContainer {
   display: flex;
   height: 100vh;
-  background: linear-gradient(to right, #e0ffe0, #a8f0c6);
+  background: linear-gradient(to right, #E0FFE0, #A8D8EA);
 }
 
 .formSection {
@@ -137,5 +137,11 @@
 .radioGroup label {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.4rem;
+}
+
+.radioGroup input {
+  margin-right: 0.5rem;
+  margin: 0; /* remove margens inconsistentes do navegador */
 }

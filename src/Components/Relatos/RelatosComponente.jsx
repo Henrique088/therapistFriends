@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { toast } from 'react-toastify';
-import './Relatos.module.css';
+import './Relatos.css';
 import { FcLikePlaceholder, FcLike } from "react-icons/fc";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { formatarData } from '../../Utils/index';
@@ -14,10 +14,10 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
   const [showForm, setShowForm] = useState(false);
   const [loadingLikeId, setLoadingLikeId] = useState(null);
   const { usuario } = useUser();
-  
+
   console.log('Recarregar relatos:', recarregar);
   console.log('Tags selecionadas:', tagsSelecionadas);
- 
+
   const carregarRelatos = () => {
     fetch('http://localhost:3001/relatos/', {
       headers: { 'Content-Type': 'application/json' },
@@ -26,12 +26,12 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
       .then((res) => res.json())
       .then((data) => {
         setRelatos(data);
-        if(relatosPessoais){
-          const relatosUsuario = data.filter((relato) => 
+        if (relatosPessoais) {
+          const relatosUsuario = data.filter((relato) =>
             relato.paciente.id_usuario === usuario.id
           );
 
-          
+
           setRelatos(relatosUsuario);
         }
 
@@ -42,14 +42,14 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
             .slice(0, numRelatos);
           setRelatos(relatosFiltrados);
         }
-          
+
       })
       .catch((err) => console.error('Erro ao buscar relatos:', err));
   };
 
   useEffect(() => {
     carregarRelatos();
-  }, [recarregar]); 
+  }, [recarregar]);
 
   // ✅ FILTRAGEM DOS RELATOS BASEADO NAS TAGS SELECIONADAS
   let relatosFiltrados = useMemo(() => {
@@ -60,7 +60,7 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
     if (tagsSelecionadas.includes('Disponivéis') && usuario.tipo_usuario === 'profissional' && tagsSelecionadas.length === 1) {
       relatos = relatos.filter(relato => !relato.profissional_id);
       return relatos;
-    }else{
+    } else {
       relatos = relatos.filter(relato => !relato.profissional_id);
     }
 
@@ -76,19 +76,19 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
           relato.texto?.toLowerCase().includes(tag.toLowerCase()) ||
           (relato.resultado_ia && relato.resultado_ia.toLowerCase().includes(tag.toLowerCase())) ||
           (relato.paciente?.codinome && relato.paciente.codinome.toLowerCase().includes(tag.toLowerCase()))
-        // (!relato.profissional_id && 'Disponivéis'.toLowerCase().includes(tag.toLowerCase())))
-        
+          // (!relato.profissional_id && 'Disponivéis'.toLowerCase().includes(tag.toLowerCase())))
+
         );
-        
+
       });
 
-      
+
     });
   }, [relatos, tagsSelecionadas]);
 
 
-   
-   
+
+
 
   const darLike = async (relato_id) => {
     if (loadingLikeId === relato_id) return;
@@ -142,7 +142,7 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
           <p><strong>Deseja realmente excluir este relato?</strong></p>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
             <button
-              style={{ background: 'red', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '5px', cursor: 'pointer'}}
+              style={{ background: 'red', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '5px', cursor: 'pointer' }}
               onClick={() => {
                 deletarRelato(relatoId);
                 closeToast();
@@ -169,7 +169,7 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
   };
 
   const handleSubmit = (formData) => {
-    setRelatos(prev => prev.map(r => 
+    setRelatos(prev => prev.map(r =>
       r.id === formData.id ? { ...r, ...formData } : r
     ));
     console.log('Dados do relato:', formData);
@@ -179,11 +179,11 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
   const entrarEmContato = (relato) => {
     if (usuario.tipo_usuario === 'paciente') {
       toast.info('Você não pode entrar em contato com relatos de pacientes.');
-      return; 
+      return;
     }
     if (relato.profissional_id) {
       toast.info('Este relato já está vinculado a um profissional.');
-      return; 
+      return;
     }
 
     fetch('http://localhost:3001/solicitacoes/solicitarConversa', {
@@ -193,7 +193,7 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        pacienteId: relato.paciente.id_usuario, 
+        pacienteId: relato.paciente.id_usuario,
         relatoId: relato.id,
       }),
     })
@@ -208,23 +208,23 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
       });
   };
 
-  return (  
+  return (
     <div className="posts-container">
       {showForm && <RelatoForm onCancel={handleCancel} onSubmit={handleSubmit} relatoEditando={relatoEditando} />}
-      
-      
+
+
       {relatosFiltrados.length === 0 ? (
         <div className="no-results">
           {tagsSelecionadas.length > 0 ? (
             <p>Nenhum relato encontrado para as tags selecionadas.</p>
           ) : (
-            <p>Você ainda não fez nenhum relato.</p>
+            <p>Nenhum relato disponivél.</p>
           )}
         </div>
       ) : (
-       
+
         relatosFiltrados.map((relato) => (
-          <div key={relato.id} className={`post-card ${usuario.tipo_usuario ==='profissional' ? relato.resultado_ia : ''}`}>
+          <div key={relato.id} className={`post-card ${usuario.tipo_usuario === 'profissional' ? relato.resultado_ia : ''}`}>
             <div className="post-header">
               <div className="user-info">
                 <div className="user-avatar">
@@ -234,10 +234,14 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
               </div>
               <div className="post-time">{formatarData(relato?.data_envio)}</div>
             </div>
-            <div className='titulo-relato'>{relato?.titulo}</div>
+            <div className='titulo_categoria'>
+              <div className='titulo-relato'><a>Título:</a> {relato?.titulo}</div>
+              <div className='titulo-relato'><a>Categoria:</a> {relato?.categoria}</div>
+
+            </div>
             <div className="post-content">{relato?.texto}</div>
             <div className="post-actions">
-              <div className='like-contat'> 
+              <div className='like-contat'>
                 <button
                   className="like-button"
                   onClick={() => darLike(relato.id)}
