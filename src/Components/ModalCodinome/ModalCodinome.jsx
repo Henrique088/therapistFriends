@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import Modal from 'react-modal';
 import { toast } from 'react-toastify';
 import './ModalCodinome.css';
+import { useUser } from '../../contexts/UserContext';
 
 Modal.setAppElement('#root');
 
@@ -12,6 +14,8 @@ export default function ModalCodinome({ isOpen, onClose }) {
   const [codinome, setCodinome] = useState('');
   const [telefone, setTelefone] = useState('');
   const [salvando, setSalvando] = useState(false);
+  const [redirect, setRedirect] = useState(null);
+  const { usuario, setUsuario } = useUser();
 
   const salvarCodinome = () => {
     if (codinome.trim().length < 3) {
@@ -51,6 +55,37 @@ export default function ModalCodinome({ isOpen, onClose }) {
       .finally(() => setSalvando(false));
   };
 
+  async function logout(e) {
+      e.preventDefault();
+  
+      try {
+        const resposta = await fetch('http://localhost:3001/auth/logout', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+  
+        if (resposta.ok) {
+          toast.success('Volte sempre! Saindo...', { autoClose: 2000 });
+          
+          setTimeout(() => {
+            setRedirect(true);
+          }, 2000);
+        }
+      } catch (erro) {
+        console.error('Erro no logout:', erro);
+        setRedirect(true);
+      }
+    }
+  
+    if (redirect) {
+      setUsuario(null);
+      console.log('Usuário desconectado');
+      return <Navigate to="/login" replace />;
+    }
+
   return (
     <Modal
       // A prop 'isOpen' do componente `<Modal>` DO REACT-MODAL
@@ -89,6 +124,7 @@ export default function ModalCodinome({ isOpen, onClose }) {
         </div>
       </div>
       <div className="modal-footer">
+        <button onClick={logout}>Sair</button>
         <button onClick={salvarCodinome} disabled={salvando}>
           {salvando ? 'Salvando...' : 'Salvar'}
         </button>

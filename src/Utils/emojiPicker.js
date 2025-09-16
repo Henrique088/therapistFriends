@@ -113,6 +113,7 @@ const EmojiPicker = ({ onEmojiSelect, position = 'bottom-start' }) => {
   return (
     <div className="emoji-picker-container" ref={pickerRef}>
       <button 
+        type='button'
         className="emoji-trigger"
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Selecionar emoji"

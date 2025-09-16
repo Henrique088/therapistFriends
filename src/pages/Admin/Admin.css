@@ -1,0 +1,120 @@
+/* src/pages/admin/Admin.css */
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+  
+}
+
+.admin-conteudo {
+  flex: 1;
+  /* width: 70%; */
+  max-height: 100vh;
+  overflow: auto;
+  
+  padding: 2rem;
+  background: #f5f7fa;
+  
+}
+
+.cards {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.card {
+  flex: 1;
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 2rem;
+}
+
+.tabela th, .tabela td {
+  border: 1px solid #ddd;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.tabela th {
+  background: #eee;
+}
+
+
+.grafico {
+  margin-top: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  background: #fff;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.btn-approve {
+  background: #0fd850;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  margin-right: 6px;
+  margin-bottom: 3px;
+  cursor: pointer;
+  width: 80px;
+}
+
+.btn-reject {
+  background: #f44336;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 80px;
+}
+
+.btn-revoke {
+  background: #ff9800;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 80px;
+}
+
+.admin-content {
+    margin-left: 7px;
+}
+
+
+@media (max-width: 768px) {
+    
+    .admin-conteudo {
+        padding: 1rem;
+    }
+    
+    .cards {
+        flex-direction: column;
+    }
+}

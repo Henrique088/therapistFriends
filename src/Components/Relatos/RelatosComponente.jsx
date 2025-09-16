@@ -218,7 +218,7 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
           {tagsSelecionadas.length > 0 ? (
             <p>Nenhum relato encontrado para as tags selecionadas.</p>
           ) : (
-            <p>Nenhum relato disponivél.</p>
+            <p>Nenhum relato disponível.</p>
           )}
         </div>
       ) : (

@@ -1,0 +1,139 @@
+.tabela-profissionais {
+  width: 100%;
+  border-collapse: collapse;
+}
+.tabela-profissionais th,
+.tabela-profissionais td {
+  padding: 0.5rem;
+  border-bottom: 1px solid #ccc;
+}
+.tabela-profissionais th {
+  background: #f0f0f0;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex; justify-content: center; align-items: center;
+}
+.modal {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  width: 400px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.modal-actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+.modal textarea {
+  width: 100%;
+  resize: vertical;
+}
+
+
+.admin-content {
+  flex: 1;
+  max-height: 100vh;
+  overflow: auto;
+  /* padding: 2rem; */
+  background: #f5f7fa;
+
+    
+}
+
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+
+  
+}
+
+.filtros {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+
+.filtros input, .filtros select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.validar_reprovar {
+  background-color: #4CAF50; /* Verde */
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 2px 1px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.historico {
+  background-color: #008CBA; /* Azul */
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 2px 1px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+
+.btn_salvar {
+  background-color: #4CAF50; /* Verde */
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 2px 1px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.btn_cancelar {
+  background-color: #f44336; /* Vermelho */
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 2px 1px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.btn_fechar {
+  background-color: #555555; /* Cinza escuro */
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 2px 1px;
+  cursor: pointer;
+  border-radius: 5px;
+}

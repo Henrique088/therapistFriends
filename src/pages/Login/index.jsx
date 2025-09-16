@@ -31,9 +31,15 @@ function Login() {
         // Redireciona com base no tipo do usuário
         if (dados.info.tipo_usuario === 'paciente') {
           window.location.href = '/dashboard-Paciente';
-        } else {
-          
+        } 
+        else if (dados.info.tipo_usuario === 'profissional') {
           window.location.href = '/dashboard-Profissional';
+        } 
+        else if (dados.info.tipo_usuario === 'admin') {
+          window.location.href = '/admin/dashboard';
+        } 
+        else {
+          window.location.href = '/';
         }
       } else {
 
