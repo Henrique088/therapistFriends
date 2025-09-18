@@ -1,58 +1,68 @@
 import React, { useEffect, useState, useRef } from 'react';
 import MenuLateral from '../../Components/Menu/MenuLateral';
 import styles from './Chat.module.css';
-import { useSocket } from './../../contexts/SocketContext'; // Importando o hook personalizado
+import { useSocket } from './../../contexts/SocketContext';
 import { useUser } from '../../contexts/UserContext';
+import { useChat } from '../../contexts/ChatContext';
 import EmojiPicker from '../../Utils/emojiPicker';
-
-// const socket = io('http://localhost:3001', {
-//   auth: {
-//     token: localStorage.getItem('token')
-//   },
-//   withCredentials: true
-// });
-
-
+import { FaCheckDouble } from "react-icons/fa6";
 
 export default function Chats() {
   const [conversas, setConversas] = useState([]);
   const [mensagens, setMensagens] = useState([]);
   const [conversaSelecionada, setConversaSelecionada] = useState(null);
   const [novaMensagem, setNovaMensagem] = useState('');
-  const mensagensRef = useRef(null);
+
+  const ultimaMensagemRef = useRef(null);
+  const mensagemRefs = useRef(new Map());
+
   const [menuAberto, setMenuAberto] = useState(null);
   const menuRef = useRef(null);
   const socket = useSocket();
   const { usuario } = useUser();
+  const { conversationUnreadCounts, clearUnreadCountForConversation } = useChat();
   const tipo = usuario?.tipo_usuario === 'paciente' ? 'paciente' : 'profissional';
 
-  // const token = localStorage.getItem('token');
-  // const decoded = jwtDecode(token)
-  // const tipo_usuario = decoded.tipo_usuario;
-  // const id_usuario = decoded.id;
+
+  const rolarParaUltimaMensagem = () => {
+    ultimaMensagemRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  };
+
+
+  const rolarParaPrimeiraNaoLida = () => {
+    const primeiraNaoLida = mensagens.find(msg => !msg.lida && msg.remetente_id !== usuario.id);
+    let elementoParaRolar = null;
+
+    if (primeiraNaoLida) {
+      elementoParaRolar = mensagemRefs.current.get(primeiraNaoLida.id);
+    } else {
+      elementoParaRolar = ultimaMensagemRef.current;
+    }
+
+    if (elementoParaRolar) {
+      elementoParaRolar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   useEffect(() => {
     fetch('http://localhost:3001/conversas', {
-      credentials: 'include', // garante envio/recebimento de cookies
-  headers: {
-    'Content-Type': 'application/json',
-  },
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
     })
       .then((res) => res.json())
       .then((data) => {
-
-
         setConversas(data);
-        console.log('Conversas:', JSON.stringify(data, null, 2));
       })
       .catch((err) => console.error('Erro ao buscar conversas:', err));
   }, []);
 
+
   useEffect(() => {
-    if (mensagensRef.current) {
-      mensagensRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (mensagens.length > 0) {
+      rolarParaPrimeiraNaoLida();
     }
-  }, [mensagens]);
+  }, [mensagens, usuario.id]);
+
 
   useEffect(() => {
     const handleClickFora = (event) => {
@@ -60,7 +70,6 @@ export default function Chats() {
         setMenuAberto(null);
       }
     };
-
     document.addEventListener('mousedown', handleClickFora);
     return () => {
       document.removeEventListener('mousedown', handleClickFora);
@@ -70,28 +79,47 @@ export default function Chats() {
   const toggleMenu = (mensagemId) => {
     setMenuAberto(menuAberto === mensagemId ? null : mensagemId);
   };
-  const carregarMensagens = (conversaId) => {
+
+  const marcarMensagensComoLidas = async (conversaId) => {
+    try {
+      await fetch(`http://localhost:3001/mensagens/${conversaId}/lida`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      });
+    } catch (err) {
+      console.error('Erro ao marcar mensagens como lidas:', err);
+    }
+  };
+
+  const carregarMensagens = async (conversaId) => {
+    if (conversaSelecionada === conversaId) return;
+
+    if (conversaSelecionada) {
+      socket.emit('sair_conversa', conversaSelecionada);
+    }
+
     socket.emit('entrar_conversa', conversaId);
-    console.log(conversaId)
-    fetch(`http://localhost:3001/mensagens/${conversaId}`, {
-      credentials: 'include', // garante envio/recebimento de cookies
-  headers: {
-    'Content-Type': 'application/json',
-  },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data)
-        setMensagens(data);
-        setConversaSelecionada(conversaId);
-      })
-      .catch((err) => console.error('Erro ao buscar mensagens:', err));
+
+    try {
+      const res = await fetch(`http://localhost:3001/mensagens/${conversaId}`, {
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await res.json();
+
+      setMensagens(data.mensagens);
+      setConversaSelecionada(conversaId);
+
+      marcarMensagensComoLidas(conversaId);
+
+    } catch (err) {
+      console.error('Erro ao buscar mensagens:', err);
+    }
   };
 
   const formatarHora = (isoString) => {
-    if (!isoString) {
-      return '';
-    }
+    if (!isoString) return '';
     try {
       const date = new Date(isoString);
       const hours = String(date.getHours()).padStart(2, '0');
@@ -111,20 +139,17 @@ export default function Chats() {
     const agora = new Date();
     const enviada = new Date(enviada_em);
     const diffMinutos = (agora - enviada) / 1000 / 60;
-
-    return diffMinutos <= 2; // por exemplo, 2 minutos
+    return diffMinutos <= 2;
   };
+
   const deletarMensagem = (mensagemId) => {
     fetch(`http://localhost:3001/mensagens/${mensagemId}`, {
       method: 'DELETE',
-      credentials: 'include', // garante envio/recebimento de cookies
-  headers: {
-    'Content-Type': 'application/json',
-  },
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
     })
       .then(res => {
         if (!res.ok) throw new Error("Erro ao deletar");
-        console.log("Mensagem deletada com sucesso.");
       })
       .catch(err => console.error(err));
   };
@@ -135,36 +160,27 @@ export default function Chats() {
 
     fetch(`http://localhost:3001/mensagens/${mensagemId}`, {
       method: 'PUT',
-      credentials: 'include', // garante envio/recebimento de cookies
-  headers: {
-    'Content-Type': 'application/json',
-  },
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ texto: novoTexto }),
     })
       .then(res => {
         if (!res.ok) throw new Error("Erro ao editar");
         return res.json();
       })
-      .then(mensagemAtualizada => {
-
-      })
       .catch(err => console.error(err));
   };
 
   const enviarMensagem = () => {
-    if (!novaMensagem.trim()) return;
-
-    if (!conversaSelecionada) {
-      console.error('Nenhuma conversa selecionada');
+    if (!novaMensagem.trim() || !conversaSelecionada) {
+      console.error('Nenhuma conversa selecionada ou mensagem vazia');
       return;
     }
 
     fetch('http://localhost:3001/mensagens/enviarMensagem', {
       method: 'POST',
-      credentials: 'include', // garante envio/recebimento de cookies
-  headers: {
-    'Content-Type': 'application/json',
-  },
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         conversa_id: conversaSelecionada,
         texto: novaMensagem,
@@ -179,90 +195,132 @@ export default function Chats() {
         return response.json();
       })
       .then(msg => {
-        // setMensagens(prev => [...prev, msg]);
         setNovaMensagem('');
-        console.log('Mensagem enviada:', msg);
-        // socket.emit('novaMensagem', msg);
+        rolarParaUltimaMensagem(); // Adicione esta chamada aqui
       })
       .catch(err => {
         console.error('Erro detalhado:', err);
-
       });
   };
-  useEffect(() => {
-    socket.on('nova_mensagem', (mensagem) => {
-      if (mensagem.conversa_id === conversaSelecionada) {
-        setMensagens((prev) => [...prev, mensagem]);
-      }
-    });
 
+  useEffect(() => {
+    const handleNewMessage = (mensagem) => {
+      if (mensagem.conversa_id === conversaSelecionada) {
+        setMensagens((prev) => {
+          const mensagemJaExiste = prev.find(msg => msg.id === mensagem.id);
+          if (mensagemJaExiste) return prev;
+
+          return [...prev, mensagem];
+        });
+
+        // Solução 1: Marca mensagens como lidas imediatamente se a conversa está aberta
+        marcarMensagensComoLidas(conversaSelecionada);
+        // Rola para a última mensagem recebida
+        rolarParaUltimaMensagem();
+      }
+    };
+
+    const handleMessagesRead = ({ conversaId, leitorId }) => {
+      if (conversaId === conversaSelecionada && leitorId !== usuario.id) {
+        setMensagens(prevMensagens =>
+          prevMensagens.map(msg => ({
+            ...msg,
+            lida: true
+          }))
+        );
+      }
+    };
+
+    socket.on('nova_mensagem', handleNewMessage);
+    socket.on('mensagens_lidas', handleMessagesRead);
     socket.on('connection_error', (err) => {
       console.error('Erro de conexão:', err.message);
     });
-
     socket.on('edicao_mensagem', (mensagemAtualizada) => {
       setMensagens((prev) =>
         prev.map((msg) =>
           msg.id === mensagemAtualizada.id ? mensagemAtualizada : msg
         )
       );
-    }
-    );
-
+    });
     socket.on('excluir_mensagem', ({ id }) => {
       setMensagens((prev) => prev.filter((msg) => msg.id !== id));
     });
 
-
     return () => {
-      socket.off('nova_mensagem');
+      socket.off('nova_mensagem', handleNewMessage);
+      socket.off('mensagens_lidas', handleMessagesRead);
       socket.off('connection_error');
       socket.off('edicao_mensagem');
       socket.off('excluir_mensagem');
     };
-  }, [conversaSelecionada]);
+  }, [conversaSelecionada, usuario, socket]);
 
+
+  const renderizarMensagemComLinks = (texto) => {
+  if (!texto) return null;
+
+  // Usa uma expressão regular mais robusta para URLs
+  const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
+
+  // Usa um array para armazenar as partes do texto e os links
+  const partes = [];
+  let ultimaPosicao = 0;
+
+  // Itera sobre as correspondências da RegEx no texto
+  texto.replace(urlRegex, (match, offset) => {
+    // Adiciona o texto antes do link
+    partes.push(texto.substring(ultimaPosicao, offset));
+    
+    // Adiciona o link como um componente <a>
+    const href = match.startsWith('http') ? match : `http://${match}`;
+    partes.push(<a key={offset} href={href} target="_blank" rel="noopener noreferrer">{match}</a>);
+    
+    ultimaPosicao = offset + match.length;
+  });
+
+  // Adiciona o restante do texto após o último link
+  partes.push(texto.substring(ultimaPosicao));
+
+  // Converte as quebras de linha (`\n`) para <br /> antes de retornar
+  return partes.map((parte, index) => {
+    if (typeof parte === 'string') {
+      const linhas = parte.split('\n');
+      return linhas.map((linha, linhaIndex) => (
+        <React.Fragment key={`${index}-${linhaIndex}`}>
+          {linha}
+          {linhaIndex < linhas.length - 1 && <br />}
+        </React.Fragment>
+      ));
+    }
+    return parte;
+  });
+};
 
   return (
-
-
     <div className={styles.container}>
       <MenuLateral></MenuLateral>
       <div className={styles.sidebar}>
         <h2>Conversas</h2>
         <ul className={styles.lista}>
-          {usuario.tipo_usuario === "paciente" ? (
-            // Renderização para Paciente
-            Array.isArray(conversas) && conversas.map((conv) => (
-              <li
-                key={conv.id}
-                className={styles.item}
-                style={{
-
-                  backgroundColor: conversaSelecionada === conv.id ? '#e0ffe0' : '#fff',
-                }}
-                onClick={() => carregarMensagens(conv.id)}
-              >
-                Conversa #<a href='/home' className={styles.nome_profissional}>{conv.profissional.usuario.nome}</a>
-              </li>
-            ))
-          ) : (
-            // Renderização para outros tipos de usuário
-            Array.isArray(conversas) && conversas.map((conv) => (
-              <li
-                key={conv.id}
-                className={styles.item}
-
-                style={{
-
-                  backgroundColor: conversaSelecionada === conv.id ? '#e0ffe0' : '#fff',
-                }}
-                onClick={() => carregarMensagens(conv.id)}
-              >
-                {conv.paciente.codinome}
-              </li>
-            ))
-          )}
+          {Array.isArray(conversas) && conversas.map((conv) => (
+            <li
+              key={conv.id}
+              className={`${styles.item} ${conversaSelecionada === conv.id ? styles.itemSelecionado : ''}`}
+              onClick={() => carregarMensagens(conv.id)}
+            >
+              <div className={styles.conteudoConversa}>
+                {usuario.tipo_usuario === "paciente" ? (
+                  <span>{conv.profissional.usuario.nome}</span>
+                ) : (
+                  <span>{conv.paciente.codinome}</span>
+                )}
+                {conversationUnreadCounts[conv.id] > 0 && (
+                  <span className={styles.badge}>{conversationUnreadCounts[conv.id]}</span>
+                )}
+              </div>
+            </li>
+          ))}
         </ul>
       </div>
 
@@ -270,57 +328,68 @@ export default function Chats() {
         {conversaSelecionada ? (
           <>
             <div className={styles.mensagens}>
-              {mensagens.map((msg) => (
-                <div key={msg.id} className={styles.mensagem}>
-                  {usuario.id === msg.remetente_id ? (
-                    <div className={styles.direita}>
-                      <div className={`${styles.mensagem} ${styles.enviada}`}>
-                        <div className={styles.mensagemTopo}>
-                          <strong><span className={styles.nome}><a href={`perfil-${tipo}`} className={styles.nome_remetente}>{msg.remetente.nome}</a></span></strong>
-                          <div className={styles.menuContainer}>
-                            {podeEditarOuDeletar(msg.enviada_em) && (
-                              <>
-                                <button onClick={() => toggleMenu(msg.id)} className={styles.menuBtn}>⋮</button>
-                                {menuAberto === msg.id && (
-                                  <div ref={menuRef} className={styles.popupMenu}>
-                                    <button onClick={() => editarMensagem(msg.id, msg.texto)}>Editar</button>
-                                    <button onClick={() => deletarMensagem(msg.id)}>Deletar</button>
-                                  </div>
-                                )}
-                              </>
-                            )}
-
+              {mensagens.map((msg) => {
+                const setRef = (el) => {
+                  if (el) {
+                    mensagemRefs.current.set(msg.id, el);
+                  } else {
+                    mensagemRefs.current.delete(msg.id);
+                  }
+                };
+                return (
+                  <div key={msg.id} ref={setRef} className={styles.mensagem}>
+                    {usuario.id === msg.remetente_id ? (
+                      <div className={styles.direita}>
+                        <div className={`${styles.mensagem} ${styles.enviada}`}>
+                          <div className={styles.mensagemTopo}>
+                            <strong><span className={styles.nome}><a href={`perfil-${tipo}`} className={styles.nome_remetente}>{msg.remetente.nome}</a></span></strong>
+                            <div className={styles.menuContainer}>
+                              {podeEditarOuDeletar(msg.enviada_em) && (
+                                <>
+                                  <button onClick={() => toggleMenu(msg.id)} className={styles.menuBtn}>⋮</button>
+                                  {menuAberto === msg.id && (
+                                    <div ref={menuRef} className={styles.popupMenu}>
+                                      <button onClick={() => editarMensagem(msg.id, msg.texto)}>Editar</button>
+                                      <button onClick={() => deletarMensagem(msg.id)}>Deletar</button>
+                                    </div>
+                                  )}
+                                </>
+                              )}
+                            </div>
+                          </div>
+                          <div>{renderizarMensagemComLinks(msg.texto)}</div>
+                          <div className={styles.mensagemRodape}>
+                            {msg.lida && (<span className={styles.lida}><FaCheckDouble/></span>)}
+                          <span className={styles.horario}>{formatarHora(msg.enviada_em)}</span>
+                          
                           </div>
                         </div>
-                        <div>{msg.texto}</div>
-                        <span className={styles.horario}>{formatarHora(msg.enviada_em)}</span>
                       </div>
-                    </div>
-                  ) : (
-                    <div className={styles.esquerda}>
-                      <div className={`${styles.mensagem} ${styles.recebida}`}>
-                        <strong><span className={styles.nome_02}><a href='#' className={styles.nome_remetente}>{msg.remetente.nome}</a></span></strong>
-                        <div>{msg.texto}</div>
-                        <span className={styles.horario}>{formatarHora(msg.enviada_em)}</span>
+                    ) : (
+                      <div className={styles.esquerda}>
+                        <div className={`${styles.mensagem} ${styles.recebida}`}>
+                          <strong><span className={styles.nome_02}><a href='#' className={styles.nome_remetente}>{msg.remetente.nome}</a></span></strong>
+                          <div>{renderizarMensagemComLinks(msg.texto)}</div>
+                          <span className={styles.horario}>{formatarHora(msg.enviada_em)}</span>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-
-              ))}
-              {/* marcador de rolagem */}
-              <div ref={mensagensRef}></div>
+                    )}
+                  </div>
+                );
+              })}
+              <div ref={ultimaMensagemRef}></div>
             </div>
             <div className={styles.formEnvio}>
               <EmojiPicker onEmojiSelect={handleEmojiSelect} position="top-center" />
-              <input
-                type="text"
+              <textarea
                 value={novaMensagem}
                 onChange={(e) => setNovaMensagem(e.target.value)}
                 placeholder="Digite sua mensagem..."
                 className={styles.input}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
+                  // Se a tecla Enter for pressionada E a tecla Shift não estiver pressionada
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    // Previne a quebra de linha padrão e envia a mensagem
                     e.preventDefault();
                     enviarMensagem();
                   }
@@ -336,4 +405,3 @@ export default function Chats() {
     </div>
   );
 }
-

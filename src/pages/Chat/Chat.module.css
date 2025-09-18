@@ -1,15 +1,15 @@
 .container {
-    display: flex;
-    height: 100%;
-    width: 100%;
-    /* justify-content:left;  */
-   
-    font-Family:Arial, sans-serif;
-    /* gap: 10px; */
-    /* background-color: #1b6de9; */
-   }
+  display: flex;
+  height: 100%;
+  width: 100%;
+  /* justify-content:left;  */
 
-  /* Sidebar */
+  font-Family: Arial, sans-serif;
+  /* gap: 10px; */
+  /* background-color: #1b6de9; */
+}
+
+/* Sidebar */
 .sidebar {
   width: 25%;
   min-width: 220px;
@@ -41,11 +41,13 @@
 
 /* Área do Chat */
 .chatArea {
-  flex: 1; /* Faz ocupar todo o espaço restante */
+  flex: 1;
+  /* Faz ocupar todo o espaço restante */
   display: flex;
   flex-direction: column;
   /* background-color: black; */
-  height: 100vh; /* Garante altura total */
+  height: 100vh;
+  /* Garante altura total */
 }
 
 /* Mensagens Individuais */
@@ -83,11 +85,11 @@
   flex: 1;
   padding: 10px;
   border-radius: 5px;
-  border: 1px dashed  #5361e47a;
+  border: 1px dashed #5361e47a;
   margin-right: 10px;
   top: 6px;
-  
-  
+
+
 
 }
 
@@ -127,7 +129,8 @@
 
 /* Estilo geral do container de mensagens */
 .mensagens {
-  flex: 1; /* Ocupa todo o espaço vertical restante */
+  flex: 1;
+  /* Ocupa todo o espaço vertical restante */
   display: flex;
   flex-direction: column;
   padding: 10px;
@@ -170,7 +173,7 @@
   color: #667781;
   margin-left: 8px;
   margin-top: auto;
-  margin-bottom: -5px;
+  /* margin-bottom: -5px; */
   white-space: nowrap;
 }
 
@@ -214,13 +217,13 @@
   transform: rotate(45deg);
 }
 
-.nome{
+.nome {
   color: #0f54df;
 }
 
-.nome_02{
+.nome_02 {
   color: #0cc033;
-  
+
 }
 
 /* .acoes {
@@ -252,7 +255,7 @@
   right: 0;
   background-color: white;
   border: 1px solid #ccc;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   border-radius: 4px;
   z-index: 10;
   min-width: 100px;
@@ -287,4 +290,40 @@
 .nome_remetente {
   color: #0f54df;
   text-decoration: none;
+}
+
+/* Container para alinhar o nome e o badge */
+.conteudoConversa {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* Estilo do badge de notificação */
+.badge {
+  background-color: #ff4d4f;
+  /* Cor vermelha */
+  color: white;
+  border-radius: 50%;
+  padding: 4px 8px;
+  font-size: 0.8em;
+  font-weight: bold;
+  min-width: 25px;
+  /* Garante que a bolinha não fique pequena */
+  text-align: center;
+}
+
+.itemSelecionado {
+  background-color: #80bde8;
+  /* Cor de fundo diferente para o item selecionado */
+}
+
+.mensagemRodape {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: -5px;
+  /* gap: 5px; */
+  /* margin-top: 5px; */
 }

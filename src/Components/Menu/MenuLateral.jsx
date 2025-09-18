@@ -14,18 +14,20 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useUser } from '../../contexts/UserContext';
 import { useSocket } from '../../contexts/SocketContext';
+import { useChat } from '../../contexts/ChatContext';
 import { useNotifications } from '../../contexts/NotificationContext'; // Importar o hook
 
 const MenuLateral = () => {
   const { usuario, setUsuario } = useUser();
   const { unreadCount, hasNewNotification } = useNotifications(); // Usar o contexto
+  const { unreadChatCount } = useChat();
   const [redirect, setRedirect] = useState(null);
   const location = useLocation();
   const isChatPage = location.pathname === '/chat';
   const isAgendaPage = location.pathname === '/agenda';
   const [menuCollapsed, setMenuCollapsed] = useState(false);
   const socket = useSocket();
-
+  
   const toggleMenu = () => {
     setMenuCollapsed(!menuCollapsed);
   };
@@ -88,10 +90,20 @@ const MenuLateral = () => {
             )}
 
             <li><a href="/relato" title='Relatos'><IoDocumentTextSharp /> {!menuCollapsed && 'Relatos'}</a></li>
-            <li><a href="/chat" title='Chats'><RiChatSmile3Fill /> {!menuCollapsed && 'Chats'}</a></li>
+            <li><a href="/chat" title='Chats'>
+              
+
+              {!menuCollapsed && <RiChatSmile3Fill /> }
+              {!menuCollapsed && 'Chats'}
+              {menuCollapsed && !unreadChatCount && <RiChatSmile3Fill />}
+              {unreadChatCount > 0 && (
+                <span className={styles['badge-dot']}>{unreadChatCount}</span>
+              )}
+            </a></li>
             <li><a href="/notificacao" title='Notificações'>
               {!menuCollapsed && <IoNotificationsCircle />}
               {!menuCollapsed && 'Notificações'}
+              {menuCollapsed && !hasNewNotification && <IoNotificationsCircle />}
               {hasNewNotification && <span className={styles['badge-dot']}>{unreadCount === 0 ? "!" : unreadCount}</span>}
             </a></li>
 

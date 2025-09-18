@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import useNotificacoes from './hooks/useNotificacoes';
 import { UserProvider, useUser } from '../src/contexts/UserContext';
 import { NotificationProvider } from './contexts/NotificationContext';
+import { ChatProvider } from './contexts/ChatContext';
 
 // Importe seus componentes de página
 import Home from './pages/Home';
@@ -28,6 +29,7 @@ import DashboardAdmin from './pages/Admin/DashboardAdmin';
 import UsuariosAdmin from './pages/Admin/UsuariosAdmin';
 import ProfissionaisAdmin from './pages/Admin/ProfissionaisAdmin';
 import PacientesAdmin from './pages/Admin/PacienteAdmin';
+
 
 // Rota protegida com verificação de tipo de usuário
 function ProtectedRoute({ children, allowedTypes }) {
@@ -128,13 +130,13 @@ export default function App() {
           setShowInitialModal(true);
           setModalType('paciente');
         } else if (usuario.tipo_usuario === 'profissional') {
-          
+
           setShowInitialModal(true);
           setModalType('profissional');
         }
       } else {
         if (usuario.tipo_usuario === 'profissional' && usuario.validado === null) {
-          
+
           setShowInitialModal(true);
           setModalType('profissional');
         } else if (usuario.tipo_usuario === 'profissional' && usuario.validado === false) {
@@ -204,8 +206,9 @@ export default function App() {
   }
 
   return (
-    
-      <NotificationProvider>
+
+    <NotificationProvider>
+      <ChatProvider>
         <ToastContainer
           position="top-right"
           autoClose={4000}
@@ -243,7 +246,8 @@ export default function App() {
           {/* Rota padrão */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
-      </NotificationProvider>
-    
+      </ChatProvider>
+    </NotificationProvider>
+
   );
 }

@@ -10,28 +10,65 @@ export const ChatProvider = ({ children }) => {
   const [unreadChatCount, setUnreadChatCount] = useState(0);
   const [conversationUnreadCounts, setConversationUnreadCounts] = useState({});
 
+  // 1. Efeito para buscar as contagens iniciais do back-end
+  useEffect(() => {
+    if (!usuario) return;
+
+    const fetchInitialUnreadCounts = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/conversas/nao-lidas', {
+          credentials: 'include',
+        });
+        if (!response.ok) throw new Error('Erro ao buscar contagem de mensagens não lidas');
+        const data = await response.json();
+        
+        setUnreadChatCount(data.totalNaoLidas || 0);
+        setConversationUnreadCounts(data.contagensPorConversa || {});
+      } catch (error) {
+        console.error('Erro na chamada inicial:', error);
+      }
+    };
+    fetchInitialUnreadCounts();
+  }, [usuario]);
+
+  // 2. Efeito para lidar com mensagens em tempo real
   useEffect(() => {
     if (!socket || !usuario) return;
 
-    // Lógica para receber uma nova mensagem e atualizar as contagens
-    const handleNewMessage = (message) => {
-      // Verifica se a mensagem é para a conversa atual (opcional, dependendo da sua tela de chat)
-      // Se não for para a conversa atual, incrementa a contagem de não lidas
-      // Aqui, assumimos que todas as novas mensagens devem ser contadas
-      
-      setUnreadChatCount(prevCount => prevCount + 1);
-
-      // Atualiza a contagem para a conversa específica
-      setConversationUnreadCounts(prevCounts => ({
-        ...prevCounts,
-        [message.conversaId]: (prevCounts[message.conversaId] || 0) + 1
-      }));
+    // NOVO: Listener para o evento 'nova_mensagem_chat'
+    const handleNewMessageChat = (payload) => {
+      // Incrementa a contagem global apenas se a mensagem for de outro usuário
+      if (payload.remetenteId !== usuario.id) {
+        setUnreadChatCount(prevCount => prevCount + 1);
+        
+        setConversationUnreadCounts(prevCounts => ({
+          ...prevCounts,
+          [payload.conversaId]: (prevCounts[payload.conversaId] || 0) + 1
+        }));
+      }
     };
 
-    socket.on('receive_message', handleNewMessage);
-
+    // Listener para o evento de mensagens lidas
+    const handleMessagesRead = ({ conversaId, leitorId }) => {
+      if (leitorId === usuario.id) {
+        setConversationUnreadCounts(prevCounts => {
+          const newCounts = { ...prevCounts };
+          const messagesRead = newCounts[conversaId] || 0;
+          setUnreadChatCount(prevTotal => Math.max(0, prevTotal - messagesRead));
+          delete newCounts[conversaId];
+          return newCounts;
+        });
+      }
+    };
+    
+    // Registra os listeners
+    socket.on('nova_mensagem_chat', handleNewMessageChat);
+    socket.on('mensagens_lidas', handleMessagesRead);
+    
+    // Função de limpeza
     return () => {
-      socket.off('receive_message', handleNewMessage);
+      socket.off('nova_mensagem_chat', handleNewMessageChat);
+      socket.off('mensagens_lidas', handleMessagesRead);
     };
   }, [socket, usuario]);
 
@@ -52,7 +89,6 @@ export const ChatProvider = ({ children }) => {
     unreadChatCount,
     conversationUnreadCounts,
     clearUnreadCountForConversation,
-    // Adicione outras funções/estados relevantes para o chat aqui
   };
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
