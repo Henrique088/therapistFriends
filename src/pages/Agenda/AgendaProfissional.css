@@ -113,3 +113,14 @@ td {
     padding: 5px 10px;
     background-color: #f8f9fa;
 }
+
+.compartilhar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+  margin-right: 10px;
+  font-weight: bold;
+}

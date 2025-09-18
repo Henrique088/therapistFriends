@@ -12,6 +12,7 @@ import ModalStatusAgendamento from '../../Components/Agenda/ModalStatusAgendamen
 import ModalBloqueio from '../../Components/Agenda/ModalBloqueio';
 import { AgendaService } from '../../api/agendaService';
 import './AgendaProfissional.css';
+import Compartilhar from '../../Components/Compartilhar/Compartilhar';
 
 
 
@@ -317,14 +318,7 @@ function AgendaProfissional() {
     <div className="agenda-container">
       <MenuLateral />
 
-      {/* <ModalDisponibilidade
-        visible={mostrarModalDisponibilidade}
-        onClose={() => setMostrarModalDisponibilidade(false)}
-        onSalvar={handleSalvarDisponibilidade}
-        onBloquear={handleAdicionarBloqueio}
-        slot={slotSelecionado}
-        loading={loading}
-      /> */}
+      
 
       <ModalBloqueio
         visible={mostrarModalBloqueio}
@@ -398,6 +392,8 @@ function AgendaProfissional() {
         </header>
 
         <section className="agenda-calendario">
+          {/* <h2 className='compartilhar'>Compartilhar <a href='localhost:3000/agenda-paciente/9/Paulo' target="_blank"><CiShare2 title='Em breve: compartilhar agenda' style={{cursor: 'not-allowed', color: '#a0a0a0', justifyContent: 'end'}}/></a></h2> */}
+          <Compartilhar/>
           <DragAndDropCalendar
             culture={"pt-BR"}
             localizer={localizer}

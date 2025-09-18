@@ -1,0 +1,31 @@
+.compartilhar-container {
+  display: flex;
+  align-items: center;
+}
+
+.compartilhar-titulo {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem; /* Ajuste o tamanho da fonte se necessário */
+  color: #333; /* Cor do texto */
+}
+
+.compartilhar-botao {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.compartilhar-icone {
+  font-size: 2rem; /* Ajuste o tamanho do ícone */
+  color: #007bff; /* Cor do ícone */
+  transition: color 0.3s ease;
+}
+
+.compartilhar-icone:hover {
+  color: #0056b3; /* Escurece a cor no hover */
+}

@@ -260,30 +260,22 @@ export default function Chats() {
   const renderizarMensagemComLinks = (texto) => {
   if (!texto) return null;
 
-  // Usa uma expressão regular mais robusta para URLs
+  // Expressão regular com parênteses de captura para incluir os delimitadores (links) no array
   const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
+  
+  // O split com parênteses de captura retorna um array com as partes e os delimitadores
+  // Ex: "Olá www.google.com!" -> ["Olá ", "www.google.com", "!"]
+  const partes = texto.split(urlRegex);
 
-  // Usa um array para armazenar as partes do texto e os links
-  const partes = [];
-  let ultimaPosicao = 0;
-
-  // Itera sobre as correspondências da RegEx no texto
-  texto.replace(urlRegex, (match, offset) => {
-    // Adiciona o texto antes do link
-    partes.push(texto.substring(ultimaPosicao, offset));
-    
-    // Adiciona o link como um componente <a>
-    const href = match.startsWith('http') ? match : `http://${match}`;
-    partes.push(<a key={offset} href={href} target="_blank" rel="noopener noreferrer">{match}</a>);
-    
-    ultimaPosicao = offset + match.length;
-  });
-
-  // Adiciona o restante do texto após o último link
-  partes.push(texto.substring(ultimaPosicao));
-
-  // Converte as quebras de linha (`\n`) para <br /> antes de retornar
+  // Mapeia sobre o array de partes, criando elementos React para cada parte
   return partes.map((parte, index) => {
+    // Se a parte for um link
+    if (typeof parte === 'string' && parte.match(urlRegex)) {
+      const href = parte.startsWith('http') ? parte : `http://${parte}`;
+      return <a key={index} href={href} target="_blank" rel="noopener noreferrer">{parte}</a>;
+    }
+    
+    // Se a parte for texto normal, lida com as quebras de linha
     if (typeof parte === 'string') {
       const linhas = parte.split('\n');
       return linhas.map((linha, linhaIndex) => (
@@ -293,6 +285,7 @@ export default function Chats() {
         </React.Fragment>
       ));
     }
+    
     return parte;
   });
 };
