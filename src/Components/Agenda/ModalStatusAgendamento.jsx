@@ -29,6 +29,7 @@ const ModalStatusAgendamento = ({ evento, onClose, onStatusChange }) => {
             {/* ... (parágrafos com os detalhes do evento) */}
             <h3> Codinome: {evento?.paciente.codinome}</h3>
             <h4> Motivo: {evento?.motivo ? evento.motivo: 'Sem motivo'}</h4>
+            <h5> Status: {evento?.status}</h5>
             <h5>Horas: {evento?.start ? `Início: ${evento.start.getHours().toString().padStart(2, '0')}:00 -`: ''} {evento?.end ? `Término:${evento.end.getHours().toString().padStart(2, '0')}:00`: ''}</h5>
             {evento.status === 'pendente' && (
                 <div className="button-group">

@@ -33,7 +33,7 @@ const MenuLateral = () => {
   };
 
   useEffect(() => {
-    if (isChatPage || isAgendaPage) {
+    if (isChatPage || isAgendaPage ) {
       setMenuCollapsed(true);
     }
   }, [isChatPage, isAgendaPage]);
@@ -127,13 +127,13 @@ const MenuLateral = () => {
           <div className={styles['user-info']}>
             {!menuCollapsed && (
               <div className={styles['user-details']}>
-                <div className={styles.avatar}>JS</div>
+                <div className={styles.avatar}>{usuario.nome.substring(0, 2)}</div>
                 <div className={styles.username}>{usuario?.codinome || usuario?.nome}</div>
                 <div className={styles['user-email']}>{usuario?.email}</div>
               </div>
             )}
           </div>
-          {!isChatPage && !isAgendaPage && (
+          {!isChatPage && !isAgendaPage &&  !isChatPage &&(
             <button className={styles['toggle-button']} onClick={toggleMenu}>
               {menuCollapsed ? <AiOutlineCaretRight /> : <AiOutlineCaretLeft />}
             </button>

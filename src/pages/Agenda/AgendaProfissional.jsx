@@ -91,6 +91,7 @@ function AgendaProfissional() {
   const statusColors = {
   'pendente': '#a0d8f6',
   'confirmado': '#57ef2dff',
+  'cancelado': '#f5a142ff'
   
 };
 
@@ -113,7 +114,7 @@ function AgendaProfissional() {
           title: 'BLOQUEADO',
           start: new Date(b.data_inicio),
           end: new Date(b.data_fim),
-          color: '#ffcccc',
+          color: '#a0a0a0',
           bloqueado: true,
         }))
         : [];
@@ -358,7 +359,7 @@ function AgendaProfissional() {
               </tr>
 
               <tr>
-                <td><span className="indicativo bloqueado"></span> Bloqueado</td>
+                <td><span className="indicativo bloqueado"></span> Bloqueado/Cancelado</td>
                 {/* <td><span className="indicativo bloqueado"></span> Indisponível</td> */}
                 <td><span className="indicativo aguardando"></span> Aguardando</td>
                 {/* <td><span className="indicativo aguardando"></span> Pedente de confirmarção</td> */}

@@ -31,11 +31,11 @@ function UsuariosAdmin() {
           <tbody>
             {usuarios.map(u => (
               <tr key={u.id}>
-                <td>{u.id}</td>
-                <td>{u.nome}</td>
-                <td>{u.email}</td>
-                <td>{u.tipo_usuario}</td>
-                <td>{u.ativo ? 'Ativo' : 'Inativo'}</td>
+                <td data-label="ID">{u.id}</td>
+                <td data-label="Nome">{u.nome}</td>
+                <td data-label="Email">{u.email}</td>
+                <td data-label="Tipo de Usuário">{u.tipo_usuario}</td>
+                <td data-label="Ativo">{u.ativo ? 'Ativo' : 'Inativo'}</td>
               </tr>
             ))}
           </tbody>

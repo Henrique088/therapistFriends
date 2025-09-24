@@ -140,18 +140,22 @@ function ProfissionaisAdmin() {
               </tr>
             ) : (
               profissionaisFiltrados.map((p) => (
-                <tr key={p.id_usuario}>
-                  <td>{p.usuario.nome}</td>
-                  <td>{p.usuario.email}</td>
-                  <td>{p.telefone}</td>
-                  <td>{p.cpf}</td>
-                  <td>{p.crp}</td>
-                  <td>{p.validado === true ? 'Sim' : p.validado === false ? 'Não' : 'Em espera'}</td>
-                  <td>
-                    <button className= 'validar_reprovar' onClick={() => abrirModal(p)}>Validar/Reprovar</button>
-                    <button className='historico' onClick={() => abrirHistorico(p)}>Histórico</button>
-                  </td>
-                </tr>
+                // ... (dentro do seu map) ...
+
+<tr key={p.id_usuario}>
+    <td data-label="Nome">{p.usuario.nome}</td>
+    <td data-label="Email">{p.usuario.email}</td>
+    <td data-label="Telefone">{p.telefone}</td>
+    <td data-label="CPF">{p.cpf}</td>
+    <td data-label="CRP">{p.crp}</td>
+    <td data-label="Validado">{p.validado === true ? 'Sim' : p.validado === false ? 'Não' : 'Em espera'}</td>
+    <td data-label="Ações">
+        <button className='validar_reprovar' onClick={() => abrirModal(p)}>Validar/Reprovar</button>
+        <button className='historico' onClick={() => abrirHistorico(p)}>Histórico</button>
+    </td>
+</tr>
+
+// ...
               ))
             )}
           </tbody>

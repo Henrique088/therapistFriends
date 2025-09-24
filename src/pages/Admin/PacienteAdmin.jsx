@@ -6,7 +6,7 @@ function PacientesAdmin() {
   const [pacientes, setPacientes] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:3001/admin/pacientes")
+    fetch("http://localhost:3001/admin/pacientes", { credentials: 'include' })
       .then(res => res.json())
       .then(data => setPacientes(data))
       .catch(err => console.error(err));
@@ -17,13 +17,28 @@ function PacientesAdmin() {
       <MenuLateralAdmin />
       <div className="admin-content">
         <h1>Gerenciar Pacientes</h1>
-        <ul>
-          {pacientes.map(p => (
-            <li key={p.id_usuario}>
-              {p.nome} ({p.codinome})
-            </li>
-          ))}
-        </ul>
+        <table className="tabela-pacientes">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Codinome</th>
+              <th>Telefone</th>
+            </tr>
+          </thead>
+          <tbody>
+            {pacientes.map(p => (
+              <tr key={p.id_usuario}>
+                <td>{p.id_usuario}</td>
+                <td>{p.usuario.nome}</td>
+                <td>{p.usuario.email}</td>
+                <td>{p.codinome}</td>
+                <td>{p.telefone}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

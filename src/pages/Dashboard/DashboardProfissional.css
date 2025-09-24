@@ -4,11 +4,12 @@
   display: flex;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f3f4f6;
-  min-height: 100vh;
+  height: 100vh;
 }
 
 .main-content {
   flex-grow: 1;
+  flex: 1;
   padding: 2rem;
   position: relative;
   overflow-y: auto;
@@ -158,4 +159,28 @@
   color: #666;
   font-size: 0.8rem;
   margin-top: 2px;
+}
+
+.chart-section, .tips-section, .extra-info, .links-uteis {
+  background: #fff;
+  margin: 20px 0;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.tips-section p {
+  font-size: 1.1rem;
+  color: #2e7d32;
+  margin-top: 10px;
+}
+
+.extra-info ul, .links-uteis ul {
+  list-style: disc;
+  padding-left: 20px;
+}
+
+.info-card.destaque {
+  background: #4caf50;
+  color: #fff;
 }

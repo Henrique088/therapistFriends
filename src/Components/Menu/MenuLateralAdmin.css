@@ -1,47 +1,86 @@
 /* src/Components/Menu/MenuLateralAdmin.css */
 .menu-admin {
-  width: 250px;
-  height: 100vh;
-  background: linear-gradient(to right, #E0FFE0, #A8D8EA);
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  border-right: 2px solid #ddd;
+    width: 250px;
+    height: 100vh;
+    background: linear-gradient(to right, #E0FFE0, #A8D8EA);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    border-right: 2px solid #ddd;
+    overflow: hidden;
+    transition: width 0.3s ease; /* Adiciona transição para um efeito de colapso suave */
+    position: relative; /* Adiciona position relative para o botão */
+}
+
+.menu-admin.collapsed {
+    width: 60px; /* Ajuste este valor para a largura desejada no estado recolhido */
+    padding: 1rem 0; /* Ajusta o padding para o estado recolhido */
+    align-items: center;
 }
 
 .menu-titulo {
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin-bottom: 2rem;
-  color: #333;
-  text-align: left;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    color: #333;
+    text-align: left;
 }
 
 .menu-admin nav ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 .menu-admin nav ul li {
-  margin: 1rem 0;
+    margin: 1rem 0;
 }
 
 .menu-admin nav ul li a {
-  text-decoration: none;
-  font-weight: 500;
-  color: #222;
-  transition: color 0.3s;
-  font-size: 0.9rem;
+    text-decoration: none;
+    font-weight: 500;
+    color: #222;
+    transition: color 0.3s;
+    font-size: 0.9rem;
 }
 
 .menu-admin nav ul li a:hover {
-  color: #0056b3;
+    color: #0056b3;
 }
 
+.toggle-button {
+    position: absolute;
+    right: -0px; /* Posiciona o botão na borda direita do menu */
+    top: 50%;
+    transform: translateY(-50%);
+    background: #34495e;
+    border: none;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s, right 0.3s ease; /* Adiciona transição para a propriedade right */
+    display: flex; /* Usa flexbox para centralizar o ícone */
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-admin.collapsed .toggle-button {
+    left: 50%; /* Centraliza o botão */
+    transform: translateX(-50%) translateY(-50%); /* Centraliza horizontal e verticalmente */
+}
+
+.toggle-button:hover {
+    background-color: #4a6b8a;
+}
+
+.collapsed li a {
+    justify-content: center;
+}
 
 @media (max-width: 768px) {
-  .menu-admin{
-    width: 180px;
-  }
+    .menu-admin {
+        width: 180px;
+    }
 }

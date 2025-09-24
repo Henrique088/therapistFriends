@@ -221,7 +221,7 @@ export default function Chats() {
     };
 
     const handleMessagesRead = ({ conversaId, leitorId }) => {
-      if (conversaId === conversaSelecionada && leitorId !== usuario.id) {
+      if (conversaId == conversaSelecionada && leitorId !== usuario.id) {
         setMensagens(prevMensagens =>
           prevMensagens.map(msg => ({
             ...msg,

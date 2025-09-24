@@ -7,6 +7,7 @@ import localizer from '../../Utils/calendarLocalizer';
 import 'moment/locale/pt-br';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { toast } from 'react-toastify';
+import './AgendaPaciente.css';
 
 import ModalAgendamento from '../../Components/Agenda/ModalAgendamento';
 import { AgendaService } from '../../api/agendaService';
@@ -95,6 +96,25 @@ const AgendaPaciente = () => {
     return (
         <div style={{ padding: '20px' }}>
             <h1>Agenda do Profissional {profissionalNome}</h1>
+            <table>
+            <thead ></thead>
+            <tbody>
+              <tr>
+                <td><span className="indicativo disponivel"></span> Disponível</td>
+                {/* <td><span className="indicativo disponivel"></span> Podem agendar</td> */}
+                <td><span className="indicativo confirmado"></span> Confirmado</td>
+                {/* <td><span className="indicativo Confirmado"></span> Horário confirmado</td> */}
+              </tr>
+
+              <tr>
+                <td><span className="indicativo bloqueado"></span> Bloqueado/Cancelado</td>
+                {/* <td><span className="indicativo bloqueado"></span> Indisponível</td> */}
+                <td><span className="indicativo aguardando"></span> Aguardando</td>
+                {/* <td><span className="indicativo aguardando"></span> Pedente de confirmarção</td> */}
+              </tr>
+
+            </tbody>
+          </table>
             <Calendar
                 culture={"pt-BR"}
                 localizer={localizer}

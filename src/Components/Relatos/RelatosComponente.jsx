@@ -26,23 +26,6 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
       .then((res) => res.json())
       .then((data) => {
         setRelatos(data);
-        if (relatosPessoais) {
-          const relatosUsuario = data.filter((relato) =>
-            relato.paciente.id_usuario === usuario.id
-          );
-
-
-          setRelatos(relatosUsuario);
-        }
-
-        //filtra os relatos para mostrar apenas o número definido por numRelatos e tira os que forem do usuario logado
-        if (numRelatos && relatosPessoais !== true) {
-          const relatosFiltrados = data
-            .filter((relato) => relato.paciente.id_usuario !== usuario.id)
-            .slice(0, numRelatos);
-          setRelatos(relatosFiltrados);
-        }
-
       })
       .catch((err) => console.error('Erro ao buscar relatos:', err));
   };
@@ -51,40 +34,49 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
     carregarRelatos();
   }, [recarregar]);
 
-  // ✅ FILTRAGEM DOS RELATOS BASEADO NAS TAGS SELECIONADAS
-  let relatosFiltrados = useMemo(() => {
-    if (!tagsSelecionadas || tagsSelecionadas.length === 0) {
-      return relatos; // Retorna todos se não houver filtros
+  const relatosFiltrados = useMemo(() => {
+    // 1. Inicia com todos os relatos carregados
+    let relatosParaExibir = [...relatos];
+
+    // 2. Filtra por relatos pessoais se a prop `relatosPessoais` for verdadeira
+    if (relatosPessoais) {
+      relatosParaExibir = relatosParaExibir.filter(relato => relato.paciente.id_usuario === usuario.id);
     }
 
-    if (tagsSelecionadas.includes('Disponivéis') && usuario.tipo_usuario === 'profissional' && tagsSelecionadas.length === 1) {
-      relatos = relatos.filter(relato => !relato.profissional_id);
-      return relatos;
-    } else {
-      relatos = relatos.filter(relato => !relato.profissional_id);
+    // 3. Filtra por número de relatos se a prop `numRelatos` for definida
+    if (numRelatos && !relatosPessoais) {
+      relatosParaExibir = relatosParaExibir.filter(relato => relato.paciente.id_usuario !== usuario.id).slice(0, numRelatos);
+    }
+    
+    // 4. Aplica a filtragem por tags como a última etapa
+    if (tagsSelecionadas.length > 0) {
+      // Lógica para a tag 'Disponivéis'
+      if (tagsSelecionadas.includes('Disponivéis') && usuario.tipo_usuario === 'profissional') {
+        relatosParaExibir = relatosParaExibir.filter(relato => !relato.profissional_id);
+      }
+
+      // Lógica para as outras tags
+      const outrasTags = tagsSelecionadas.filter(tag => tag !== 'Disponivéis');
+      if (outrasTags.length > 0) {
+        relatosParaExibir = relatosParaExibir.filter(relato => {
+          return outrasTags.some(tag => {
+            const tagLowerCase = tag.toLowerCase();
+            return (
+              relato.categoria?.toLowerCase().includes(tagLowerCase) ||
+              relato.titulo?.toLowerCase().includes(tagLowerCase) ||
+              relato.texto?.toLowerCase().includes(tagLowerCase) ||
+              (relato.resultado_ia && relato.resultado_ia.toLowerCase().includes(tagLowerCase)) ||
+              (relato.paciente?.codinome && relato.paciente.codinome.toLowerCase().includes(tagLowerCase))
+            );
+          });
+        });
+      }
     }
 
-    console.log('Relatos antes da filtragem:', relatos);
+    return relatosParaExibir;
 
-    return relatos.filter(relato => {
-      // Verifica se o relato tem pelo menos uma das tags selecionadas
-      return tagsSelecionadas.some(tag => {
-        // Busca em múltiplos campos do relato
-        return (
-          relato.categoria?.toLowerCase().includes(tag.toLowerCase()) ||
-          relato.titulo?.toLowerCase().includes(tag.toLowerCase()) ||
-          relato.texto?.toLowerCase().includes(tag.toLowerCase()) ||
-          (relato.resultado_ia && relato.resultado_ia.toLowerCase().includes(tag.toLowerCase())) ||
-          (relato.paciente?.codinome && relato.paciente.codinome.toLowerCase().includes(tag.toLowerCase()))
-          // (!relato.profissional_id && 'Disponivéis'.toLowerCase().includes(tag.toLowerCase())))
-
-        );
-
-      });
-
-
-    });
-  }, [relatos, tagsSelecionadas]);
+  }, [relatos, tagsSelecionadas, relatosPessoais, numRelatos, usuario.id, usuario.tipo_usuario]);
+  
 
 
 

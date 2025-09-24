@@ -1,0 +1,39 @@
+.indicativo {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    margin-right: 8px;
+    border: 1px solid #ddd;
+}
+
+.indicativo.disponivel {
+    background-color: white;
+    border: 1px solid #ccc;
+}
+
+.indicativo.bloqueado {
+    /* Define um gradiente linear para criar a divisão de duas cores */
+    background: linear-gradient(
+        to bottom right, /* Direção do gradiente: do canto superior esquerdo para o inferior direito */
+        #a0a0a0 50%,     /* Primeira cor, ocupando 50% do espaço */
+        #f08b35 50%      /* Segunda cor, começando em 50% */
+    );
+    border: 1px solid #ea7019; /* Mantém a borda original */
+}
+
+.indicativo.aguardando {
+    background-color: #a0d8f6; /* Azul */
+    border: 1px solid #0066cc;
+}
+
+.indicativo.confirmado {
+    background-color: #57ef2dff; /* Verde */
+    border: 1px solid #00cc44;
+}
+
+/* Para melhor visualização da cor branca */
+td {
+    padding: 5px 10px;
+    background-color: #f8f9fa;
+}

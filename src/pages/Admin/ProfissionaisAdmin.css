@@ -137,3 +137,50 @@
   cursor: pointer;
   border-radius: 5px;
 }
+
+/* src/Components/ProfissionaisAdmin.css */
+
+/* ... (seus estilos existentes) ... */
+
+@media (max-width: 768px) {
+    .tabela-profissionais {
+        width: 100%; /* Garante que a tabela ocupe toda a largura disponível */
+        display: block; /* Essencial para a transformação */
+        overflow-x: hidden; /* Evita a rolagem horizontal indesejada */
+    }
+
+    .tabela-profissionais thead {
+        display: none; /* Esconde o cabeçalho da tabela */
+    }
+
+    .tabela-profissionais tbody,
+    .tabela-profissionais tr {
+        display: block;
+    }
+
+    .tabela-profissionais tr {
+        margin-bottom: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 1rem;
+    }
+
+    .tabela-profissionais td {
+        display: block;
+        text-align: right;
+        font-size: 0.9em;
+        position: relative;
+        padding-left: 50%; /* Espaço para o pseudo-elemento */
+    }
+    
+    .tabela-profissionais td::before {
+        content: attr(data-label); /* Adiciona o rótulo da coluna antes do valor */
+        position: absolute;
+        left: 0;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+    }
+}
