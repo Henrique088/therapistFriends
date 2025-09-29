@@ -8,13 +8,15 @@ import './ModalStatusAgendamento.css';
 Modal.setAppElement('#root');
 
 const ModalStatusAgendamento = ({ evento, onClose, onStatusChange }) => {
+
+    const [motivo, setMotivo] = React.useState('');
     if (!evento) return null;
 
     console.log(evento);
 
     const handleStatusChange = async (novoStatus) => {
         try {
-            await AgendaService.updateAgendamentoStatus(evento.id, novoStatus);
+            await AgendaService.updateAgendamentoStatus(evento.id, novoStatus, motivo);
             toast.success(`Agendamento ${novoStatus} com sucesso!`);
             onStatusChange();
         } catch (error) {
@@ -32,15 +34,22 @@ const ModalStatusAgendamento = ({ evento, onClose, onStatusChange }) => {
             <h5> Status: {evento?.status}</h5>
             <h5>Horas: {evento?.start ? `Início: ${evento.start.getHours().toString().padStart(2, '0')}:00 -`: ''} {evento?.end ? `Término:${evento.end.getHours().toString().padStart(2, '0')}:00`: ''}</h5>
             {evento.status === 'pendente' && (
+                <>
+                <input type="text" placeholder="Motivo em caso de cancelamento(opcional)" value={motivo} onChange={(e) => setMotivo(e.target.value)}  className="input-motivo" />
                 <div className="button-group">
                     <button className="btn-confirmar" onClick={() => handleStatusChange('confirmado')}>Confirmar</button>
                     <button className="btn-rejeitar" onClick={() => handleStatusChange('rejeitado')}>Rejeitar</button>
                 </div>
+
+                </>
             )}
             {evento.status !== 'cancelado' && (
+                <>
+                <input type="text" placeholder="Motivo do cancelamento(opcional)" value={motivo} onChange={(e) => setMotivo(e.target.value)}  className="input-motivo" />
                 <div className="button-group">
                     <button className="btn-cancelar" onClick={() => handleStatusChange('cancelado')}>Cancelar</button>
                 </div>
+                </>
             )}
             <div className="button-group">
                 <button className="btn-fechar" onClick={onClose}>Fechar</button>

@@ -55,8 +55,13 @@ export const AgendaService = {
   },
 
   //Atualiza status do agendamento
-  async updateAgendamentoStatus(agendamentoId, status) {
-    const response = await api.patch(`agendamento/${agendamentoId}/status`, { status });
+  async updateAgendamentoStatus(agendamentoId, status, motivo) {
+    const response = await api.patch(`agendamento/${agendamentoId}/status`, { status, motivo });
+    return response.data;
+  },
+
+  async updateBloqueio(id, updates) {
+    const response = await api.put(`bloqueio/${id}`, updates);
     return response.data;
   }
 };

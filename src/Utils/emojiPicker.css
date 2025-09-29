@@ -195,22 +195,22 @@
 }
 
 /* Responsividade */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .emoji-picker {
     width: 280px;
     max-height: 350px;
   }
   
   .emoji-grid {
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
   
   /* Para mobile, força o posicionamento bottom */
   .emoji-picker {
-    left: 0 !important;
-    right: auto !important;
-    transform: none !important;
-    top: calc(100% + 10px) !important;
-    bottom: auto !important;
+    left: 50px !important;
+    /* right: auto !important; */
+    /* transform: none !important; */
+    /* top: calc(100% + 10px) !important; */
+    /* bottom: auto !important; */
   }
 }

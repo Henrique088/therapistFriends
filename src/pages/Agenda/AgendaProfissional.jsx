@@ -167,6 +167,7 @@ function AgendaProfissional() {
 
   const onSelectEvent = (evento) => {
     // Armazena o evento e abre o modal para o profissional
+    console.log('Evento selecionado:', evento);
     setEventoSelecionado(evento);
     if(evento.title === 'BLOQUEADO') {
       setSlotSelecionado({
@@ -200,21 +201,34 @@ function AgendaProfissional() {
   const handleSalvarBloqueio = async (dados) => {
     try {
       setLoading(true);
+      console.log('Dados recebidos para salvar bloqueio:', dados);
       const { inicio, fim, recorrente, dias_recorrencia } = dados;
-
+      const dataInicioFormatada = moment(inicio).format(); 
+        const dataFimFormatada = moment(fim).format();
       const novoBloqueio = {
         profissional_id: usuario.id,
-        data_inicio: inicio.toISOString(),
-        data_fim: fim.toISOString(),
+        data_inicio: dataInicioFormatada,
+        data_fim: dataFimFormatada,
         recorrente: dias_recorrencia.length > 0 ? true : false,
-        dias_recorrencia
+        dias_recorrencia,
+        id : slotSelecionado?.id // Inclui o ID se estiver editando um bloqueio existente
       };
-
+      console.log(slotSelecionado?.id || 'Nenhum ID de bloqueio existente');
       console.log('Dados do novo bloqueio:', novoBloqueio);
 
-      await AgendaService.createBloqueio(novoBloqueio);
 
-      toast.success('Bloqueio salvo com sucesso!');
+      if (slotSelecionado?.id) {
+        // Atualiza o bloqueio existente
+        await AgendaService.updateBloqueio(slotSelecionado.id, novoBloqueio);
+        toast.success('Bloqueio atualizado com sucesso!');
+      } else {
+        // Cria um novo bloqueio
+        await AgendaService.createBloqueio(novoBloqueio);
+        toast.success('Bloqueio criado com sucesso!');
+      }
+      
+
+      
       setMostrarModalBloqueio(false);
 
       // Recarrega a agenda após a operação
@@ -223,7 +237,7 @@ function AgendaProfissional() {
       carregarAgenda(inicioSemana, fimSemana);
 
     } catch (error) {
-      toast.error('Erro ao salvar bloqueio');
+      toast.error('Erro ao salvar bloqueio: ' + (error.response?.data?.erro || 'Erro desconhecido'));
       console.error('Erro detalhado:', error);
     } finally {
       setLoading(false);
@@ -393,7 +407,7 @@ function AgendaProfissional() {
         </header>
 
         <section className="agenda-calendario">
-          {/* <h2 className='compartilhar'>Compartilhar <a href='localhost:3000/agenda-paciente/9/Paulo' target="_blank"><CiShare2 title='Em breve: compartilhar agenda' style={{cursor: 'not-allowed', color: '#a0a0a0', justifyContent: 'end'}}/></a></h2> */}
+          
           <Compartilhar/>
           <DragAndDropCalendar
             culture={"pt-BR"}

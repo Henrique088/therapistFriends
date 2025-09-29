@@ -24,10 +24,10 @@ const customStyles = {
   }
 };
 
-const ModalBloqueio = ({ 
-  visible, 
-  onClose, 
-  onRemover, 
+const ModalBloqueio = ({
+  visible,
+  onClose,
+  onRemover,
   onSalvarBloqueio, // Nova prop para salvar bloqueios
   loading,
   slot // O slot selecionado no calendário
@@ -52,9 +52,20 @@ const ModalBloqueio = ({
   }, [slot]);
 
   const handleTimeChange = (field, timeString) => {
-    const time = moment(timeString, 'HH:mm');
-    setFormData(prev => ({ ...prev, [field]: time }));
-  };
+    // 1. Converte a string de hora para um objeto moment temporário
+    const [hours, minutes] = timeString.split(':');
+    
+    // 2. Clone a data original (garantindo que o dia seja mantido)
+    let newMoment = formData[field].clone();
+
+    // 3. Aplica a nova hora e minuto
+    newMoment.hour(parseInt(hours, 10))
+             .minute(parseInt(minutes, 10))
+             .second(0)
+             .millisecond(0);
+
+    setFormData(prev => ({ ...prev, [field]: newMoment }));
+};
 
   const handleRecorrenciaChange = (e) => {
     setFormData(prev => ({ ...prev, recorrente: e.target.checked }));
@@ -128,7 +139,7 @@ const ModalBloqueio = ({
               checked={formData.recorrente}
               onChange={handleRecorrenciaChange}
             />
-            
+
           </label>
         </div>
 
@@ -150,16 +161,16 @@ const ModalBloqueio = ({
         )}
 
         <div className="modal-footer">
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="submit-button"
             disabled={loading}
           >
             {loading ? 'Salvando...' : 'Salvar Bloqueio'}
           </button>
           {slot && (
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="remover-button"
               onClick={onRemover}
               disabled={loading}
@@ -167,8 +178,8 @@ const ModalBloqueio = ({
               Remover
             </button>
           )}
-          <button 
-            type="button" 
+          <button
+            type="button"
             className="cancelar-button"
             onClick={onClose}
           >
