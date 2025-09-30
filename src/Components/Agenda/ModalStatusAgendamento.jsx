@@ -35,7 +35,8 @@ const ModalStatusAgendamento = ({ evento, onClose, onStatusChange }) => {
             <h5>Horas: {evento?.start ? `Início: ${evento.start.getHours().toString().padStart(2, '0')}:00 -`: ''} {evento?.end ? `Término:${evento.end.getHours().toString().padStart(2, '0')}:00`: ''}</h5>
             {evento.status === 'pendente' && (
                 <>
-                <input type="text" placeholder="Motivo em caso de cancelamento(opcional)" value={motivo} onChange={(e) => setMotivo(e.target.value)}  className="input-motivo" />
+                
+                {/* <input type="text" placeholder="Motivo em caso de cancelamento(opcional)" value={motivo} onChange={(e) => setMotivo(e.target.value)}  className="input-motivo" /> */}
                 <div className="button-group">
                     <button className="btn-confirmar" onClick={() => handleStatusChange('confirmado')}>Confirmar</button>
                     <button className="btn-rejeitar" onClick={() => handleStatusChange('rejeitado')}>Rejeitar</button>

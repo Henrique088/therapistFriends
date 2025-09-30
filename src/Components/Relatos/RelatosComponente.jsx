@@ -192,6 +192,15 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
       .then(async (resp) => {
         const data = await resp.json();
         if (!resp.ok) throw new Error(data.erro || 'Erro ao solicitar conversa');
+        // Atualiza o relato localmente para refletir a mudança
+        setRelatos((prevRelatos) =>
+          prevRelatos.map((r) =>
+            r.id === relato.id ? { ...r, profissional_id: usuario.id } : r
+          )
+        );
+        return data;
+      })
+      .then(() => {
         toast.success('Solicitação de conversa enviada com sucesso!');
       })
       .catch((err) => {
