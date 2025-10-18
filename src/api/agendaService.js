@@ -63,5 +63,10 @@ export const AgendaService = {
   async updateBloqueio(id, updates) {
     const response = await api.put(`bloqueio/${id}`, updates);
     return response.data;
+  },
+
+  async cancelarAgendamento(id){
+    const response = await api.delete(`agendamento/cancelar/${id}`)
+    return response.data.erro;
   }
 };

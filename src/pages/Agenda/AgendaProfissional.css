@@ -30,7 +30,8 @@
 .agenda-header h1 {
   font-size: 1.4rem;
   color: #333;
-  margin: 0;
+  margin: 25px;
+  
 }
 
 .btn-disponibilidade {
@@ -129,5 +130,21 @@ td {
 @media (max-width: 768px) {
   table{
     font-size: 0.9rem;
+  }
+
+  .agenda-header {
+    flex-direction: column;
+    align-items: flex-start;
+    height: auto;
+   
+    gap: 10px;
+    padding: 1rem;
+  }
+
+  .agenda-header h1 {
+    font-size: 1.2rem;
+    /* margin: 0; */
+    /* margin-top: 40px; */
+    margin-left: 35px;
   }
 }

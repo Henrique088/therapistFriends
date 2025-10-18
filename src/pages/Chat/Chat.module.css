@@ -1,15 +1,23 @@
-.container {
-  display: flex;
-  height: 100%;
-  width: 100%;
-  /* justify-content:left;  */
+/* Chat.module.css */
 
-  font-Family: Arial, sans-serif;
-  /* gap: 10px; */
-  /* background-color: #1b6de9; */
+/* --------------------------------- */
+/* Estilos Base/Desktop */
+/* --------------------------------- */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
 }
 
-/* Sidebar */
+.container {
+  display: flex;
+  height: 100dvh; /* evita barra branca no mobile */
+  width: 100%;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+
+/* Sidebar (Lista de Conversas) */
 .sidebar {
   width: 25%;
   min-width: 220px;
@@ -19,6 +27,12 @@
   padding: 10px;
   overflow-y: auto;
   background-color: #f8f8f8;
+}
+
+.sidebar h2 {
+  margin-top: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
 }
 
 /* Lista de Conversas */
@@ -37,100 +51,65 @@
   transition: background-color 0.4s;
 }
 
+.itemSelecionado {
+  background-color: #80bde8;
+}
 
+.conteudoConversa {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.badge {
+  background-color: #ff4d4f;
+  color: white;
+  border-radius: 50%;
+  padding: 4px 8px;
+  font-size: 0.8em;
+  font-weight: bold;
+  min-width: 25px;
+  text-align: center;
+}
 
 /* Área do Chat */
 .chatArea {
   flex: 1;
-  /* Faz ocupar todo o espaço restante */
   display: flex;
   flex-direction: column;
-  /* background-color: black; */
-  height: 100vh;
-  /* Garante altura total */
+  height: 100%;
+  overflow: hidden;
 }
 
-/* Mensagens Individuais */
-.mensagem {
-  /* width: 100%; */
-  display: flex;
-  flex-direction: column;
-  padding: 8px;
-  margin-bottom: 5px;
-  /* background-color: #fff; */
-  border: 1px solid #ddd;
-  max-width: 100%;
-  margin-bottom: 10px;
-  padding: 8px 12px;
-  border-radius: 7.5px;
-  position: relative;
-  word-break: break-word;
-  overflow-wrap: break-word;
-}
-
-/* Formulário de Envio */
-.formEnvio {
-  display: flex;
-  padding: 10px;
-  border-top: 1px solid #ccc;
-  background-color: #98cfe1;
-  gap: 10px;
-  width: 100%;
-  justify-content: center;
+/* Header do Chat */
+.chatHeader {
+  display: none; /* oculto no desktop */
   align-items: center;
-}
-
-.input {
-  position: relative;
-  flex: 1;
   padding: 10px;
-  border-radius: 5px;
-  border: 1px dashed #5361e47a;
-  margin-right: 10px;
-  top: 6px;
-
-
-
+  border-bottom: 1px solid #ccc;
+  background-color: #fff;
 }
 
-.botao {
-  padding: 10px 20px;
-  border-radius: 5px;
+.chatHeader h3 {
+  margin: 0;
+  margin-left: 10px;
+  font-size: 1.2rem;
+}
+
+.voltarBtn {
+  background: none;
   border: none;
-  background-color: #06effbb5;
-  color: #000;
+  color: #0f54df;
+  font-size: 2rem;
   cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.botao:hover {
-  background-color: #d2ff5f;
-}
-
-.avatar {
-  width: 40px;
-  height: 40px;
-  background-color: #0fd850;
-  color: white;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
   margin-right: 10px;
+  display: none; /* oculto no desktop */
 }
 
-.horario {
-  font-size: 0.75rem;
-  color: #888;
-}
-
-
-
-/* Estilo geral do container de mensagens */
+/* Mensagens Container */
 .mensagens {
   flex: 1;
-  /* Ocupa todo o espaço vertical restante */
   display: flex;
   flex-direction: column;
   padding: 10px;
@@ -139,62 +118,28 @@
   background-image: url('https://www.transparenttextures.com/patterns/white-wall-3.png');
 }
 
-
-
-/* Mensagens enviadas (à direita) */
-/* .direita {
+/* Mensagem Individual */
+.mensagem {
   display: flex;
-  justify-content: flex-end;
-} */
+  flex-direction: column;
+  max-width: 70%;
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  border-radius: 7.5px;
+  position: relative;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
 
+/* Mensagens Enviadas (Direita) */
 .mensagem.enviada {
   background-color: #c6e6f8;
   color: #000;
   margin-left: auto;
   border-top-right-radius: 0;
-}
-
-/* Mensagens recebidas (à esquerda) */
-/* .esquerda {
-  display: flex;
-  justify-content: flex-start;
-} */
-
-.mensagem.recebida {
-  background-color: #fff;
-  color: #000;
-  margin-right: auto;
-  border-top-left-radius: 0;
-}
-
-/* Estilo para o horário */
-.horario {
-  font-size: 11px;
-  color: #667781;
-  margin-left: 8px;
-  margin-top: auto;
-  /* margin-bottom: -5px; */
-  white-space: nowrap;
-}
-
-/* Alinhamento do horário nas mensagens enviadas */
-.direita .horario {
   align-self: flex-end;
 }
 
-/* Alinhamento do horário nas mensagens recebidas */
-.esquerda .horario {
-  align-self: flex-end;
-}
-
-/* Estilo para o texto do remetente */
-.mensagem strong {
-  font-weight: 500;
-  display: inline-block;
-  margin-bottom: 2px;
-}
-
-/* Efeito de bolha no WhatsApp */
 .mensagem.enviada:after {
   content: "";
   position: absolute;
@@ -204,6 +149,15 @@
   height: 10px;
   background-color: #c6e6f8;
   transform: rotate(45deg);
+}
+
+/* Mensagens Recebidas (Esquerda) */
+.mensagem.recebida {
+  background-color: #fff;
+  color: #000;
+  margin-right: auto;
+  border-top-left-radius: 0;
+  align-self: flex-start;
 }
 
 .mensagem.recebida:before {
@@ -217,25 +171,49 @@
   transform: rotate(45deg);
 }
 
+/* Detalhes da Mensagem */
+.mensagemTopo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.nome_remetente {
+  color: inherit;
+  text-decoration: none;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
 .nome {
   color: #0f54df;
 }
 
 .nome_02 {
   color: #0cc033;
-
 }
 
-/* .acoes {
+.mensagemRodape {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
   margin-top: 5px;
 }
-.acoes button {
-  margin-right: 5px;
-  padding: 4px 8px;
-  font-size: 0.8rem;
-  cursor: pointer;
-} */
 
+.horario {
+  font-size: 11px;
+  color: #667781;
+  margin-left: 8px;
+  white-space: nowrap;
+}
+
+.lida {
+  color: #34b7f1;
+  font-size: 1em;
+}
+
+/* Menu de Ações */
 .menuContainer {
   position: relative;
   display: inline-block;
@@ -276,54 +254,213 @@
   background-color: #f0f0f0;
 }
 
-.mensagemTopo {
+/* Formulário de Envio */
+.formEnvio {
+  flex-shrink: 0;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.nome_profissional {
-  color: #0f54df;
-  text-decoration: none;
-}
-
-.nome_remetente {
-  color: #0f54df;
-  text-decoration: none;
-}
-
-/* Container para alinhar o nome e o badge */
-.conteudoConversa {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+  background-color: #98cfe1;
+  gap: 10px;
   width: 100%;
-}
-
-/* Estilo do badge de notificação */
-.badge {
-  background-color: #ff4d4f;
-  /* Cor vermelha */
-  color: white;
-  border-radius: 50%;
-  padding: 4px 8px;
-  font-size: 0.8em;
-  font-weight: bold;
-  min-width: 25px;
-  /* Garante que a bolinha não fique pequena */
-  text-align: center;
-}
-
-.itemSelecionado {
-  background-color: #80bde8;
-  /* Cor de fundo diferente para o item selecionado */
-}
-
-.mensagemRodape {
-  display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
-  margin-bottom: -5px;
-  /* gap: 5px; */
-  /* margin-top: 5px; */
+}
+
+.input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px dashed #5361e47a;
+  resize: none;
+  min-height: 40px;
+}
+
+.botao {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: #06effbb5;
+  color: #000;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.botao:hover {
+  background-color: #d2ff5f;
+}
+
+.botao:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* --------------------------------- */
+/* MOBILE (até 768px) */
+/* --------------------------------- */
+@media (max-width: 768px) {
+  .container {
+    width: 100vw;
+    overflow-x: hidden;
+  }
+
+  /* Header fixo no topo */
+  .chatHeader {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    background-color: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    z-index: 20;
+  }
+
+  /* Ajuste: espaço abaixo do header */
+  .chatAtivoMobile .mensagens {
+    margin-top: 60px;
+  }
+
+  .chatAtivoMobile > :first-child {
+    display: none !important;
+  }
+
+  .sidebar {
+    position: absolute;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    z-index: 5;
+    border-right: none;
+    left: 0;
+    padding-top: 50px;
+  }
+
+  .chatArea {
+    width: 100%;
+    position: absolute;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .voltarBtn {
+    display: block;
+    background: none;
+    border: none;
+    color: #0f54df;
+    font-size: 2rem;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+
+  .ocultarMobile {
+    display: none !important;
+  }
+
+  /* Ajustes de espaçamento e proporção */
+  .mensagem {
+    max-width: 90%;
+  }
+
+  .formEnvio {
+    padding: 8px;
+    gap: 5px;
+  }
+
+  .input {
+    padding: 8px;
+  }
+
+  .botao {
+    padding: 8px 15px;
+  }
+}
+
+
+@media (max-width: 1200px) and (orientation: landscape) {
+
+.container {
+    width: 100vw;
+    overflow-x: hidden;
+  }
+
+  /* Header fixo no topo */
+  .chatHeader {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    background-color: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    z-index: 20;
+  }
+
+  /* Ajuste: espaço abaixo do header */
+  .chatAtivoMobile .mensagens {
+    margin-top: 60px;
+  }
+
+  .chatAtivoMobile > :first-child {
+    display: none !important;
+  }
+
+  .sidebar {
+    position: absolute;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    z-index: 5;
+    border-right: none;
+    left: 0;
+    padding-top: 50px;
+  }
+
+  .chatArea {
+    width: 100%;
+    position: absolute;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .voltarBtn {
+    display: block;
+    background: none;
+    border: none;
+    color: #0f54df;
+    font-size: 2rem;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+
+  .ocultarMobile {
+    display: none !important;
+  }
+
+  /* Ajustes de espaçamento e proporção */
+  .mensagem {
+    max-width: 90%;
+  }
+
+  .formEnvio {
+    padding: 8px;
+    gap: 5px;
+  }
+
+  .input {
+    padding: 8px;
+  }
+
+  .botao {
+    padding: 8px 15px;
+  }
+
 }

@@ -1,0 +1,96 @@
+/* src/Components/Agenda/ModalCancelamento.css */
+
+/* Estilo para a sobreposição escura (fundo do modal) */
+.OverlayCancelamento {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Estilo para o conteúdo principal do modal */
+.ModalCancelamento {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 450px; /* Tamanho razoável para um modal de confirmação */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    outline: none; /* Remove o foco padrão */
+}
+
+.ModalCancelamento h2 {
+    color: #cc0000; /* Cor para o título de cancelamento */
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.ModalCancelamento p {
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.ModalCancelamento strong {
+    font-weight: bold;
+}
+
+.alerta-erro {
+    color: #cc0000;
+    font-weight: bold;
+    border: 1px solid #ffcccc;
+    padding: 10px;
+    background-color: #fff0f0;
+    border-radius: 4px;
+}
+
+.alerta-sucesso {
+    color: #28a745;
+    font-weight: bold;
+    border: 1px solid #c3e6cb;
+    padding: 10px;
+    background-color: #d4edda;
+    border-radius: 4px;
+}
+
+.botoes-modal {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.botao-cancelar {
+    background-color: #cc0000;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.botao-cancelar:hover {
+    background-color: #990000;
+}
+
+.botao-fechar {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.botao-fechar:hover {
+    background-color: #e0e0e0;
+}

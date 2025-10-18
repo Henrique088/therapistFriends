@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useUser } from './UserContext';
 import { useSocket } from './SocketContext';
+import api from '../api/apiConfig';
 
 const ChatContext = createContext();
 
@@ -16,18 +17,16 @@ export const ChatProvider = ({ children }) => {
 
     const fetchInitialUnreadCounts = async () => {
       try {
-        const response = await fetch('http://localhost:3001/conversas/nao-lidas', {
-          credentials: 'include',
-        });
-        if (!response.ok) throw new Error('Erro ao buscar contagem de mensagens não lidas');
-        const data = await response.json();
+        const response = await api.get('/conversas/nao-lidas');
         
-        setUnreadChatCount(data.totalNaoLidas || 0);
-        setConversationUnreadCounts(data.contagensPorConversa || {});
+        setUnreadChatCount(response.data.totalNaoLidas || 0);
+        setConversationUnreadCounts(response.data.contagensPorConversa || {});
+        
       } catch (error) {
-        console.error('Erro na chamada inicial:', error);
+        console.error('Erro na chamada inicial:', error.response?.data || error.message);
       }
     };
+    
     fetchInitialUnreadCounts();
   }, [usuario]);
 
@@ -35,7 +34,7 @@ export const ChatProvider = ({ children }) => {
   useEffect(() => {
     if (!socket || !usuario) return;
 
-    // NOVO: Listener para o evento 'nova_mensagem_chat'
+    // Listener para o evento 'nova_mensagem_chat'
     const handleNewMessageChat = (payload) => {
       // Incrementa a contagem global apenas se a mensagem for de outro usuário
       if (payload.remetenteId !== usuario.id) {

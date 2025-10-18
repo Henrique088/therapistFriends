@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import './ModalCadastroProfissional.css';
 import { useUser } from '../../contexts/UserContext';
-
+import api from '../../api/apiConfig'; 
 
 Modal.setAppElement('#root');
 
@@ -77,6 +77,7 @@ export default function ModalCadastroProfissional({ isOpen, onClose, token }) {
     const regex = /^CRP-\d{2}\/\d{5}$/;
     return regex.test(crp);
   };
+
   const formatCPF = (value) => {
     return value
       .replace(/\D/g, '')
@@ -96,58 +97,55 @@ export default function ModalCadastroProfissional({ isOpen, onClose, token }) {
 
   const SalvarDados = async (event) => {
     event.preventDefault();
+    
+    // Validações
+    if (!cpfValido) {
+      toast.error('Por favor, insira um CPF válido.');
+      return;
+    }
+
     const telefoneFormatado = formatarTelefone(form.telefone);
     const cpfFormatado = formatCPF(form.cpf);
 
     setSalvando(true);
-    fetch('http://localhost:3001/profissionais', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+
+    try {
+      const dadosProfissional = {
         telefone: telefoneFormatado || usuario?.telefone,
         cpf: cpfFormatado || usuario?.cpf,
         crp: form.crp.toUpperCase() || usuario?.crp,
         bio: form.bio.trim() || usuario?.bio,
         especialidades: form.especialidades.split(',').map(e => e.trim()).filter(e => e).join(', ') || usuario?.especialidades,
-      }),
-    })
-      .then(async (resp) => {
-        const data = await resp.json();
-        if (!resp.ok) throw new Error(data.erro || 'Erro ao salvar');
-        toast.success('Dados salvos com sucesso!');
-        onClose(); // fecha o modal no componente pai
-      })
-      .catch((err) => {
-        toast.error(err.message);
-        console.error(err);
-      })
-      .finally(() => setSalvando(false));
+      };
+
+      await api.post('/profissionais', dadosProfissional);
+      
+      toast.success('Dados salvos com sucesso!');
+      onClose(); // fecha o modal no componente pai
+      
+    } catch (error) {
+      const errorMessage = error.response?.data?.erro || 'Erro ao salvar dados';
+      toast.error(errorMessage);
+      console.error('Erro ao salvar dados profissionais:', error);
+    } finally {
+      setSalvando(false);
+    }
   };
 
   async function logout(e) {
     e.preventDefault();
 
     try {
-      const resposta = await fetch('http://localhost:3001/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      });
+      await api.post('/auth/logout');
+      
+      toast.success('Volte sempre! Saindo...', { autoClose: 2000 });
 
-      if (resposta.ok) {
-        toast.success('Volte sempre! Saindo...', { autoClose: 2000 });
-
-        setTimeout(() => {
-          setRedirect(true);
-        }, 2000);
-      }
-    } catch (erro) {
-      console.error('Erro no logout:', erro);
+      setTimeout(() => {
+        setRedirect(true);
+      }, 2000);
+      
+    } catch (error) {
+      console.error('Erro no logout:', error.response?.data || error.message);
       setRedirect(true);
     }
   }
@@ -158,10 +156,7 @@ export default function ModalCadastroProfissional({ isOpen, onClose, token }) {
     return <Navigate to="/login" replace />;
   }
 
-
   return (
-
-
     usuario?.dadosCompletos && usuario?.validado === null ? (
       <div className="aguarde-validacao">
         <h2>Cadastro em Análise</h2>
@@ -189,6 +184,7 @@ export default function ModalCadastroProfissional({ isOpen, onClose, token }) {
             value={usuario?.telefone || formatarTelefone(form.telefone)}
             onChange={handleChange}
             required
+            disabled={salvando}
           />
           <input
             type="text"
@@ -198,6 +194,7 @@ export default function ModalCadastroProfissional({ isOpen, onClose, token }) {
             onChange={handleChangeCpf}
             maxLength={14}
             required
+            disabled={salvando}
           />
           {!cpfValido && <span className="error">CPF inválido</span>}
           <input
@@ -207,6 +204,7 @@ export default function ModalCadastroProfissional({ isOpen, onClose, token }) {
             value={usuario?.crp || form.crp}
             onChange={handleChange}
             required
+            disabled={salvando}
           />
           <textarea
             name="bio"
@@ -214,6 +212,7 @@ export default function ModalCadastroProfissional({ isOpen, onClose, token }) {
             value={usuario?.bio || form.bio}
             onChange={handleChange}
             required
+            disabled={salvando}
           />
           <input
             type="text"
@@ -222,10 +221,13 @@ export default function ModalCadastroProfissional({ isOpen, onClose, token }) {
             value={usuario?.especialidades || form.especialidades}
             onChange={handleChange}
             required
+            disabled={salvando}
           />
           <div className="modal-actions">
-            <button onClick={logout} className='sair-btn'>Sair</button>
-            <button type="submit" className="submit-btn" disabled={salvando}>
+            <button onClick={logout} className='sair-btn' disabled={salvando}>
+              Sair
+            </button>
+            <button type="submit" className="submit-btn" disabled={salvando || !cpfValido}>
               {salvando ? 'Salvando...' : 'Salvar'}
             </button>
           </div>

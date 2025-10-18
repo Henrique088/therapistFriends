@@ -1,75 +1,65 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FiMail, FiLock } from 'react-icons/fi';
 import styles from './Login.module.css';
 import lobo from '../../img/lobo.png';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import api from '../../api/apiConfig';
+import { useUser } from '../../contexts/UserContext';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const { setUsuario,fetchUsuario } = useUser();
+  const navigate = useNavigate();
+  
 
   async function handleLogin(e) {
-    if (email === '' || senha === '') {
+    e.preventDefault();
+
+    if (!email || !senha) {
       toast.error('Por favor, preencha todos os campos.');
       return;
     }
-  try{
-  const resposta = await fetch('http://localhost:3001/auth/login', {
-  method: 'POST',
-  credentials: 'include', // garante envio/recebimento de cookies
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({ email, senha }),
-});
-  const dados = await resposta.json();
-      console.log(dados);
-      if (resposta.ok && dados.info) {
-        localStorage.setItem('info', JSON.stringify(dados.info));
-        // Redireciona com base no tipo do usuário
-        if (dados.info.tipo_usuario === 'paciente') {
-          window.location.href = '/dashboard-Paciente';
-        } 
-        else if (dados.info.tipo_usuario === 'profissional') {
-          window.location.href = '/dashboard-Profissional';
-        } 
-        else if (dados.info.tipo_usuario === 'admin') {
-          window.location.href = '/admin/dashboard';
-        } 
-        else {
-          window.location.href = '/';
-        }
-      } else {
 
-        
-        if(dados.msg === 'Senha incorreta.'){
-          setSenha('');
-        }
-        else{
-          setEmail('');
-        }
-        
-        toast.error(dados.msg)
-        // alert(dados.msg || 'Erro ao fazer login.');
-      }
-    } catch (erro) {
-      console.error('Erro ao logar:', erro);
-      toast.error('Erro no servidor.');
-    }
-  
-  };
+    try {
+  const resposta = await api.post('/auth/login', { email, senha },{ withCredentials: true });
+
+  // Login OK
+  const { info } = resposta.data;
+  localStorage.setItem('userAuthInfo', JSON.stringify(info));
+  await fetchUsuario();
+
+  if (info.tipo_usuario === 'paciente') navigate('/dashboard-paciente');
+  else if (info.tipo_usuario === 'profissional') navigate('/dashboard-profissional');
+  else if (info.tipo_usuario === 'admin') navigate('/admin/dashboard');
+  else navigate('/');
+} catch (erro) {
+  if (erro.response) {
+    // Backend respondeu com erro tratado (401, 400, etc)
+    const dados = erro.response.data;
+
+    if (dados.msg === 'Senha incorreta.') setSenha('');
+    if (dados.msg === 'Usuário não encontrado.') setEmail('');
+
+    toast.error(dados.msg || 'Falha ao fazer login.');
+  } else {
+    // Sem resposta (erro de rede, servidor off, etc)
+    toast.error('Erro de conexão com o servidor.');
+  }
+}
+  }
+
   return (
     <div className={styles.loginContainer}>
-      <form className={styles.formSection} onSubmit={(e) => e.preventDefault()}>
+      <form className={styles.formSection} onSubmit={handleLogin}>
         <h1 className={styles.title}>Login</h1>
 
         <div className={styles.inputGroup}>
           <FiMail className={styles.icon} />
-          <input 
-            type="email" 
-            id="email" 
+          <input
+            type="email"
             placeholder="Digite seu E-mail"
             className={styles.input}
             value={email}
@@ -79,19 +69,23 @@ function Login() {
 
         <div className={styles.inputGroup}>
           <FiLock className={styles.icon} />
-          <input 
-            type="password" 
-            id="senha" 
+          <input
+            type="password"
             placeholder="Digite sua senha"
             className={styles.input}
             value={senha}
-            onChange={(e) => setSenha(e.target.value)} 
+            onChange={(e) => setSenha(e.target.value)}
           />
         </div>
 
-        <button className={styles.loginButton} onClick={handleLogin}>Entrar</button>
-        <button className={styles.loginButtonGoogle}>
-          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google" className={styles.googleIcon} />
+        <button type="submit" className={styles.loginButton}>Entrar</button>
+
+        <button type="button" className={styles.loginButtonGoogle}>
+          <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
+            alt="Google"
+            className={styles.googleIcon}
+          />
           <span>Entrar com o Google</span>
         </button>
 
@@ -103,11 +97,7 @@ function Login() {
       </form>
 
       <div className={styles.imageSection}>
-        <img 
-          src={lobo} 
-          alt="Lobo" 
-          className={styles.wolfImage}
-        />
+        <img src={lobo} alt="Lobo" className={styles.wolfImage} />
       </div>
     </div>
   );

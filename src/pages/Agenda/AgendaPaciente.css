@@ -37,3 +37,49 @@ td {
     padding: 5px 10px;
     background-color: #f8f9fa;
 }
+
+/* Adicione isso em AgendaPaciente.css para estilizar o ícone de informação */
+.header-agenda {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Alinhar à esquerda */
+    margin-bottom: 10px;
+    gap: 15px;
+}
+
+.icone-info {
+    width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.icone-info:hover {
+    background-color: #0056b3;
+  transform: scale(1.1);
+}
+
+.cabeca{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+
+/* Responsividade */
+@media (max-width: 768px) {
+    
+
+    .cabeca h1 {
+        font-size: 1.2rem;
+    }
+}

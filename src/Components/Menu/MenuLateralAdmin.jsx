@@ -13,74 +13,80 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Navigate } from 'react-router-dom';
 import { useUser } from '../../contexts/UserContext';
 import { AiOutlineCaretRight, AiOutlineCaretLeft } from "react-icons/ai";
+import api from '../../api/apiConfig'; 
 
 function MenuLateralAdmin() {
     const [menuCollapsed, setMenuCollapsed] = useState(false);
+    const [loading, setLoading] = useState(false);
     const location = useLocation();
     const isProfissionalPage = location.pathname === '/profissionais';
     const [redirect, setRedirect] = useState(null);
     const { usuario, setUsuario } = useUser();
 
-
     const toggleMenu = () => {
         setMenuCollapsed(!menuCollapsed);
-      };
-    
-      useEffect(() => {
-        if (isProfissionalPage ) {
-          setMenuCollapsed(true);
-        }
-      }, [isProfissionalPage]);
+    };
 
-      async function logout(e) {
-          e.preventDefault();
-      
-          try {
-            const resposta = await fetch('http://localhost:3001/auth/logout', {
-              method: 'POST',
-              credentials: 'include',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-            });
-      
-            if (resposta.ok) {
-              toast.success('Volte sempre! Saindo...', { autoClose: 2000 });
-              
-              setTimeout(() => {
+    useEffect(() => {
+        if (isProfissionalPage) {
+            setMenuCollapsed(true);
+        }
+    }, [isProfissionalPage]);
+
+    async function logout(e) {
+        e.preventDefault();
+        
+        if (loading) return;
+        
+        setLoading(true);
+
+        try {
+            await api.post('/auth/logout');
+            
+            toast.success('Volte sempre! Saindo...', { autoClose: 2000 });
+            
+            setTimeout(() => {
                 setRedirect(true);
-              }, 2000);
-            }
-          } catch (erro) {
-            console.error('Erro no logout:', erro);
+            }, 2000);
+            
+        } catch (error) {
+            console.error('Erro no logout:', error.response?.data || error.message);
+            // Mesmo com erro, redireciona para login
             setRedirect(true);
-          }
+        } finally {
+            setLoading(false);
         }
-      
-        if (redirect) {
-          setUsuario(null);
-          console.log('Usuário desconectado');
-          return <Navigate to="/login" replace />;
-        }
-  return (
-    <aside className={`menu-admin ${menuCollapsed ? 'collapsed' : ''}`}>
-      <h2 className="menu-titulo">{!menuCollapsed && 'Painel Admin'}</h2>
-      <nav>
-        <ul>
-          <li><Link to="/admin/dashboard"><RxBarChart/> {!menuCollapsed && 'Dashboard'}</Link></li>
-          <li><Link to="/admin/usuarios"><FaUsers/> {!menuCollapsed && 'Usuários'}</Link></li>
-          <li><Link to="/admin/profissionais"><FaHandHoldingMedical/> {!menuCollapsed && 'Profissionais'}</Link></li>
-          <li><Link to="/admin/pacientes"><GiMedicalDrip/> {!menuCollapsed && 'Pacientes'}</Link></li>
-          <li><Link to=""  ><BsGearWide/> {!menuCollapsed && 'Configurações'}</Link></li>
-            <li><Link to="" onClick={logout} ><GiExitDoor/> {!menuCollapsed && 'Sair'}</Link></li>
-        </ul>
-      </nav>
+    }
 
-      <button className="toggle-button" onClick={toggleMenu}>
-                    {menuCollapsed ? <AiOutlineCaretRight /> : <AiOutlineCaretLeft />}
-                  </button>
-    </aside>
-  );
+    if (redirect) {
+        setUsuario(null);
+        console.log('Usuário desconectado');
+        return <Navigate to="/login" replace />;
+    }
+
+    return (
+        <aside className={`menu-admin ${menuCollapsed ? 'collapsed' : ''}`}>
+            <h2 className="menu-titulo">{!menuCollapsed && 'Painel Admin'}</h2>
+            <nav>
+                <ul>
+                    <li><Link to="/admin/dashboard"><RxBarChart/> {!menuCollapsed && 'Dashboard'}</Link></li>
+                    <li><Link to="/admin/usuarios"><FaUsers/> {!menuCollapsed && 'Usuários'}</Link></li>
+                    <li><Link to="/admin/profissionais"><FaHandHoldingMedical/> {!menuCollapsed && 'Profissionais'}</Link></li>
+                    <li><Link to="/admin/pacientes"><GiMedicalDrip/> {!menuCollapsed && 'Pacientes'}</Link></li>
+                    <li><Link to=""><BsGearWide/> {!menuCollapsed && 'Configurações'}</Link></li>
+                    <li>
+                        <Link to="" onClick={logout} disabled={loading}>
+                            <GiExitDoor/> {!menuCollapsed && (loading ? 'Saindo...' : 'Sair')}
+                        </Link>
+                    </li>
+                </ul>
+            </nav>
+
+            <button className="toggle-button" onClick={toggleMenu}>
+                {menuCollapsed ? <AiOutlineCaretRight /> : <AiOutlineCaretLeft />}
+            </button>
+        </aside>
+    );
 }
 
 export default MenuLateralAdmin;

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import MenuLateralAdmin from '../../Components/Menu/MenuLateralAdmin';
 import './ProfissionaisAdmin.css';
+import api from '../../api/apiConfig'; 
 
 function ProfissionaisAdmin() {
   const [profissionais, setProfissionais] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // controle do modal
   const [modalOpen, setModalOpen] = useState(false);
@@ -16,21 +18,20 @@ function ProfissionaisAdmin() {
 
   const [busca, setBusca] = useState('');
   const [statusFiltro, setStatusFiltro] = useState('todos');
-  
 
   useEffect(() => {
     buscarProfissionais();
   }, []);
 
   const buscarProfissionais = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      const res = await fetch('http://localhost:3001/admin/profissionais', 
-         { credentials: 'include' },
-      );
-      const data = await res.json();
-      setProfissionais(data);
-    } catch (err) {
-      console.error('Erro ao buscar profissionais', err);
+      const response = await api.get('/admin/profissionais');
+      setProfissionais(response.data);
+    } catch (error) {
+      console.error('Erro ao buscar profissionais:', error);
+      setError('Erro ao carregar lista de profissionais');
     } finally {
       setLoading(false);
     }
@@ -46,13 +47,12 @@ function ProfissionaisAdmin() {
   const abrirHistorico = async (prof) => {
     setProfissionalSelecionado(prof);
     try {
-      const res = await fetch(`http://localhost:3001/admin/profissionais/${prof.id_usuario}/historico`,  { credentials: 'include' }
-      );
-      const hist = await res.json();
-      setHistorico(hist);
+      const response = await api.get(`/admin/profissionais/${prof.id_usuario}/historico`);
+      setHistorico(response.data);
       setHistoricoOpen(true);
-    } catch (err) {
-      console.error('Erro ao buscar histórico', err);
+    } catch (error) {
+      console.error('Erro ao buscar histórico:', error);
+      alert('Erro ao carregar histórico');
     }
   };
 
@@ -63,46 +63,70 @@ function ProfissionaisAdmin() {
     }
 
     try {
-      await fetch('http://localhost:3001/admin/profissionais/validacao', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-            
-        },
-        body: JSON.stringify({
-          profissional_id: profissionalSelecionado.id_usuario,
-          status,
-          motivo
-        })
+      await api.post('/admin/profissionais/validacao', {
+        profissional_id: profissionalSelecionado.id_usuario,
+        status,
+        motivo
       });
 
       alert('Decisão registrada com sucesso!');
       setModalOpen(false);
       buscarProfissionais();
-    } catch (err) {
-      console.error('Erro ao registrar decisão', err);
-      alert('Falha ao registrar decisão.');
+    } catch (error) {
+      console.error('Erro ao registrar decisão:', error);
+      const errorMessage = error.response?.data?.message || 'Falha ao registrar decisão.';
+      alert(errorMessage);
     }
   };
 
-  if (loading) return <p>Carregando...</p>;
+  if (loading) {
+    return (
+      <div className="admin-container">
+        <MenuLateralAdmin />
+        <div className="admin-content">
+          <h1>Profissionais</h1>
+          <p>Carregando...</p>
+        </div>
+      </div>
+    );
+  }
 
+  if (error) {
+    return (
+      <div className="admin-container">
+        <MenuLateralAdmin />
+        <div className="admin-content">
+          <h1>Profissionais</h1>
+          <p className="error">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   const profissionaisFiltrados = profissionais.filter((p) => {
     const termo = busca.toLowerCase();
-    const correspondeTexto = p.usuario.nome.toLowerCase().includes(termo) || p.usuario.email.toLowerCase().includes(termo) || p.telefone.includes(termo) || p.crp.includes(termo);
+    const correspondeTexto = 
+      p.usuario?.nome?.toLowerCase().includes(termo) || 
+      p.usuario?.email?.toLowerCase().includes(termo) || 
+      p.telefone?.includes(termo) || 
+      p.crp?.toLowerCase().includes(termo);
+    
     const correspondeStatus =
-      statusFiltro === 'todos' ? true : statusFiltro === 'validados' ? p.validado === true : statusFiltro === 'nao_validados' ? p.validado === false : p.validado === null;
+      statusFiltro === 'todos' ? true : 
+      statusFiltro === 'validados' ? p.validado === true : 
+      statusFiltro === 'naoValidados' ? p.validado === false : 
+      p.validado === null;
+    
     return correspondeTexto && correspondeStatus;
   });
+
   return (
     <div className="admin-container">
       <MenuLateralAdmin />
       <div className="admin-content">
         <h1>Profissionais</h1>
 
-         <div className="filtro-container">
+        <div className="filtro-container">
           <input
             type="text"
             placeholder="Buscar por nome, email, telefone ou CRP..."
@@ -116,6 +140,7 @@ function ProfissionaisAdmin() {
             <option value="todos">Todos</option>
             <option value="validados">Validados</option>
             <option value="naoValidados">Não Validados</option>
+            <option value="pendentes">Pendentes</option>
           </select>
         </div>
 
@@ -134,32 +159,33 @@ function ProfissionaisAdmin() {
           <tbody>
             {profissionaisFiltrados.length === 0 ? (
               <tr>
-                <td colSpan="6" style={{ textAlign: 'center' }}>
+                <td colSpan="7" style={{ textAlign: 'center' }}>
                   Nenhum profissional encontrado
                 </td>
               </tr>
             ) : (
               profissionaisFiltrados.map((p) => (
-                // ... (dentro do seu map) ...
-
-<tr key={p.id_usuario}>
-    <td data-label="Nome">{p.usuario.nome}</td>
-    <td data-label="Email">{p.usuario.email}</td>
-    <td data-label="Telefone">{p.telefone}</td>
-    <td data-label="CPF">{p.cpf}</td>
-    <td data-label="CRP">{p.crp}</td>
-    <td data-label="Validado">{p.validado === true ? 'Sim' : p.validado === false ? 'Não' : 'Em espera'}</td>
-    <td data-label="Ações">
-        <button className='validar_reprovar' onClick={() => abrirModal(p)}>Validar/Reprovar</button>
-        <button className='historico' onClick={() => abrirHistorico(p)}>Histórico</button>
-    </td>
-</tr>
-
-// ...
+                <tr key={p.id_usuario}>
+                  <td data-label="Nome">{p.usuario?.nome}</td>
+                  <td data-label="Email">{p.usuario?.email}</td>
+                  <td data-label="Telefone">{p.telefone}</td>
+                  <td data-label="CPF">{p.cpf}</td>
+                  <td data-label="CRP">{p.crp}</td>
+                  <td data-label="Validado">
+                    {p.validado === true ? '✅ Sim' : p.validado === false ? '❌ Não' : '⏳ Em espera'}
+                  </td>
+                  <td data-label="Ações">
+                    <button className='validar_reprovar' onClick={() => abrirModal(p)}>
+                      Validar/Reprovar
+                    </button>
+                    <button className='historico' onClick={() => abrirHistorico(p)}>
+                      Histórico
+                    </button>
+                  </td>
+                </tr>
               ))
             )}
           </tbody>
-
         </table>
       </div>
 
@@ -181,11 +207,16 @@ function ProfissionaisAdmin() {
               onChange={(e) => setMotivo(e.target.value)}
               placeholder="Descreva o motivo da decisão..."
               rows={4}
+              required
             />
 
             <div className="modal-actions">
-              <button className='btn_salvar' onClick={enviarDecisao}>Salvar</button>
-              <button className='btn_cancelar' onClick={() => setModalOpen(false)}>Cancelar</button>
+              <button className='btn_salvar' onClick={enviarDecisao}>
+                Salvar
+              </button>
+              <button className='btn_cancelar' onClick={() => setModalOpen(false)}>
+                Cancelar
+              </button>
             </div>
           </div>
         </div>
@@ -194,22 +225,25 @@ function ProfissionaisAdmin() {
       {/* MODAL HISTÓRICO */}
       {historicoOpen && (
         <div className="modal-overlay">
-          <div className="modal">
+          <div className="modal historico-modal">
             <h2>Histórico de {profissionalSelecionado?.usuario?.nome}</h2>
             {historico.length === 0 ? (
               <p>Sem registros.</p>
             ) : (
-              <ul>
+              <ul className="historico-lista">
                 {historico.map((h) => (
-                  <li key={h.id}>
-                    <strong>{new Date(h.data_decisao).toLocaleString()}</strong> - {h.status}  
+                  <li key={h.id} className="historico-item">
+                    <strong>{new Date(h.data_decisao).toLocaleString('pt-BR')}</strong> - 
+                    <span className={`status-${h.status}`}> {h.status}</span>
                     <br />
-                    Motivo: {h.motivo}
+                    <span className="motivo">Motivo: {h.motivo}</span>
                   </li>
                 ))}
               </ul>
             )}
-            <button className='btn_fechar'onClick={() => setHistoricoOpen(false)}>Fechar</button>
+            <button className='btn_fechar' onClick={() => setHistoricoOpen(false)}>
+              Fechar
+            </button>
           </div>
         </div>
       )}

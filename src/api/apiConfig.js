@@ -1,28 +1,42 @@
 import axios from 'axios';
-import { toast } from 'react-toastify';
+
+// Detecta o host atual (localhost, IP, domínio etc)
+const host = window.location.hostname;
+
+// Define a baseURL dinamicamente
+let baseURL;
+if (host === 'localhost' || host === '127.0.0.1') {
+  baseURL = 'http://localhost:3001/';
+} else {
+  baseURL = `http://${host}:3001/`;
+}
+
+// Log para depuração (opcional)
+console.log('🌍 API Base URL:', baseURL);
 
 // Configuração base do Axios
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3001/',
+  baseURL,
   timeout: 30000,
-  withCredentials: true, // Habilita o envio de cookies
-  credentials: 'include', // Garante que credenciais sejam incluídas
+  withCredentials: true, // Habilita envio de cookies
+  credentials: 'include', // Mantém credenciais
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
 });
 
-// Interceptor de requisição (opcional - para adicionar headers adicionais se necessário)
+// Interceptor de resposta
 api.interceptors.response.use(
   (response) => {
-    // Se a resposta tiver dados, retorne-os.
-    // Caso contrário, retorne a resposta completa para que você possa verificar o status
-    // Por exemplo, uma resposta 204 (No Content)
     return response !== undefined ? response : response.msg;
   },
   (error) => {
-    // ... restante do seu código de tratamento de erro
+    if (error.response) {
+      console.error('❌ Erro da API:', error.response.data);
+    } else {
+      console.error('⚠️ Erro de rede:', error.message);
+    }
     return Promise.reject(error);
   }
 );

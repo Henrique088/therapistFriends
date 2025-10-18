@@ -274,3 +274,128 @@ footer .contato a svg {
   margin-right: 10px;
   font-size: 20px;
 }
+
+
+/* Para celular */
+/* Para celular */
+@media (max-width: 768px) {
+  .topo {
+    height: auto;
+    padding-bottom: 10px;
+  }
+  
+  .head {
+    flex-direction: column;
+    height: auto;
+    gap: 20px;
+  }
+
+  .conteudo {
+    padding-top: 80px;
+  }
+  
+  .bemVindo {
+    padding-top: 20%;
+    padding-left: 10px;
+    padding-right: 10px;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .img {
+    width: 100px;
+    height: auto;
+  }
+
+  .texto {
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: justify;
+  }
+
+  .comoFunciona {
+    font-size: 28px;
+    padding-bottom: 40px;
+    text-align: center;
+  }
+
+  .contato {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .card {
+    background: linear-gradient(to right, #E0FFE0, #6ab4e6);
+    width: 320px;
+    height: 250px;
+  }
+
+  /* Ajustes específicos para a fonte dos cards */
+  .card .paragrafo {
+    font-size: 16px; /* Reduzido de 23px */
+    padding: 0 15px;
+    text-align: center;
+  }
+
+  .card__content {
+    padding: 15px;
+  }
+
+  .card__title {
+    font-size: 18px; /* Reduzido de 24px */
+    margin-bottom: 10px;
+  }
+
+  .card__description {
+    font-size: 13px; /* Reduzido de 15px */
+    line-height: 1.4; /* Reduzido de 2.4 */
+    text-align: justify;
+  }
+
+  .f {
+    gap: 40px;
+    padding-bottom: 30px;
+  }
+
+  /* Ajustes para o footer no mobile */
+  footer .criador {
+    font-size: 16px;
+  }
+
+  footer .contato a {
+    font-size: 14px;
+  }
+
+  footer .contato p {
+    font-size: 14px;
+  }
+}
+
+/* Para telas muito pequenas (menos de 400px) */
+@media (max-width: 400px) {
+  .card {
+    width: 280px;
+    height: 230px;
+  }
+
+  .card .paragrafo {
+    font-size: 14px;
+  }
+
+  .card__title {
+    font-size: 16px;
+  }
+
+  .card__description {
+    font-size: 12px;
+    line-height: 1.3;
+  }
+
+  .comoFunciona {
+    font-size: 24px;
+  }
+
+  .texto {
+    font-size: 13px;
+  }
+}

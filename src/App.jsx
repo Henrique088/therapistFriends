@@ -7,6 +7,7 @@ import useNotificacoes from './hooks/useNotificacoes';
 import { UserProvider, useUser } from '../src/contexts/UserContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { ChatProvider } from './contexts/ChatContext';
+import './App.css';
 
 // Importe seus componentes de página
 import Home from './pages/Home';
@@ -67,7 +68,10 @@ function ProtectedRoute({ children, allowedTypes }) {
   }
 
   if (redirect === null || loadingUsuario) {
-    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontSize: '1.5em' }}>Carregando...</div>;
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontSize: '1.5em' }}><div className="z z-1">Z</div>
+      <div className="z z-2">Z</div>
+      <div className="z z-3">Z</div>
+      <div className="z z-4">Z</div></div>;
   }
 
   return children;
@@ -158,7 +162,12 @@ export default function App() {
   if (loadingUsuario) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100vw', backgroundColor: '#f0f0f0', position: 'fixed', top: 0, left: 0, zIndex: 9999 }}>
-        Carregando dados do usuário...
+       
+<div class="z z-1">Z</div>
+<div class="z z-2">Z</div>
+<div class="z z-3">Z</div>
+<div class="z z-4">Z</div>
+
         <ToastContainer />
       </div>
     );

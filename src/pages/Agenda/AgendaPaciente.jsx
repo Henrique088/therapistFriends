@@ -8,11 +8,11 @@ import 'moment/locale/pt-br';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { toast } from 'react-toastify';
 import './AgendaPaciente.css';
-
 import ModalAgendamento from '../../Components/Agenda/ModalAgendamento';
+import ModalCancelamento from '../../Components/Agenda/ModalCancelamento';
+import ModalExplicativo from '../../Components/Agenda/ModalExplicativo';
 import { AgendaService } from '../../api/agendaService';
-
-
+import { MdOutlineQuestionMark } from "react-icons/md";
 
 
 const AgendaPaciente = () => {
@@ -22,6 +22,9 @@ const AgendaPaciente = () => {
     const [dataAtual, setDataAtual] = useState(moment().toDate());
     const [mostrarModalAgendamento, setMostrarModalAgendamento] = useState(false);
     const [slotSelecionado, setSlotSelecionado] = useState(null);
+    const [mostrarModalCancelamento, setMostrarModalCancelamento] = useState(false);
+    const [eventoSelecionado, setEventoSelecionado] = useState(null);
+    const [mostrarModalExplicativo, setMostrarModalExplicativo] = useState(false); 
 
 
     const carregarAgenda = async (inicio, fim) => {
@@ -33,7 +36,7 @@ const AgendaPaciente = () => {
 
             const eventosFormatados = response.data.map(evento => ({
                 ...evento,
-                title: evento.paciente ? `Agendado com ${evento.paciente}` : '',
+                title: evento.title ? evento.title : '',
                 start: new Date(evento.start),
                 end: new Date(evento.end),
             }));
@@ -57,24 +60,96 @@ const AgendaPaciente = () => {
     }, [profissionalId, dataAtual]);
 
 
-
     const handleSelectSlot = ({ start, end, action }) => {
-        // Bloqueia arrastes - apenas permite clicks
-        if (action === 'select') {
+        // Ignora arrastos longos, que podem ocorrer acidentalmente em toque.
+        // Como step é 60, o slot válido é de 60 minutos.
+        const duracaoSelecionada = moment(end).diff(moment(start), 'minutes');
+        if (duracaoSelecionada > 60) {
             return;
         }
 
-        // Permite apenas clicks (action === 'click' ou undefined)
+        // Garante que o slot é exato na hora cheia (ex: 10:00 - 11:00)
         const inicioInteiro = moment(start).startOf('hour');
         const fimInteiro = moment(inicioInteiro).add(1, 'hour');
+
+        // 1. Não permite agendamento no passado
+        if (inicioInteiro.isBefore(moment())) {
+            toast.error('Não é possível agendar um horário no passado.');
+            return;
+        }
+        
+        // 2. Verifica se o slot está ocupado por algum evento (importante para evitar agendamento sobre bloqueios)
+        const slotOcupado = eventos.some(evento => {
+            const eventoStart = moment(evento.start);
+            const eventoEnd = moment(evento.end);
+            
+            // Verifica se o slot de 1 hora se sobrepõe a qualquer evento existente
+            return (
+                (inicioInteiro.isSameOrAfter(eventoStart) && inicioInteiro.isBefore(eventoEnd)) || // Slot começa dentro de um evento
+                (fimInteiro.isAfter(eventoStart) && fimInteiro.isSameOrBefore(eventoEnd)) ||      // Slot termina dentro de um evento
+                (inicioInteiro.isSameOrBefore(eventoStart) && fimInteiro.isSameOrAfter(eventoEnd)) // Evento está dentro do slot
+            );
+        });
+
+        if (slotOcupado) {
+            // Informa ao usuário que o horário não está disponível
+            toast.info('Este horário já está ocupado ou indisponível. Clique em um horário vazio.');
+            return; 
+        }
 
         setSlotSelecionado({ start: inicioInteiro.toDate(), end: fimInteiro.toDate() });
         setMostrarModalAgendamento(true);
     };
 
+
     const onNavigate = (newDate) => {
         // Apenas atualize a data no estado
         setDataAtual(newDate);
+    };
+
+    const verificarPodeCancelar = (eventoStart) => {
+        const agora = moment();
+        const inicioEvento = moment(eventoStart);
+        const diferencaHoras = inicioEvento.diff(agora, 'hours');
+        return diferencaHoras >= 24;
+    };
+
+    const handleCancelamentoConcluido = () => {
+        setMostrarModalCancelamento(false);
+        setEventoSelecionado(null);
+        
+        // Recarrega a agenda após o cancelamento
+        const inicio = moment(dataAtual).startOf('week');
+        const fim = moment(dataAtual).endOf('week');
+        carregarAgenda(inicio, fim);
+        
+        toast.success('Consulta cancelada com sucesso!');
+    };
+
+    const onSelectEvent = (evento) => {
+        console.log('Evento selecionado:', evento);
+        
+        if(evento.title === 'BLOQUEADO' || evento.title === 'OCUPADO') {
+            toast.info('Este horário está bloqueado e não pode ser alterado.');
+            return;
+        }
+
+        // Verifica se é um evento que pode ser cancelado (agendamento do paciente)
+        if ((evento.title === 'PENDENTE' || evento.title === 'CONFIRMADO') && evento.paciente) {
+            const podeCancelar = verificarPodeCancelar(evento.start);
+            
+            if (!podeCancelar) {
+                toast.error('Cancelamento permitido apenas com 24 horas de antecedência.');
+                return;
+            }
+            // alert('Você poderá cancelar este agendamento no próximo passo.');
+            setEventoSelecionado(evento);
+            setMostrarModalCancelamento(true);
+        } else {
+            if(evento.title === 'EM USO') {
+                return
+            }
+        }
     };
 
 
@@ -82,7 +157,7 @@ const AgendaPaciente = () => {
         return {
             style: {
 
-                backgroundColor: event?.title == 'Ocupado' ? '#a0a0a0' : event?.color, // Cor genérica para eventos ocupados
+                backgroundColor: event?.title === 'Ocupado' ? '#a0a0a0' : event?.color, // Cor genérica para eventos ocupados
                 color: 'white',
                 borderRadius: '0px',
                 border: 'none',
@@ -95,7 +170,17 @@ const AgendaPaciente = () => {
     };
     return (
         <div style={{ padding: '20px' }}>
+            <div className='cabeca'>
             <h1>Agenda do Profissional {profissionalNome}</h1>
+            <button 
+                        className="icone-info" 
+                        title="Explicar a agenda"
+                        onClick={() => setMostrarModalExplicativo(true)}
+                    >
+                        <MdOutlineQuestionMark/>
+                    </button>
+
+                    </div>
             <table>
             <thead ></thead>
             <tbody>
@@ -138,7 +223,7 @@ const AgendaPaciente = () => {
                 defaultView="week"
                 selectable
                 onSelectSlot={handleSelectSlot}
-                onSelectEvent={null} // Desabilitado para o paciente
+                onSelectEvent={onSelectEvent} // Desabilitado para o paciente
                 eventPropGetter={eventStyleGetter}
                 toolbar
                 scrollToTime={new Date()}
@@ -166,6 +251,27 @@ const AgendaPaciente = () => {
                     }}
                 />
             )}
+
+            {mostrarModalCancelamento && (
+                <ModalCancelamento
+                    isOpen={mostrarModalCancelamento}
+                    onRequestClose={() => setMostrarModalCancelamento(false)}
+                    evento={eventoSelecionado}
+                    onCancelamentoConcluido={() => {
+                        // Recarrega a agenda após o cancelamento
+                        setMostrarModalCancelamento(false);
+                        const inicio = moment(dataAtual).startOf('week');
+                        const fim = moment(dataAtual).endOf('week');
+                        carregarAgenda(inicio, fim);
+                    }}
+                />
+            )}
+
+            <ModalExplicativo
+                isOpen={mostrarModalExplicativo}
+                onRequestClose={() => setMostrarModalExplicativo(false)}
+            />
+
         </div>
     );
 };

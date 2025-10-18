@@ -1,9 +1,17 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  /* background: linear-gradient(to right, #E0FFE0, #A8D8EA); */
+}
+
+
 .loginContainer {
   display: flex;
   height: 100vh;
   background: linear-gradient(to right, #E0FFE0, #A8D8EA);
 }
 
+/* --- FORMULÁRIO --- */
 .formSection {
   flex: 1;
   padding: 3rem;
@@ -12,24 +20,14 @@
   justify-content: center;
 }
 
-.imageSection {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.wolfImage {
-  max-width: 80%;
-  height: auto;
-}
-
 .title {
   font-size: 3rem;
   margin-bottom: 2rem;
   font-family: 'Georgia', serif;
+  text-align: left;
 }
 
+/* --- CAMPOS --- */
 .inputGroup {
   display: flex;
   align-items: center;
@@ -55,8 +53,9 @@
   outline: none;
 }
 
+/* --- BOTÕES --- */
 .loginButton {
-  background-color: #6fcf97; /* verde suave */
+  background-color: #6fcf97;
   border: none;
   padding: 1rem;
   border-radius: 12px;
@@ -68,12 +67,12 @@
 }
 
 .loginButton:hover {
-  background-color: #56b881; /* tom mais escuro no hover */
+  background-color: #56b881;
   transform: scale(1.05);
 }
 
 .loginButtonGoogle {
-  background-color: #db4437; /* Cor do Google */
+  background-color: #db4437;
   border: none;
   padding: 1rem;
   border-radius: 12px;
@@ -88,23 +87,25 @@
 }
 
 .loginButtonGoogle:hover {
-  background-color: #c1351d; /* Tom mais escuro do Google */
+  background-color: #c1351d;
   transform: scale(1.05);
 }
 
 .googleIcon {
   width: 20px;
   height: 20px;
-  margin-right: 0.5rem; /* Espaço entre o ícone e o texto */
+  margin-right: 0.5rem;
 }
 
 .loginButtonGoogle span {
   display: inline-block;
-  margin-left: 0.5rem; /* Espaçamento entre o ícone e o texto */
+  margin-left: 0.5rem;
 }
 
+/* --- TEXTOS E LINKS --- */
 .cadastroText {
   margin-top: 1.5rem;
+  text-align: center;
 }
 
 .link {
@@ -118,4 +119,154 @@
   text-decoration: none;
   color: #333;
   font-weight: bold;
+  text-align: center;
+}
+
+/* --- SEÇÃO DA IMAGEM --- */
+.imageSection {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wolfImage {
+  max-width: 80%;
+  height: auto;
+}
+
+/* ============================================= */
+/*               📱 RESPONSIVIDADE               */
+/* ============================================= */
+
+@media (max-width: 1024px) {
+  .title {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .loginContainer {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .formSection {
+    flex: none;
+    width: 100%;
+    padding: 2rem;
+    order: 2;
+  }
+
+  .title {
+    text-align: center;
+    font-size: 2.2rem;
+  }
+
+  .inputGroup {
+    margin-bottom: 1.2rem;
+  }
+
+  .loginButton,
+  .loginButtonGoogle {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .cadastroText {
+    font-size: 0.9rem;
+  }
+
+  .imageSection {
+    order: 1;
+    padding: 1rem;
+  }
+
+  .wolfImage {
+    max-width: 100vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .formSection {
+    padding: 1.5rem;
+  }
+
+  .title {
+    font-size: 1.8rem;
+  }
+
+  .icon {
+    font-size: 1.2rem;
+  }
+
+  .input {
+    font-size: 0.95rem;
+  }
+
+  .loginButton,
+  .loginButtonGoogle {
+    padding: 0.9rem;
+    font-size: 0.95rem;
+  }
+
+  .wolfImage {
+    max-width: 100vh;
+  }
+}
+
+/* ============================================= */
+/*              📺 MODO PAISAGEM                 */
+/* ============================================= */
+
+/* Celulares em modo paisagem */
+@media (max-height: 480px) and (orientation: landscape) {
+  .loginContainer {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 100vdh;
+    background: linear-gradient(to right, #E0FFE0, #A8D8EA);
+  }
+
+  .formSection {
+    flex: 1;
+    padding: 1.5rem 2rem;
+    justify-content: center;
+  }
+
+  .title {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .inputGroup {
+    margin-bottom: 1rem;
+  }
+
+  .input {
+    font-size: 0.9rem;
+  }
+
+  .loginButton,
+  .loginButtonGoogle {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .cadastroText,
+  .backHome {
+    font-size: 0.85rem;
+  }
+
+  .imageSection {
+    flex: 1;
+    padding: 1rem;
+  }
+
+  .wolfImage {
+    max-width: 100vh;
+  }
 }

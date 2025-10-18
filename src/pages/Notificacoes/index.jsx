@@ -1,56 +1,57 @@
-// src/pages/Notificacoes.jsx
 import React, { useEffect, useState } from 'react';
 import MenuLateral from '../../Components/Menu/MenuLateral';
 import './Notificacoes.css';
-import { useNotifications } from '../../contexts/NotificationContext'; // Importar o hook
+import { useNotifications } from '../../contexts/NotificationContext';
+import api from '../../api/apiConfig';
 
 export default function Notificacoes() {
   const [notificacoes, setNotificacoes] = useState([]);
-  const { fetchNotifications, markAsRead } = useNotifications(); // Usar o contexto
+  const [loading, setLoading] = useState(false);
+  const [updating, setUpdating] = useState(null); // Para controlar qual notificação está sendo processada
+  const { fetchNotifications, markAsRead } = useNotifications();
 
   useEffect(() => {
     fetchNotificacoes();
   }, []);
 
-  const fetchNotificacoes = () => {
-    fetch('http://localhost:3001/notificacoes', {
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log('Notificações:', data);
-        setNotificacoes(data);
-      })
-      .catch((err) => console.error('Erro ao buscar notificações:', err));
+  const fetchNotificacoes = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get('/notificacoes');
+      setNotificacoes(response.data);
+    } catch (error) {
+      console.error('Erro ao buscar notificações:', error);
+      // Opcional: mostrar toast de erro
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleMarcarComoLida = (notificacaoId) => {
-    markAsRead(notificacaoId).then(() => {
-      // Atualizar a lista local
+  const handleMarcarComoLida = async (notificacaoId) => {
+    setUpdating(notificacaoId);
+    try {
+      await markAsRead(notificacaoId);
       setNotificacoes((prev) => prev.filter((n) => n.id !== notificacaoId));
-    });
+    } catch (error) {
+      console.error('Erro ao marcar como lida:', error);
+    } finally {
+      setUpdating(null);
+    }
   };
 
-  const atualizarStatus = (idSolicitacao, status, notificacaoId) => {
-    fetch(`http://localhost:3001/solicitacoes/atualizaSolicitacao/${idSolicitacao}`, {
-      method: 'PUT',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ status: status })
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Erro ao atualizar solicitação");
-        return res.json();
-      })
-      .then(() => {
-        handleMarcarComoLida(notificacaoId);
-      })
-      .catch((err) => console.error(err));
+  const atualizarStatus = async (idSolicitacao, status, notificacaoId) => {
+    setUpdating(notificacaoId);
+    try {
+      await api.put(`/solicitacoes/atualizaSolicitacao/${idSolicitacao}`, { 
+        status: status 
+      });
+      
+      await handleMarcarComoLida(notificacaoId);
+      
+    } catch (error) {
+      console.error('Erro ao atualizar solicitação:', error);
+      setUpdating(null);
+    }
   };
 
   return (
@@ -58,11 +59,14 @@ export default function Notificacoes() {
       <MenuLateral />
       <div className="conteudo">
         <h2>Notificações</h2>
-        <ul className="lista">
-          {notificacoes.length === 0 ? (
-            <p>Sem notificações.</p>
-          ) : (
-            notificacoes.map((notificacao) => (
+        
+        {loading ? (
+          <p>Carregando notificações...</p>
+        ) : notificacoes.length === 0 ? (
+          <p>Sem notificações.</p>
+        ) : (
+          <ul className="lista">
+            {notificacoes.map((notificacao) => (
               <li key={notificacao.id} className="item">
                 <div className="titulo">{notificacao.titulo}</div>
                 <div className="mensagem">{notificacao.mensagem}</div>
@@ -77,16 +81,18 @@ export default function Notificacoes() {
                       onClick={() =>
                         atualizarStatus(notificacao.solicitacao_id, 'aprovada', notificacao.id)
                       }
+                      disabled={updating === notificacao.id}
                     >
-                      Aceitar
+                      {updating === notificacao.id ? 'Processando...' : 'Aceitar'}
                     </button>
                     <button
                       className="botao-recusar"
                       onClick={() =>
                         atualizarStatus(notificacao.solicitacao_id, 'rejeitada', notificacao.id)
                       }
+                      disabled={updating === notificacao.id}
                     >
-                      Recusar
+                      {updating === notificacao.id ? 'Processando...' : 'Recusar'}
                     </button>
                   </div>
                 ) : (
@@ -94,15 +100,16 @@ export default function Notificacoes() {
                     <button
                       className="botao-marcar-lida"
                       onClick={() => handleMarcarComoLida(notificacao.id)}
+                      disabled={updating === notificacao.id}
                     >
-                      Marcar como lida
+                      {updating === notificacao.id ? 'Processando...' : 'Marcar como lida'}
                     </button>
                   </div>
                 )}
               </li>
-            ))
-          )}
-        </ul>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );

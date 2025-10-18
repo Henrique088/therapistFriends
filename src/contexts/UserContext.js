@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import api from '../api/apiConfig';
 
 const UserContext = createContext();
 
@@ -7,34 +8,23 @@ export function UserProvider({ children }) {
   const [loadingUsuario, setLoadingUsuario] = useState(true);
 
   const fetchUsuario = useCallback(async () => {
-    setLoadingUsuario(true);
-    try {
-      const response = await fetch('http://localhost:3001/auth/me', {
-        method: 'GET',
-        credentials: 'include',
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setUsuario(data.info);
-        
-        localStorage.setItem('userAuthInfo', JSON.stringify(data.info));
-      } else {
-        console.error('Erro ao buscar usuário:', response.statusText);
-        setUsuario(null);
-        localStorage.removeItem('userAuthInfo');
-        // localStorage.removeItem('infoPaciente');
-        // localStorage.removeItem('infoProfissional');
-      }
-    } catch (error) {
-      console.error('Erro ao buscar usuário:', error);
-      setUsuario(null);
-      localStorage.removeItem('userAuthInfo');
-      // localStorage.removeItem('infoPaciente');
-      // localStorage.removeItem('infoProfissional');
-    } finally {
-      setLoadingUsuario(false);
-    }
-  }, []);
+  setLoadingUsuario(true);
+  try {
+    const response = await api.get('/auth/me');
+    
+    setUsuario(response.data.info);
+    localStorage.setItem('userAuthInfo', JSON.stringify(response.data.info));
+    
+  } catch (error) {
+    console.error('Erro ao buscar usuário:', error.response?.data || error.message);
+    setUsuario(null);
+    localStorage.removeItem('userAuthInfo');
+    // localStorage.removeItem('infoPaciente');
+    // localStorage.removeItem('infoProfissional');
+  } finally {
+    setLoadingUsuario(false);
+  }
+}, []);
 
 
   useEffect(() => {
@@ -59,23 +49,18 @@ export function UserProvider({ children }) {
     fetchUsuario();
   }, [fetchUsuario]);
 
-  const logout = useCallback(() => {
-    fetch('http://localhost:3001/auth/logout', {
-      method: 'POST',
-      credentials: 'include',
-    })
-      .then(response => {
-        if (response.ok) {
-          setUsuario(null);
-          localStorage.clear();
-        } else {
-          console.error('Erro ao fazer logout');
-        }
-      })
-      .catch(error => {
-        console.error('Erro ao fazer logout:', error);
-      });
-  }, []);
+  const logout = useCallback(async () => {
+  try {
+    await api.post('/auth/logout');
+    
+    // ✅ Se chegou aqui, o logout foi bem-sucedido
+    setUsuario(null);
+    localStorage.clear();
+    
+  } catch (error) {
+    console.error('Erro ao fazer logout:', error.response?.data || error.message);
+  }
+}, []);
 
   return (
     <UserContext.Provider value={{ usuario, setUsuario, loadingUsuario, fetchUsuario, logout }}>

@@ -7,13 +7,27 @@ const SocketContext = createContext(null);
 export function SocketProvider({ children }) {
   const socketRef = useRef(null);
 
+
+  const getSocketUrl = () => {
+    // Se estiver em produção ou usando ngrok
+    if (window.location.hostname !== 'localhost') {
+      // Usa o mesmo host do frontend (que será o ngrok)
+      return window.location.origin;
+    }
+    // Desenvolvimento local
+    return 'http://localhost:3001';
+  };
+
+  const socketUrl = getSocketUrl();
   // Inicializa o socket uma única vez
   if (!socketRef.current) {
-    socketRef.current = io('http://localhost:3001', {
+    socketRef.current = io(socketUrl, {
       withCredentials: true,
       autoConnect: true,
     });
   }
+
+  
 
  //desconecta o socket quando o usuário fecha a aba
   useEffect(() => {
@@ -29,7 +43,7 @@ export function SocketProvider({ children }) {
   
   useEffect(() => {
     return () => {
-      if (!socketRef.current) socketRef.current.disconnect();
+      if (!socketRef.current) socketRef.current.disconnect(); //analisar depois
     };
   }, []);
 

@@ -6,6 +6,7 @@ import { FiBell, FiHeart, FiBookOpen } from 'react-icons/fi';
 import { useUser } from '../../contexts/UserContext';
 import { Chart } from 'react-chartjs-2';
 import 'chart.js/auto';
+import api from '../../api/apiConfig'; 
 
 export default function DashboardProfissional() {
   const { usuario } = useUser();
@@ -18,6 +19,7 @@ export default function DashboardProfissional() {
   const [labels, setLabels] = useState('');
   const [valores, setValores] = useState('');
   const [tip, setTip] = useState('');
+  const [loading, setLoading] = useState(false);
   const notificationsRef = useRef(null);
   const notificationButtonRef = useRef(null);
 
@@ -37,8 +39,6 @@ export default function DashboardProfissional() {
     'Mindfulness e meditação podem reduzir níveis de cortisol, o hormônio do estresse.',
   ];
 
-  
-
   useEffect(() => {
     // Fechar painel de notificações ao clicar fora
     const handleClickOutside = (event) => {
@@ -57,29 +57,37 @@ export default function DashboardProfissional() {
   }, [showNotifications]);
 
   useEffect(() => {
-    // Buscar estatísticas do backend
+    // Buscar estatísticas do backend com axios
     async function fetchStats() {
+      setLoading(true);
       try {
-        const res = await fetch(`http://localhost:3001/profissionais/dados/${usuario.id}` , { credentials: 'include' });
-        const data = await res.json();
-        setStats(data);
-        // Preparar dados para o gráfico
-        const dias = data.consultasPorDia.map(item => item.dia);
-        const totais = data.consultasPorDia.map(item => item.total);
-        setLabels(dias);
-        setValores(totais);
+        const response = await api.get(`/profissionais/dados/${usuario.id}`);
+        const data = response.data;
         
-      } catch (err) {
-        console.error('Erro ao buscar estatísticas', err);
+        setStats(data);
+        
+        // Preparar dados para o gráfico
+        if (data.consultasPorDia) {
+          const dias = data.consultasPorDia.map(item => item.dia);
+          const totais = data.consultasPorDia.map(item => item.total);
+          setLabels(dias);
+          setValores(totais);
+        }
+        
+      } catch (error) {
+        console.error('Erro ao buscar estatísticas:', error.response?.data || error.message);
+      } finally {
+        setLoading(false);
       }
     }
-    fetchStats();
+    
+    if (usuario?.id) {
+      fetchStats();
+    }
 
     // Escolher uma dica aleatória
     setTip(mentalHealthTips[Math.floor(Math.random() * mentalHealthTips.length)]);
-  }, [usuario.id]);
-
-  
+  }, [usuario?.id]);
 
   // Dados para gráfico simples (exemplo: consultas por dia da semana)
   const chartData = {
@@ -98,7 +106,7 @@ export default function DashboardProfissional() {
       <MenuLateral />
       <div className="main-content">
         <div className="content-header">
-          <h1>Bem-vindo(a), {usuario.nome}</h1>
+          <h1>Bem-vindo(a), {usuario?.nome || 'Profissional'}</h1>
           <button
             className="notification-button"
             ref={notificationButtonRef}
@@ -118,22 +126,26 @@ export default function DashboardProfissional() {
         <div className="info-cards-container">
           <div className="info-card ">
             <h3>Consultas Hoje</h3>
-            <p>{stats.consultasHoje}</p>
+            <p>{loading ? 'Carregando...' : stats.consultasHoje}</p>
           </div>
           <div className="info-card">
             <h3>Consultas na Semana</h3>
-            <p>{stats.consultasSemana}</p>
+            <p>{loading ? 'Carregando...' : stats.consultasSemana}</p>
           </div>
           <div className="info-card">
             <h3>Pacientes Ativos</h3>
-            <p>{stats.pacientesAtivos}</p>
+            <p>{loading ? 'Carregando...' : stats.pacientesAtivos}</p>
           </div>
         </div>
 
         {/* Gráfico de consultas na semana */}
         <div className="chart-section">
           <h2>Distribuição das Consultas (Semana)</h2>
-          <Chart type="bar" data={chartData} />
+          {loading ? (
+            <p>Carregando gráfico...</p>
+          ) : (
+            <Chart type="bar" data={chartData} />
+          )}
         </div>
 
         {/* Dica do Dia */}

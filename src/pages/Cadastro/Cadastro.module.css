@@ -1,35 +1,50 @@
 .cadastroContainer {
   display: flex;
-  height: 100vh;
+  flex-direction: row; /* padrão: lado a lado em desktop */
+  min-height: 100vh;
   background: linear-gradient(to right, #E0FFE0, #A8D8EA);
+  padding: env(safe-area-inset-top) 1rem env(safe-area-inset-bottom) 1rem;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
+/* Formulário */
 .formSection {
   flex: 1;
-  padding: 3rem;
+  padding: 3rem 2rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  max-width: 600px;
+  box-sizing: border-box;
+  overflow-y: auto;
 }
 
+/* Imagem */
 .imageSection {
   flex: 1;
   display: flex;
   align-items: center;
-  justify-content: center;
+  /* justify-content: center; */
+  padding: 1rem;
+  
 }
 
 .wolfImage {
-  max-width: 80%;
+  width: 100%;
   height: auto;
+  object-fit: contain; /* nunca corta a imagem */
+  max-height: 80vh;
 }
 
+/* Título */
 .title {
   font-size: 3rem;
   margin-bottom: 2rem;
   font-family: 'Georgia', serif;
 }
 
+/* Inputs */
 .inputGroup {
   display: flex;
   align-items: center;
@@ -55,8 +70,9 @@
   outline: none;
 }
 
-.cadastrarButton {
-  background-color: #6fcf97; /* verde suave */
+/* Botões */
+.cadastrarButton,
+.cadastrarButtonGoogle {
   border: none;
   padding: 1rem;
   border-radius: 12px;
@@ -67,12 +83,57 @@
   transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
+.cadastrarButton {
+  background-color: #6fcf97;
+}
+
 .cadastrarButton:hover {
-  background-color: #56b881; /* tom mais escuro no hover */
+  background-color: #56b881;
   transform: scale(1.05);
 }
 
+.cadastrarButtonGoogle {
+  background-color: #db4437;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
+.cadastrarButtonGoogle:hover {
+  background-color: #c1351d;
+  transform: scale(1.05);
+}
+
+.googleIcon {
+  width: 20px;
+  height: 20px;
+  margin-right: 0.5rem;
+}
+
+.cadastrarButtonGoogle span {
+  display: inline-block;
+  margin-left: 0.5rem;
+}
+
+/* Radio */
+.radioGroup {
+  display: flex;
+  margin: 1rem 0;
+  font-size: 1rem;
+  gap: 1rem;
+}
+
+.radioGroup label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.radioGroup input {
+  margin: 0;
+}
+
+/* Links */
 .loginText {
   margin-top: 1.5rem;
 }
@@ -89,59 +150,68 @@
   color: #333;
   font-weight: bold;
 }
-.googleIcon {
-  width: 20px;
-  height: 20px;
+
+/* Mobile retrato: imagem acima do form */
+@media (max-width: 768px) {
+  .cadastroContainer {
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 1rem;
+    overflow-y: auto;
+  }
+
+  .imageSection {
+    order: -1; /* imagem primeiro */
+    width: 100%;
+    max-height: 40vh;
+    margin-bottom: 1rem;
+  }
+
+  .formSection {
+    width: 100%;
+    max-width: 100%;
+    padding: 2rem 1rem;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .cadastrarButton,
+  .cadastrarButtonGoogle {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+  }
 }
 
-.cadastrarButtonGoogle {
-  background-color: #db4437; /* Cor do Google */
-  border: none;
-  padding: 1rem;
-  border-radius: 12px;
-  cursor: pointer;
-  margin-top: 1rem;
-  font-weight: bold;
-  color: white;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+/* Mobile paisagem: imagem ao lado */
+@media (orientation: landscape) and (max-width: 1024px) {
+  .cadastroContainer {
+    flex-direction: row;
+    align-items: flex-start; /* topo alinhado */
+    justify-content: space-around;
+    min-height: 100vh;
+    overflow-y: auto; /* scroll só se necessário */
+  }
 
-.cadastrarButtonGoogle:hover {
-  background-color: #c1351d; /* Tom mais escuro do Google */
-  transform: scale(1.05);
-}
+  .formSection {
+    flex: 1;
+    max-width: 50%;
+    padding: 1rem 2rem;
+  }
 
-.googleIcon {
-  width: 20px;
-  height: 20px;
-  margin-right: 0.5rem; /* Espaço entre o ícone e o texto */
-}
+  .imageSection {
+    flex: 1;
+    max-width: 50%;
+    align-items: flex-start; /* topo alinhado */
+  }
 
-.cadastrarButtonGoogle span {
-  display: inline-block;
-  margin-left: 0.5rem; /* Espaçamento entre o ícone e o texto */
-}
+  .wolfImage {
+    max-width: 100%;
+    max-height: 100vh; /* nunca ultrapassa a altura da tela */
+  }
 
-
-.radioGroup {
-  display: flex;
-  /* justify-content: space-between; */
-  margin: 1rem 0;
-  font-size: 1rem;
-  gap: 1rem;
-}
-
-.radioGroup label {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-}
-
-.radioGroup input {
-  margin-right: 0.5rem;
-  margin: 0; /* remove margens inconsistentes do navegador */
+  .title {
+    font-size: 1.8rem;
+  }
 }

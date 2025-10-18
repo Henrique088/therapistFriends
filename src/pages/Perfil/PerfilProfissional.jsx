@@ -4,6 +4,7 @@ import MenuLateral from '../../Components/Menu/MenuLateral';
 import './Perfil.css';
 import image_default from '../../img/imagem_default.png';
 import { toast } from 'react-toastify';
+import api from '../../api/apiConfig'; 
 
 export default function PerfilProfissional() {
     const { usuario, fetchUsuario } = useUser();
@@ -42,72 +43,58 @@ export default function PerfilProfissional() {
 
 
     useEffect(() => {
-        form.bio = usuario.bio;
-        form.telefone = usuario.telefone;
-        form.nome = usuario.nome;
-        form.cpf = usuario.cpf;
-        form.crp = usuario.crp;
-        form.especialidades = usuario.especialidades;
-        
-      } ,[editando]);
+        setForm({
+            nome: usuario?.nome || '',
+            telefone: usuario?.telefone || '',
+            cpf: usuario?.cpf || '',
+            crp: usuario?.crp || '',
+            bio: usuario?.bio || '',
+            especialidades: usuario?.especialidades || ''
+        });
+    }, [editando, usuario]);
 
-    const atualizarDados = (e) => {
+    const atualizarDados = async (e) => {
         e.preventDefault();
-        if (!form.especialidades.trim()) {
-            form.especialidades = usuario.especialidades;
-        }
-        if (!form.telefone.trim()) {
-            form.telefone = usuario.telefone;
-        }
+        
+        // Validações
+        const dadosAtualizados = {
+            bio: form.bio.trim() || usuario.bio,
+            telefone: form.telefone.trim() || usuario.telefone,
+            nome: form.nome.trim() || usuario.nome,
+            cpf: form.cpf.trim() || usuario.cpf,
+            crp: form.crp.toUpperCase() || usuario.crp,
+            especialidades: form.especialidades.split(',').map(e => e.trim()).filter(e => e).join(', ') || usuario.especialidades
+        };
 
-        if (!form.nome.trim()) {
-            form.nome = usuario.nome;
-        }
-
-        if (!form.bio.trim()) {
-            form.bio = usuario.bio;
-        }
-
-        if (!form.especialidades.trim()) {
-            form.especialidades = usuario.especialidades;
+        // Validações adicionais
+        if (!dadosAtualizados.bio.trim()) {
+            toast.error('A bio é obrigatória');
+            return;
         }
 
-       
+        if (!dadosAtualizados.especialidades.trim()) {
+            toast.error('As especialidades são obrigatórias');
+            return;
+        }
 
-        fetch('http://localhost:3001/profissionais', {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
+        setSalvando(true);
 
-            },
-            body: JSON.stringify({
-                bio: form.bio.trim(),
-                telefone: form.telefone.trim(),
-                nome: form.nome.trim(),
-                cpf: form.cpf.trim(),
-                crp: form.crp.toUpperCase(),
-                especialidades: form.especialidades.split(',').map(e => e.trim()).filter(e => e).join(', ')
-            }),
-        })
-            .then(async (resp) => {
-                const data = await resp.json();
-                if (!resp.ok) throw new Error(data.erro || 'Erro ao salvar');
-                localStorage.setItem('info', JSON.stringify(data.info));
-                toast.success('Dados atualizados com sucesso!');
-                // refresh na pagina ou atualizar o estado do usuário
-                // window.location.reload();
-                fetchUsuario(); // Atualiza o usuário no contexto
+        try {
+            const response = await api.post('/profissionais', dadosAtualizados);
+            
+            localStorage.setItem('info', JSON.stringify(response.data.info));
+            toast.success('Dados atualizados com sucesso!');
+            
+            fetchUsuario(); // Atualiza o usuário no contexto
+            setEditando(false);
                
-                
-                setEditando(false);
-               
-            })
-            .catch((err) => {
-                toast.error(err.message);
-                console.error(err);
-            })
-            .finally(() => setSalvando(false));
+        } catch (error) {
+            const errorMessage = error.response?.data?.erro || 'Erro ao salvar dados';
+            toast.error(errorMessage);
+            console.error('Erro ao atualizar perfil:', error);
+        } finally {
+            setSalvando(false);
+        }
     };
 
     return (
@@ -131,21 +118,55 @@ export default function PerfilProfissional() {
 
                         {!editando ? (
                             <div className="dadosUsuario">
-                                <p><strong>Nome:</strong> {usuario.nome}</p>
-                                <p><strong>Telefone:</strong> {formatarTelefone(usuario.telefone)}</p>
-                                <p><strong>CPF:</strong> {usuario.cpf}</p>
-                                <p><strong>CRP:</strong> {usuario.crp}</p>
-                                <p><strong>Bio:</strong> {usuario.bio}</p>
-                                <p><strong>Especialidades:</strong> {usuario.especialidades}</p>
+                                <p><strong>Nome:</strong> {usuario?.nome}</p>
+                                <p><strong>Telefone:</strong> {usuario?.telefone ? formatarTelefone(usuario.telefone) : ''}</p>
+                                <p><strong>CPF:</strong> {usuario?.cpf}</p>
+                                <p><strong>CRP:</strong> {usuario?.crp}</p>
+                                <p><strong>Bio:</strong> {usuario?.bio}</p>
+                                <p><strong>Especialidades:</strong> {usuario?.especialidades}</p>
                                 
                             </div>
                         ) : (
                             <form onSubmit={atualizarDados} className="formEditar">
-                                <input type="text" name="nome" value={form.nome} onChange={handleChange} placeholder="Nome" />
-                                <input type="text" name="telefone" value={formatarTelefone(form.telefone)} onChange={handleChange} placeholder="Telefone" />
-                                <input type="text" name="cpf" value={form.cpf} onChange={handleChange} placeholder="CPF" readOnly className='ler' />
-                                <input type="text" name="crp" value={form.crp} onChange={handleChange} placeholder="CRP (ex: CRP-12/12345)" readOnly className='ler'/>
-                                <input type="text" name="especialidades" value={form.especialidades} onChange={handleChange} placeholder="Especialidades" />
+                                <input 
+                                    type="text" 
+                                    name="nome" 
+                                    value={form.nome} 
+                                    onChange={handleChange} 
+                                    placeholder="Nome" 
+                                />
+                                <input 
+                                    type="text" 
+                                    name="telefone" 
+                                    value={formatarTelefone(form.telefone)} 
+                                    onChange={handleChange} 
+                                    placeholder="Telefone" 
+                                />
+                                <input 
+                                    type="text" 
+                                    name="cpf" 
+                                    value={form.cpf} 
+                                    onChange={handleChange} 
+                                    placeholder="CPF" 
+                                    readOnly 
+                                    className='ler' 
+                                />
+                                <input 
+                                    type="text" 
+                                    name="crp" 
+                                    value={form.crp} 
+                                    onChange={handleChange} 
+                                    placeholder="CRP (ex: CRP-12/12345)" 
+                                    readOnly 
+                                    className='ler'
+                                />
+                                <input 
+                                    type="text" 
+                                    name="especialidades" 
+                                    value={form.especialidades} 
+                                    onChange={handleChange} 
+                                    placeholder="Especialidades (separadas por vírgula)" 
+                                />
                                 <textarea
                                     name="bio"
                                     placeholder="Fale um pouco sobre você..."
@@ -153,7 +174,9 @@ export default function PerfilProfissional() {
                                     onChange={handleChange}
                                     required
                                 />
-                                <button type="submit" disabled={salvando}>Salvar</button>
+                                <button type="submit" disabled={salvando}>
+                                    {salvando ? 'Salvando...' : 'Salvar'}
+                                </button>
                             </form>
                         )}
                     </div>

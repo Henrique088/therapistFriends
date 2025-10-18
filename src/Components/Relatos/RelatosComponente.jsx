@@ -7,27 +7,29 @@ import { formatarData } from '../../Utils/index';
 import { darLikeNoRelato } from '../../Utils/likeUtils';
 import { useUser } from '../../contexts/UserContext';
 import RelatoForm from '../../Components/FormularioRelatos/FormularioRelatos';
+import api from '../../api/apiConfig';
 
 export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar, tagsSelecionadas = [] }) {
   let [relatos, setRelatos] = useState([]);
   const [relatoEditando, setRelatoEditando] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [loadingLikeId, setLoadingLikeId] = useState(null);
+  const [loading, setLoading] = useState(false);
   const { usuario } = useUser();
 
   console.log('Recarregar relatos:', recarregar);
   console.log('Tags selecionadas:', tagsSelecionadas);
 
-  const carregarRelatos = () => {
-    fetch('http://localhost:3001/relatos/', {
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setRelatos(data);
-      })
-      .catch((err) => console.error('Erro ao buscar relatos:', err));
+  const carregarRelatos = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get('/relatos/');
+      setRelatos(response.data);
+    } catch (error) {
+      console.error('Erro ao buscar relatos:', error.response?.data || error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -76,11 +78,6 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
     return relatosParaExibir;
 
   }, [relatos, tagsSelecionadas, relatosPessoais, numRelatos, usuario.id, usuario.tipo_usuario]);
-  
-
-
-
-
 
   const darLike = async (relato_id) => {
     if (loadingLikeId === relato_id) return;
@@ -109,21 +106,15 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
 
   const deletarRelato = async (relatoId) => {
     try {
-      const response = await fetch(`http://localhost:3001/relatos/${relatoId}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
-
-      if (response.status === 204) {
-        setRelatos((prev) => prev.filter((r) => r.id !== relatoId));
-        toast.success('Relato excluído com sucesso!');
-      } else {
-        const erro = await response.json();
-        toast.error('Erro ao deletar: ' + erro.erro);
-      }
+      await api.delete(`/relatos/${relatoId}`);
+      
+      setRelatos((prev) => prev.filter((r) => r.id !== relatoId));
+      toast.success('Relato excluído com sucesso!');
+      
     } catch (error) {
+      const errorMessage = error.response?.data?.erro || 'Erro ao deletar relato';
       console.error('Erro ao deletar relato:', error);
-      toast.error('Erro ao deletar o relato.');
+      toast.error(errorMessage);
     }
   };
 
@@ -168,7 +159,7 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
     setShowForm(false);
   };
 
-  const entrarEmContato = (relato) => {
+  const entrarEmContato = async (relato) => {
     if (usuario.tipo_usuario === 'paciente') {
       toast.info('Você não pode entrar em contato com relatos de pacientes.');
       return;
@@ -178,43 +169,37 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
       return;
     }
 
-    fetch('http://localhost:3001/solicitacoes/solicitarConversa', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    try {
+      const response = await api.post('/solicitacoes/solicitarConversa', {
         pacienteId: relato.paciente.id_usuario,
         relatoId: relato.id,
-      }),
-    })
-      .then(async (resp) => {
-        const data = await resp.json();
-        if (!resp.ok) throw new Error(data.erro || 'Erro ao solicitar conversa');
-        // Atualiza o relato localmente para refletir a mudança
-        setRelatos((prevRelatos) =>
-          prevRelatos.map((r) =>
-            r.id === relato.id ? { ...r, profissional_id: usuario.id } : r
-          )
-        );
-        return data;
-      })
-      .then(() => {
-        toast.success('Solicitação de conversa enviada com sucesso!');
-      })
-      .catch((err) => {
-        toast.error(err.message);
-        console.error(err);
       });
+
+      // Atualiza o relato localmente para refletir a mudança
+      setRelatos((prevRelatos) =>
+        prevRelatos.map((r) =>
+          r.id === relato.id ? { ...r, profissional_id: usuario.id } : r
+        )
+      );
+      
+      toast.success('Solicitação de conversa enviada com sucesso!');
+      
+    } catch (error) {
+      const errorMessage = error.response?.data?.erro || 'Erro ao solicitar conversa';
+      toast.error(errorMessage);
+      console.error('Erro ao solicitar conversa:', error);
+    }
   };
 
   return (
     <div className="posts-container">
       {showForm && <RelatoForm onCancel={handleCancel} onSubmit={handleSubmit} relatoEditando={relatoEditando} />}
 
-
-      {relatosFiltrados.length === 0 ? (
+      {loading ? (
+        <div className="loading">
+          <p>Carregando relatos...</p>
+        </div>
+      ) : relatosFiltrados.length === 0 ? (
         <div className="no-results">
           {tagsSelecionadas.length > 0 ? (
             <p>Nenhum relato encontrado para as tags selecionadas.</p>
@@ -223,22 +208,20 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
           )}
         </div>
       ) : (
-
         relatosFiltrados.map((relato) => (
           <div key={relato.id} className={`post-card ${usuario.tipo_usuario === 'profissional' ? relato.resultado_ia : ''}`}>
             <div className="post-header">
               <div className="user-info">
                 <div className="user-avatar">
-                  {relato?.paciente?.codinome.substring(0, 2)}
+                  {relato?.paciente?.codinome?.substring(0, 2)}
                 </div>
-                <div className="username">{relato?.paciente.codinome}</div>
+                <div className="username">{relato?.paciente?.codinome}</div>
               </div>
               <div className="post-time">{formatarData(relato?.data_envio)}</div>
             </div>
             <div className='titulo_categoria'>
               <div className='titulo-relato'><a>Título:</a> {relato?.titulo}</div>
               <div className='titulo-relato'><a>Categoria:</a> {relato?.categoria}</div>
-
             </div>
             <div className="post-content">{relato?.texto}</div>
             <div className="post-actions">
@@ -263,7 +246,7 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
                   </button>
                 )}
               </div>
-              {relato.paciente.id_usuario === usuario.id && (
+              {relato.paciente?.id_usuario === usuario.id && (
                 <div className="post-actions-extra">
                   <button onClick={() => editarRelato(relato)}>
                     <MdEdit size={20} style={{ marginRight: '5px' }} />

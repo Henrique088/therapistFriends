@@ -5,6 +5,7 @@ import './Perfil.css';
 import image_default from '../../img/imagem_default.png';
 import ExibirRelatos from '../../Components/Relatos/RelatosComponente';
 import { toast } from 'react-toastify';
+import api from '../../api/apiConfig'; 
 
 export default function PerfilPaciente() {
     const { usuario, fetchUsuario } = useUser();
@@ -40,58 +41,46 @@ export default function PerfilPaciente() {
 
 
     useEffect(() => {
-        form.codinome = usuario.codinome;
-        form.telefone = usuario.telefone;
-        form.nome = usuario.nome;
-        
-      } ,[editando]);
+        setForm({
+            codinome: usuario?.codinome || '',
+            telefone: usuario?.telefone || '',
+            nome: usuario?.nome || ''
+        });
+    }, [editando, usuario]);
 
-    const atualizarDados = (e) => {
+    const atualizarDados = async (e) => {
         e.preventDefault();
-        if (form.codinome.trim().length < 3 ) {
-            form.codinome = usuario.codinome;
+        
+        // Validações
+        const dadosAtualizados = {
+            codinome: form.codinome.trim() || usuario.codinome,
+            telefone: form.telefone.trim() || usuario.telefone,
+            nome: form.nome.trim() || usuario.nome,
+        };
+
+        if (dadosAtualizados.codinome.trim().length < 3) {
+            toast.error('Codinome deve ter pelo menos 3 caracteres');
+            return;
         }
-        if (!form.telefone.trim()) {
-            form.telefone = usuario.telefone;
-        }
 
-        if (!form.nome.trim()) {
-            form.nome = usuario.nome;
-        }
+        setSalvando(true);
 
-       
-
-        fetch('http://localhost:3001/pacientes', {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-
-            },
-            body: JSON.stringify({
-                codinome: form.codinome.trim(),
-                telefone: form.telefone.trim(),
-                nome: form.nome.trim(),
-            }),
-        })
-            .then(async (resp) => {
-                const data = await resp.json();
-                if (!resp.ok) throw new Error(data.erro || 'Erro ao salvar');
-                localStorage.setItem('info', JSON.stringify(data.info));
-                toast.success('Dados atualizados com sucesso!');
-                // refresh na pagina ou atualizar o estado do usuário
-                // window.location.reload();
-                fetchUsuario();
-                // ou setUser(data.info) se você tiver um contexto de usuário
-                
-                setEditando(false);
+        try {
+            const response = await api.post('/pacientes', dadosAtualizados);
+            
+            localStorage.setItem('info', JSON.stringify(response.data.info));
+            toast.success('Dados atualizados com sucesso!');
+            
+            fetchUsuario();
+            setEditando(false);
                
-            })
-            .catch((err) => {
-                toast.error(err.message);
-                console.error(err);
-            })
-            .finally(() => setSalvando(false));
+        } catch (error) {
+            const errorMessage = error.response?.data?.erro || 'Erro ao salvar dados';
+            toast.error(errorMessage);
+            console.error('Erro ao atualizar perfil:', error);
+        } finally {
+            setSalvando(false);
+        }
     };
 
     return (
@@ -115,16 +104,36 @@ export default function PerfilPaciente() {
 
                         {!editando ? (
                             <div className="dadosUsuario">
-                                <p><strong>Nome:</strong> {usuario.nome}</p>
-                                <p><strong>Telefone:</strong> {formatarTelefone(usuario.telefone)}</p>
-                                <p><strong>Codinome:</strong> {usuario.codinome}</p>
+                                <p><strong>Nome:</strong> {usuario?.nome}</p>
+                                <p><strong>Telefone:</strong> {usuario?.telefone ? formatarTelefone(usuario.telefone) : ''}</p>
+                                <p><strong>Codinome:</strong> {usuario?.codinome}</p>
                             </div>
                         ) : (
                             <form onSubmit={atualizarDados} className="formEditar">
-                                <input type="text" name="nome" value={form.nome} onChange={handleChange} placeholder="Nome" />
-                                <input type="text"  name="telefone" value={formatarTelefone(form.telefone)} onChange={handleChange} placeholder="Telefone" />
-                                <input type="text" name="codinome" value={form.codinome} onChange={handleChange} placeholder="Codinome" />
-                                <button type="submit" disabled={salvando}>Salvar</button>
+                                <input 
+                                    type="text" 
+                                    name="nome" 
+                                    value={form.nome} 
+                                    onChange={handleChange} 
+                                    placeholder="Nome" 
+                                />
+                                <input 
+                                    type="text"  
+                                    name="telefone" 
+                                    value={formatarTelefone(form.telefone)} 
+                                    onChange={handleChange} 
+                                    placeholder="Telefone" 
+                                />
+                                <input 
+                                    type="text" 
+                                    name="codinome" 
+                                    value={form.codinome} 
+                                    onChange={handleChange} 
+                                    placeholder="Codinome" 
+                                />
+                                <button type="submit" disabled={salvando}>
+                                    {salvando ? 'Salvando...' : 'Salvar'}
+                                </button>
                             </form>
                         )}
                     </div>
@@ -133,7 +142,6 @@ export default function PerfilPaciente() {
                 <div className="relatosUsuario">
                     <h2>Seus Relatos</h2>
                     <ExibirRelatos numRelatos={5} relatosPessoais={true} />
-                    {/* Aqui você renderiza os relatos do usuário */}
                 </div>
             </div>
         </div>

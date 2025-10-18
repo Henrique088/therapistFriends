@@ -5,19 +5,18 @@ import Modal from 'react-modal';
 import { toast } from 'react-toastify';
 import './ModalCodinome.css';
 import { useUser } from '../../contexts/UserContext';
+import api from '../../api/apiConfig';
 
 Modal.setAppElement('#root');
 
 export default function ModalCodinome({ isOpen, onClose }) {
-
-
   const [codinome, setCodinome] = useState('');
   const [telefone, setTelefone] = useState('');
   const [salvando, setSalvando] = useState(false);
   const [redirect, setRedirect] = useState(null);
   const { usuario, setUsuario } = useUser();
 
-  const salvarCodinome = () => {
+  const salvarCodinome = async () => {
     if (codinome.trim().length < 3) {
       toast.warn('O codinome deve ter pelo menos 3 caracteres.');
       return;
@@ -29,73 +28,57 @@ export default function ModalCodinome({ isOpen, onClose }) {
 
     setSalvando(true);
 
-    fetch('http://localhost:3001/pacientes', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-
-      },
-      body: JSON.stringify({
+    try {
+      const response = await api.post('/pacientes', {
         codinome: codinome.trim(),
         telefone: telefone.trim()
-      }),
-    })
-      .then(async (resp) => {
-        const data = await resp.json();
-        if (!resp.ok) throw new Error(data.erro || 'Erro ao salvar');
-        localStorage.setItem('info', JSON.stringify(data.info));
-        toast.success('Codinome salvo com sucesso!');
-        onClose();          // fecha o modal no componente pai
-      })
-      .catch((err) => {
-        toast.error(err.message);
-        console.error(err);
-      })
-      .finally(() => setSalvando(false));
+      });
+      
+      localStorage.setItem('info', JSON.stringify(response.data.info));
+      toast.success('Codinome salvo com sucesso!');
+      onClose(); // fecha o modal no componente pai
+      
+    } catch (error) {
+      const errorMessage = error.response?.data?.erro || 'Erro ao salvar';
+      toast.error(errorMessage);
+      console.error('Erro ao salvar codinome:', error);
+    } finally {
+      setSalvando(false);
+    }
   };
 
   async function logout(e) {
-      e.preventDefault();
-  
-      try {
-        const resposta = await fetch('http://localhost:3001/auth/logout', {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
-  
-        if (resposta.ok) {
-          toast.success('Volte sempre! Saindo...', { autoClose: 2000 });
-          
-          setTimeout(() => {
-            setRedirect(true);
-          }, 2000);
-        }
-      } catch (erro) {
-        console.error('Erro no logout:', erro);
+    e.preventDefault();
+
+    try {
+      await api.post('/auth/logout');
+      
+      toast.success('Volte sempre! Saindo...', { autoClose: 2000 });
+      
+      setTimeout(() => {
         setRedirect(true);
-      }
+      }, 2000);
+      
+    } catch (error) {
+      console.error('Erro no logout:', error.response?.data || error.message);
+      setRedirect(true);
     }
-  
-    if (redirect) {
-      setUsuario(null);
-      console.log('Usuário desconectado');
-      return <Navigate to="/login" replace />;
-    }
+  }
+
+  if (redirect) {
+    setUsuario(null);
+    console.log('Usuário desconectado');
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <Modal
-      // A prop 'isOpen' do componente `<Modal>` DO REACT-MODAL
-      // DEVE ser a mesma 'isOpen' que você recebe nas props do seu ModalCodinome.
-      isOpen={isOpen} // <-- ESSA É A CHAVE!
-      onRequestClose={onClose} // Permite fechar com ESC ou clique fora, se quiser. Se é obrigatório, defina shouldCloseOnOverlayClick/Esc como false.
-      shouldCloseOnOverlayClick={false} // Para garantir que o usuário preencha.
-      shouldCloseOnEsc={false}         // Para garantir que o usuário preencha.
-      className="modal-content"        // Sua classe CSS para o conteúdo do modal
-      overlayClassName="modal-overlay" // Sua classe CSS para o overlay
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      shouldCloseOnOverlayClick={false}
+      shouldCloseOnEsc={false}
+      className="modal-content"
+      overlayClassName="modal-overlay"
     >
       <div className="modal-header">
         <h2>Complete Seu Perfil</h2>
@@ -110,6 +93,7 @@ export default function ModalCodinome({ isOpen, onClose }) {
             value={codinome}
             onChange={(e) => setCodinome(e.target.value)}
             disabled={salvando}
+            placeholder="Digite seu codinome"
           />
         </div>
         <div className="form-group">
@@ -120,11 +104,14 @@ export default function ModalCodinome({ isOpen, onClose }) {
             value={telefone}
             onChange={(e) => setTelefone(e.target.value)}
             disabled={salvando}
+            placeholder="Digite seu telefone"
           />
         </div>
       </div>
       <div className="modal-footer">
-        <button onClick={logout}>Sair</button>
+        <button onClick={logout} disabled={salvando}>
+          Sair
+        </button>
         <button onClick={salvarCodinome} disabled={salvando}>
           {salvando ? 'Salvando...' : 'Salvar'}
         </button>

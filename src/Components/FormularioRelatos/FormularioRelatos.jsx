@@ -2,31 +2,23 @@ import React, { useState, useEffect } from 'react';
 import './FormularioRelatos.css';
 import { toast } from 'react-toastify';
 import EmojiPicker from '../../Utils/emojiPicker';
+import api from '../../api/apiConfig';
 
-const RelatoForm = ({ onCancel, onSubmit, relatoEditando}) => {
+const RelatoForm = ({ onCancel, onSubmit, relatoEditando }) => {
   const [titulo, setTitulo] = useState('');
   const [categoria, setCategoria] = useState('');
   const [relato, setRelato] = useState('');
   const [anonimo, setAnonimo] = useState(false);
   const [enviando, setEnviando] = useState(false);
+  const [emojiPosition, setEmojiPosition] = useState('top-center'); // 👈 posição inicial
 
   const categorias = [
-    'Solidão',
-    'Ansiedade',
-    'Depressão',
-    'Timidez',
-    'Autoestima',
-    'Saúde Mental',
-    'Estresse',
-    'Relacionamentos',
-    'Transtornos Alimentares',
-    'Transtornos de Aprendizagem',
-    'Transtornos de Personalidade',
-    'Transtornos de Humor',
-    'Transtornos de Ansiedade',
+    'Solidão', 'Ansiedade', 'Depressão', 'Timidez', 'Autoestima',
+    'Saúde Mental', 'Estresse', 'Relacionamentos', 'Transtornos Alimentares',
+    'Transtornos de Aprendizagem', 'Transtornos de Personalidade',
+    'Transtornos de Humor', 'Transtornos de Ansiedade',
     'Transtornos Obsessivo-Compulsivos',
-    'Transtornos de Déficit de Atenção e Hiperatividade (TDAH)',
-    'Outros'
+    'Transtornos de Déficit de Atenção e Hiperatividade (TDAH)', 'Outros'
   ];
 
   useEffect(() => {
@@ -38,65 +30,66 @@ const RelatoForm = ({ onCancel, onSubmit, relatoEditando}) => {
     }
   }, [relatoEditando]);
 
+  // 📱 Detecta tipo de tela e orientação
+  useEffect(() => {
+    const updateEmojiPosition = () => {
+      const isMobile = window.innerWidth <= 768;
+      const isLandscape = window.innerWidth > window.innerHeight;
+
+      if (isMobile && isLandscape) {
+        setEmojiPosition('right-center'); // em celular deitado
+      } else if (isMobile && !isLandscape) {
+        setEmojiPosition('center'); // em celular em pé
+      } else {
+        setEmojiPosition('right-center'); // desktop
+      }
+    };
+
+    updateEmojiPosition();
+
+    window.addEventListener('resize', updateEmojiPosition);
+    window.addEventListener('orientationchange', updateEmojiPosition);
+
+    return () => {
+      window.removeEventListener('resize', updateEmojiPosition);
+      window.removeEventListener('orientationchange', updateEmojiPosition);
+    };
+  }, []);
+
   const handleEmojiSelect = (emoji) => {
     setRelato(prevMessage => prevMessage + emoji);
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); 
-    
+    e.preventDefault();
     if (enviando) return;
-    
+
     setEnviando(true);
 
     try {
-      const url = relatoEditando
-        ? `http://localhost:3001/relatos/${relatoEditando.id}`
-        : `http://localhost:3001/relatos/criarRelato`;
+      const dadosRelato = { titulo, categoria, texto: relato, anonimo };
+      let response;
 
-      const method = relatoEditando ? 'PUT' : 'POST';
-
-      const response = await fetch(url, {
-        method: method,
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          titulo,
-          categoria,
-          texto: relato,
-          anonimo: anonimo,
-        }),
-      });
-
-      if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.message || 'Erro ao enviar relato');
+      if (relatoEditando) {
+        response = await api.put(`/relatos/${relatoEditando.id}`, dadosRelato);
+      } else {
+        response = await api.post('/relatos/criarRelato', dadosRelato);
       }
 
-      const data = await response.json();
-      
-      // Limpa o formulário
+      const data = response.data;
       setRelato('');
       setTitulo('');
       setCategoria('');
       setAnonimo(false);
-      
-      // Chama a função onSubmit passada como prop para atualizar a UI
-      if (onSubmit) {
-        onSubmit(data, relatoEditando ? 'editado' : 'criado');
-      }
-      
-      onCancel(); // Fecha o modal
-      
-      console.log('Relato enviado:', data);
-      
-    } catch (err) {
-      console.error('Erro detalhado:', err);
-      alert(err.message || 'Erro ao enviar relato');
-    } finally {
+
+      if (onSubmit) onSubmit(data, relatoEditando ? 'editado' : 'criado');
+      onCancel();
+
       toast.success(relatoEditando ? 'Relato editado com sucesso!' : 'Relato enviado com sucesso!');
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Erro ao enviar relato';
+      toast.error(errorMessage);
+    } finally {
       setEnviando(false);
     }
   };
@@ -105,13 +98,12 @@ const RelatoForm = ({ onCancel, onSubmit, relatoEditando}) => {
     <div className="relato-modal-overlay">
       <div className="relato-form-container">
         <h1>{relatoEditando ? 'Editar Relato' : 'Escrever Novo Relato'}</h1>
-        
+
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Título</label>
             <input
               type="text"
-              name="titulo"
               placeholder="Ex: Pressão no trabalho"
               value={titulo}
               onChange={(e) => setTitulo(e.target.value)}
@@ -119,11 +111,10 @@ const RelatoForm = ({ onCancel, onSubmit, relatoEditando}) => {
               disabled={enviando}
             />
           </div>
-          
+
           <div className="form-group">
             <label>Categoria</label>
             <select
-              name="categoria"
               value={categoria}
               onChange={(e) => setCategoria(e.target.value)}
               required
@@ -135,11 +126,10 @@ const RelatoForm = ({ onCancel, onSubmit, relatoEditando}) => {
               ))}
             </select>
           </div>
-          
+
           <div className="form-group">
             <label>Relato</label>
             <textarea
-              name="relato"
               placeholder="Descreva seu relato com detalhes..."
               value={relato}
               onChange={(e) => setRelato(e.target.value)}
@@ -149,36 +139,27 @@ const RelatoForm = ({ onCancel, onSubmit, relatoEditando}) => {
             />
           </div>
 
-          <EmojiPicker onEmojiSelect={handleEmojiSelect} position="top-center" />
+          {/* 🧠 AQUI está o truque */}
+          <EmojiPicker onEmojiSelect={handleEmojiSelect} position={emojiPosition} />
 
           <div className="form-group anonimo-checkbox">
             <label>
               <input
                 type="checkbox"
-                name="anonimo"
                 checked={anonimo}
-                onChange={(e) => setAnonimo(e.target.checked)} 
+                onChange={(e) => setAnonimo(e.target.checked)}
                 disabled={enviando}
               />
               Compartilhar de forma anônima
             </label>
           </div>
-          
+
           <div className="form-actions">
-            <button 
-              type="button" 
-              className="cancel-button" 
-              onClick={onCancel}
-              disabled={enviando}
-            >
+            <button type="button" className="cancel-button" onClick={onCancel} disabled={enviando}>
               Cancelar
             </button>
-            <button 
-              type="submit" 
-              className="submit-button" 
-              disabled={enviando}
-            >
-              {enviando ? 'Enviando...' : 'Enviar Relato'}
+            <button type="submit" className="submit-button" disabled={enviando}>
+              {enviando ? 'Enviando...' : (relatoEditando ? 'Atualizar Relato' : 'Enviar Relato')}
             </button>
           </div>
         </form>

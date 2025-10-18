@@ -155,3 +155,51 @@
       width: 100%;
     }
   }
+
+
+  /* 📱 Responsividade retrato */
+@media (max-width: 480px) and (orientation: portrait) {
+  .relato-form-container {
+    padding: 20px;
+    width: 95%;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cancel-button,
+  .submit-button {
+    width: 100%;
+  }
+}
+
+/* 📺 Landscape em celulares */
+@media (max-height: 480px) and (orientation: landscape) {
+  .relato-modal-overlay {
+    align-items: flex-start;
+    padding-top: 10px;
+  }
+
+  .relato-form-container {
+    width: 80%;
+    max-width: 500px;
+    padding: 15px 20px;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  .relato-form-container h1 {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .form-group textarea {
+    min-height: 80px;
+  }
+
+  .form-actions {
+    margin-top: 15px;
+  }
+}

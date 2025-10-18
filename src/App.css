@@ -4,16 +4,16 @@
   font-size: 32px;
   opacity: 0;
 }
-.z1 {
+.z-1 {
   animation: swayUpToRight 2s ease-out infinite;
 }
-.z2 {
+.z-2 {
   animation: swayUpToRight 2s ease-out 0.5s infinite;
 }
-.z3 {
+.z-3 {
   animation: swayUpToRight 2s ease-out 1s infinite;
 }
-.z4 {
+.z-4 {
   animation: swayUpToRight 2s ease-out 1.5s infinite;
 }
 @keyframes swayUpToRight {

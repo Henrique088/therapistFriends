@@ -1,20 +1,22 @@
 /* Container principal do modal */
 .modal-agendamento {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  right: auto;
-  bottom: auto;
-  margin-right: -50%;
-  transform: translate(-50%, -50%);
-  background-color: #fff;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 90%;
-  max-width: 500px;
-  display: flex;
+  position: fixed;
+  top: 40px;
+  left: 30%;
+  right: 0;
+  bottom: 0;
+  width: 40%;
+  height: 90%;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #050505;
+  background-color: rgba(244, 236, 236, 0.95); 
+  display: flex; /* Para centralizar o conteúdo */
   flex-direction: column;
+  align-items: center; /* Centraliza verticalmente */
+  justify-content: center; /* Centraliza horizontalmente */
+  z-index: 1000; /* Garante que o overlay esteja acima de outros elementos */
+  /* background: linear-gradient(to right, #E0FFE0, #A8D8EA); */
 }
 
 /* Título e parágrafo */
@@ -28,6 +30,7 @@
   font-size: 1rem;
   color: #666;
   margin-bottom: 20px;
+  text-align: center;
 }
 
 /* Formulário */
@@ -100,4 +103,12 @@
 
 .codinome{
     background-color: #dbdbdb;
+}
+
+
+@media (max-width: 768px) {
+  .modal-agendamento {
+    width: 90%;
+    left: 5%;
+  }
 }

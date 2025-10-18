@@ -4,36 +4,38 @@ import { FiMail, FiLock, FiUser } from 'react-icons/fi';
 import styles from './Cadastro.module.css';
 import lobo from '../../img/lobo.png';
 import { toast } from 'react-toastify';
+import api from '../../api/apiConfig'; 
 
 function Cadastro() {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [tipoUsuario, setTipoUsuario] = useState('paciente'); // valor padrão
+  const [loading, setLoading] = useState(false);
 
   async function handleCadastro(e) {
     e.preventDefault();
+    setLoading(true);
 
     try {
-      const resposta = await fetch('http://localhost:3001/auth/cadastro', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ nome, email, senha, tipo_usuario: tipoUsuario }),
+      const response = await api.post('/auth/cadastro', {
+        nome, 
+        email, 
+        senha, 
+        tipo_usuario: tipoUsuario 
       });
 
-      const dados = await resposta.json();
-
-      if (resposta.ok) {
-        toast.done('Cadastro realizado com sucesso!');
-        window.location.href = '/login';
-      } else {
-        alert(dados.msg || 'Erro ao cadastrar.');
-      }
-    } catch (erro) {
-      console.error('Erro ao cadastrar:', erro);
-      alert('Erro no servidor.');
+      toast.success('Cadastro realizado com sucesso!');
+      window.location.href = '/login';
+      
+    } catch (error) {
+      console.error('Erro ao cadastrar:', error);
+      
+      const errorMessage = error.response?.data?.msg || 'Erro ao cadastrar.';
+      toast.error(errorMessage);
+      
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -83,7 +85,7 @@ function Cadastro() {
           <label>
             <input
               type="radio"
-              value="Paciente"
+              value="paciente"
               checked={tipoUsuario === 'paciente'}
               onChange={() => setTipoUsuario('paciente')}
             />
@@ -100,7 +102,13 @@ function Cadastro() {
           </label>
         </div>
 
-        <button className={styles.cadastrarButton} onClick={handleCadastro}>Cadastrar</button>
+        <button 
+          className={styles.cadastrarButton} 
+          onClick={handleCadastro}
+          disabled={loading}
+        >
+          {loading ? 'Cadastrando...' : 'Cadastrar'}
+        </button>
 
         <button className={styles.cadastrarButtonGoogle}>
           <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google" className={styles.googleIcon} />

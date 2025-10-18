@@ -1,6 +1,7 @@
 // contexts/NotificationContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSocket } from './SocketContext';
+import api from '../api/apiConfig';
 
 const NotificationContext = createContext();
 
@@ -39,56 +40,38 @@ export const NotificationProvider = ({ children }) => {
 
   const fetchNotifications = async () => {
     try {
-      const response = await fetch('http://localhost:3001/notificacoes/nao-lidas', {
-        credentials: 'include',
-      });
+      const response = await api.get('/notificacoes/nao-lidas');
       
-      if (response.ok) {
-        const data = await response.json();
-        setUnreadCount(data.total);
-        setHasNewNotification(data.total > 0);
-      }
+      setUnreadCount(response.data.total);
+      setHasNewNotification(response.data.total > 0);
+      
     } catch (error) {
-      console.error('Erro ao buscar notificações:', error);
+      console.error('Erro ao buscar notificações:', error.response?.data || error.message);
     }
   };
 
   const markAsRead = async (notificationId) => {
     try {
-      const response = await fetch(`http://localhost:3001/notificacoes/${notificationId}`, {
-        method: 'PUT',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        // Atualizar contador
-        setUnreadCount(prev => Math.max(0, prev - 1));
-        setHasNewNotification(unreadCount - 1 > 0);
-      }
+      await api.put(`/notificacoes/${notificationId}`);
+      
+      // Atualizar contador
+      setUnreadCount(prev => Math.max(0, prev - 1));
+      setHasNewNotification(unreadCount - 1 > 0);
+      
     } catch (error) {
-      console.error('Erro ao marcar notificação como lida:', error);
+      console.error('Erro ao marcar notificação como lida:', error.response?.data || error.message);
     }
   };
 
   const markAllAsRead = async () => {
     try {
-      const response = await fetch('http://localhost:3001/notificacoes/marcar-todas-lidas', {
-        method: 'PUT',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        setUnreadCount(0);
-        setHasNewNotification(false);
-      }
+      await api.put('/notificacoes/marcar-todas-lidas');
+      
+      setUnreadCount(0);
+      setHasNewNotification(false);
+      
     } catch (error) {
-      console.error('Erro ao marcar todas como lidas:', error);
+      console.error('Erro ao marcar todas como lidas:', error.response?.data || error.message);
     }
   };
 
