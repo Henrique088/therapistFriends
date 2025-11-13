@@ -39,7 +39,6 @@ const MenuLateral = () => {
     setMenuOpenMobile(!menuOpenMobile);
   };
 
-  // ✅ Corrigido: essa lógica atua apenas em telas grandes
   useEffect(() => {
     const isMobile = window.innerWidth <= 768;
     if (!isMobile && (isChatPage || isAgendaPage)) {
@@ -79,6 +78,7 @@ const MenuLateral = () => {
 
   return (
     <div className={styles.container}>
+      
       {/* Overlay do mobile */}
       {menuOpenMobile && <div className={styles['mobile-overlay']} onClick={toggleMenuMobile}></div>}
 

@@ -26,7 +26,7 @@ function Login() {
     try {
   const resposta = await api.post('/auth/login', { email, senha },{ withCredentials: true });
 
-  // Login OK
+  
   const { info } = resposta.data;
   localStorage.setItem('userAuthInfo', JSON.stringify(info));
   await fetchUsuario();
@@ -37,7 +37,7 @@ function Login() {
   else navigate('/');
 } catch (erro) {
   if (erro.response) {
-    // Backend respondeu com erro tratado (401, 400, etc)
+    
     const dados = erro.response.data;
 
     if (dados.msg === 'Senha incorreta.') setSenha('');
@@ -45,7 +45,7 @@ function Login() {
 
     toast.error(dados.msg || 'Falha ao fazer login.');
   } else {
-    // Sem resposta (erro de rede, servidor off, etc)
+   
     toast.error('Erro de conexão com o servidor.');
   }
 }

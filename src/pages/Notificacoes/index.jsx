@@ -7,7 +7,7 @@ import api from '../../api/apiConfig';
 export default function Notificacoes() {
   const [notificacoes, setNotificacoes] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [updating, setUpdating] = useState(null); // Para controlar qual notificação está sendo processada
+  const [updating, setUpdating] = useState(null); 
   const { fetchNotifications, markAsRead } = useNotifications();
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function Notificacoes() {
       setNotificacoes(response.data);
     } catch (error) {
       console.error('Erro ao buscar notificações:', error);
-      // Opcional: mostrar toast de erro
+      
     } finally {
       setLoading(false);
     }

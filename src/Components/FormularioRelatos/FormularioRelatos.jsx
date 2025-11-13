@@ -10,7 +10,7 @@ const RelatoForm = ({ onCancel, onSubmit, relatoEditando }) => {
   const [relato, setRelato] = useState('');
   const [anonimo, setAnonimo] = useState(false);
   const [enviando, setEnviando] = useState(false);
-  const [emojiPosition, setEmojiPosition] = useState('top-center'); // 👈 posição inicial
+  const [emojiPosition, setEmojiPosition] = useState('top-center'); 
 
   const categorias = [
     'Solidão', 'Ansiedade', 'Depressão', 'Timidez', 'Autoestima',
@@ -30,7 +30,7 @@ const RelatoForm = ({ onCancel, onSubmit, relatoEditando }) => {
     }
   }, [relatoEditando]);
 
-  // 📱 Detecta tipo de tela e orientação
+  //Detecta tipo de tela e orientação
   useEffect(() => {
     const updateEmojiPosition = () => {
       const isMobile = window.innerWidth <= 768;
@@ -138,8 +138,7 @@ const RelatoForm = ({ onCancel, onSubmit, relatoEditando }) => {
               disabled={enviando}
             />
           </div>
-
-          {/* 🧠 AQUI está o truque */}
+          
           <EmojiPicker onEmojiSelect={handleEmojiSelect} position={emojiPosition} />
 
           <div className="form-group anonimo-checkbox">

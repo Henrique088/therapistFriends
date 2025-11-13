@@ -2,10 +2,9 @@
 
 import React from 'react';
 import Modal from 'react-modal';
-import './ModalExplicativo.css'; // O CSS que criaremos
+import './ModalExplicativo.css'; 
 
-Modal.setAppElement('#root'); // Altere '#root' se o seu ID root for diferente
-
+Modal.setAppElement('#root'); 
 const ModalExplicativo = ({ isOpen, onRequestClose }) => {
     return (
         <Modal

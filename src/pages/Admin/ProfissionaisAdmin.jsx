@@ -109,7 +109,8 @@ function ProfissionaisAdmin() {
       p.usuario?.nome?.toLowerCase().includes(termo) || 
       p.usuario?.email?.toLowerCase().includes(termo) || 
       p.telefone?.includes(termo) || 
-      p.crp?.toLowerCase().includes(termo);
+      p.crp?.toLowerCase().includes(termo)||
+      p.cpf?.toLowerCase().includes(termo);
     
     const correspondeStatus =
       statusFiltro === 'todos' ? true : 
@@ -129,7 +130,7 @@ function ProfissionaisAdmin() {
         <div className="filtro-container">
           <input
             type="text"
-            placeholder="Buscar por nome, email, telefone ou CRP..."
+            placeholder="Buscar por nome, email, telefone, cpf ou CRP..."
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
           />

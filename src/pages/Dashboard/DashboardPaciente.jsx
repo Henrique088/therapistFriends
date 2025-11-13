@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import MenuLateral from '../../Components/Menu/MenuLateral';
 import ExibirRelatos from '../../Components/Relatos/RelatosComponente';
-import MyCalendar from '../Calendario';
 import RelatoForm from '../../Components/FormularioRelatos/FormularioRelatos';
 import { useUser } from '../../contexts/UserContext';
 

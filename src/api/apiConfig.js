@@ -33,9 +33,9 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response) {
-      console.error('❌ Erro da API:', error.response.data);
+      console.error('Erro da API:', error.response.data);
     } else {
-      console.error('⚠️ Erro de rede:', error.message);
+      console.error('Erro de rede:', error.message);
     }
     return Promise.reject(error);
   }

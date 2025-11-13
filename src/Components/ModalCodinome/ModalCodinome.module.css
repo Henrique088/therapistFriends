@@ -1,0 +1,202 @@
+/* Modal Overlay - Base do seu CSS */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.95); /* Fundo cinza escuro semi-transparente */
+  display: flex; /* Para centralizar o conteúdo */
+  align-items: center; /* Centraliza verticalmente */
+  justify-content: center; /* Centraliza horizontalmente */
+  z-index: 1000; /* Garante que o overlay esteja acima de outros elementos */
+}
+
+/* Modal Content - Base do seu CSS */
+.modalContent {
+  background: linear-gradient(to right, #E0FFE0, #A8D8EA);
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 500px; /* Largura máxima do modal */
+  width: 90%; /* Largura responsiva */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  outline: none; /* Remove o contorno padrão do foco */
+  position: relative; /* Pode ser útil para posicionamento interno */
+  z-index: 1001; /* Garante que o conteúdo esteja acima do overlay */
+}
+
+/* Modal Header - Ajustado para o novo gradiente */
+.modalHeader {
+  background: linear-gradient(135deg, #ffffff 0%, #75dde7 100%);
+  color: white;
+  padding: 20px;
+  margin: -20px -20px 20px -20px;
+  border-radius: 8px 8px 0 0;
+  text-align: center;
+}
+
+.modalHeader h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Modal Body */
+.modalBody {
+  padding: 10px 0;
+}
+
+.modalBody p {
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+/* Form Groups */
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #bdc3c7;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-color: #3498db;
+  background: white;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+}
+
+.formGroup input:disabled {
+  background-color: #ecf0f1;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.formGroup input::placeholder {
+  color: #7f8c8d;
+}
+
+/* Modal Footer */
+.modalFooter {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 20px 0 0 0;
+  margin-top: 10px;
+}
+
+.modalFooter button {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.logoutButton {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+}
+
+.logoutButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(192, 57, 43, 0.3);
+}
+
+.saveButton {
+  background: linear-gradient(135deg, #27ae60 0%, #2196F3 100%);
+  color: white;
+}
+
+.saveButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2196F3 0%, #27ae60 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(39, 174, 96, 0.3);
+}
+
+.modalFooter button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .modalContent {
+    width: 95%;
+    margin: 20px;
+    padding: 15px;
+  }
+  
+  .modalHeader {
+    padding: 15px;
+    margin: -15px -15px 15px -15px;
+  }
+  
+  .modalHeader h2 {
+    font-size: 1.3rem;
+  }
+  
+  .modalBody {
+    padding: 5px 0;
+  }
+  
+  .modalFooter {
+    padding: 15px 0 0 0;
+    flex-direction: column;
+  }
+  
+  .modalFooter button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .modalContent {
+    padding: 10px;
+  }
+  
+  .modalHeader {
+    padding: 12px;
+    margin: -10px -10px 12px -10px;
+  }
+  
+  .modalHeader h2 {
+    font-size: 1.2rem;
+  }
+  
+  .formGroup input {
+    padding: 10px;
+  }
+  
+  .modalFooter button {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+  }
+}

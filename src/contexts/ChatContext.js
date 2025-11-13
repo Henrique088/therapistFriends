@@ -11,7 +11,7 @@ export const ChatProvider = ({ children }) => {
   const [unreadChatCount, setUnreadChatCount] = useState(0);
   const [conversationUnreadCounts, setConversationUnreadCounts] = useState({});
 
-  // 1. Efeito para buscar as contagens iniciais do back-end
+ 
   useEffect(() => {
     if (!usuario) return;
 
@@ -30,7 +30,7 @@ export const ChatProvider = ({ children }) => {
     fetchInitialUnreadCounts();
   }, [usuario]);
 
-  // 2. Efeito para lidar com mensagens em tempo real
+ 
   useEffect(() => {
     if (!socket || !usuario) return;
 

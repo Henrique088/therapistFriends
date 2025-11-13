@@ -13,10 +13,10 @@ const Explorar = () => {
   const [profissionais, setProfissionais] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const isOpen = !!profissionalSelecionado; // Modal aberto se houver profissional selecionado
-  const onClose = () => setProfissionalSelecionado(null); // Função para fechar o modal
+  const isOpen = !!profissionalSelecionado; 
+  const onClose = () => setProfissionalSelecionado(null); 
 
-  Modal.setAppElement('#root'); // Define o elemento raiz para acessibilidade
+  Modal.setAppElement('#root'); 
 
   // Busca os profissionais da API
   useEffect(() => {
@@ -34,7 +34,7 @@ const Explorar = () => {
         
         if (err.response?.status === 401) return;
         
-        // Para outros erros, podemos tentar novamente após 5 segundos
+        
         setTimeout(() => {
           fetchProfissionais();
         }, 5000);
@@ -172,7 +172,7 @@ const Explorar = () => {
             </div>
             
             <div className={styles['modal-actions']}>
-              <button className={styles['agendar-button']}>Conversar</button>
+              {/* <button className={styles['agendar-button']}>Conversar</button> */}
               <button className={`${styles['agendar-button']} ${styles.secondary}`} onClick={()=>agendarConsulta(profissionalSelecionado.id_usuario) }>Agendar Consulta</button>
             </div>
           </div>

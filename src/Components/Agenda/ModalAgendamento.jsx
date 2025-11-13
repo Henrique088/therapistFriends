@@ -5,7 +5,8 @@ import api from '../../api/apiConfig';
 import { toast } from 'react-toastify';
 import { useUser } from '../../contexts/UserContext';
 import './ModalAgendamento.css';
-Modal.setAppElement('#root'); // Configure a raiz da sua aplicação
+
+Modal.setAppElement('#root'); 
 
 const ModalAgendamento = ({ profissionalId, slot, onClose, onAgendamentoConcluido }) => {
     const [pacienteNome, setPacienteNome] = useState('');
@@ -36,21 +37,21 @@ const ModalAgendamento = ({ profissionalId, slot, onClose, onAgendamentoConcluid
         <Modal 
     isOpen={true} 
     onRequestClose={onClose} 
-    className="modal-agendamento" // Adicione a classe aqui
-    overlayClassName="overlay-agendamento" // Opcional, para estilizar o fundo
+    className="modal-agendamento" 
+    overlayClassName="overlay-agendamento" 
   >
     <h2>Agendar Horário</h2>
     <p>Horário selecionado: {slot.start.toLocaleString()} - {slot.end.toLocaleString()}</p>
     <form onSubmit={handleSubmit}>
       <div className="form-group">
         <label>Seu Codinome:</label>
-        <input type="text" value={usuario.nome} disabled  className='codinome'/>
+        <input type="text" value={usuario.codinome} disabled  className='codinome'/>
       </div>
       <div className="form-group">
         <label>Motivo:</label>
         <textarea value={motivo} onChange={(e) => setMotivo(e.target.value)}  placeholder='Escreve algo se achar necessário...'/>
       </div>
-      <div className="button-group"> {/* Adicione um grupo para os botões */}
+      <div className="button-group"> 
         <button type="submit" className="btn-confirm">Confirmar Agendamento</button>
         <button type="button" onClick={onClose} className="btn-cancel">Cancelar</button>
       </div>

@@ -6,7 +6,7 @@ import { useUser } from '../../contexts/UserContext';
 import { useChat } from '../../contexts/ChatContext';
 import EmojiPicker from '../../Utils/emojiPicker';
 import { FaCheckDouble } from "react-icons/fa6";
-import { IoArrowBackCircleOutline } from "react-icons/io5"; // Ícone para voltar
+import { IoArrowBackCircleOutline } from "react-icons/io5"; 
 import api from '../../api/apiConfig';
 
 export default function Chats() {
@@ -61,19 +61,17 @@ export default function Chats() {
     fetchConversas();
   }, []);
 
-  // Dentro do seu Chats.js
+  
   useEffect(() => {
-    // Função que será registrada como Listener
+   
     const ajustarTeclado = () => {
 
-      // CORREÇÃO DEFINITIVA: Usar getElementsByClassName para evitar problemas de escape
-      // Retorna um NodeList, então pegamos o primeiro elemento [0]
+     
       const formEnvioEl = document.getElementsByClassName(styles.formEnvio)[0];
       const chatHeaderEl = document.getElementsByClassName(styles.chatHeader)[0];
 
       const chatArea = chatAreaRef.current;
 
-      // Verifica se estamos em um chat ativo
       if (!formEnvioEl || !window.visualViewport || !chatArea || !chatHeaderEl || !conversaSelecionada) {
         resetAltura();
         return;
@@ -89,7 +87,6 @@ export default function Chats() {
       // 2. Mover o Formulário de Envio (colando no topo do teclado)
       formEnvioEl.style.bottom = `${alturaTeclado}px`;
 
-      // 3. CRUCIAL: Ajustar Altura da Área de Mensagens
       // Altura da Mensagens = Altura Visível - Altura do Header - Altura do Form.
       chatArea.style.height = `${alturaVisivel - alturaHeader - alturaForm}px`;
 
@@ -105,11 +102,11 @@ export default function Chats() {
     // Função para resetar as alturas quando o teclado fechar
     const resetAltura = () => {
       const chatArea = chatAreaRef.current;
-      // CORREÇÃO: Usar getElementsByClassName para o reset também
+
       const formEnvioEl = document.getElementsByClassName(styles.formEnvio)[0];
 
       if (chatArea) {
-        // Volta para o controle do CSS (flex: 1 e height: 100%)
+        
         chatArea.style.height = 'auto';
         chatArea.style.flex = '1';
       }
@@ -131,9 +128,9 @@ export default function Chats() {
       window.removeEventListener('focusin', ajustarTeclado);
       window.removeEventListener('focusout', resetAltura);
     };
-    // Mantemos styles e conversaSelecionada para garantir que os listeners sejam reconfigurados se necessário.
-  }, [styles, conversaSelecionada]);   // Dependência adicionada para re-inicializar a lógica ao mudar de chat
-  // === FIM DO AJUSTE PARA TECLADO VIRTUAL ===
+   
+  }, [styles, conversaSelecionada]); 
+  
 
 
   useEffect(() => {
@@ -142,7 +139,7 @@ export default function Chats() {
     }
   }, [mensagens, usuario.id]);
 
-  // ... (Restante da lógica do componente - mantido) ...
+
 
   useEffect(() => {
     const handleClickFora = (event) => {
@@ -332,7 +329,7 @@ export default function Chats() {
     });
   };
 
-  // Função para limpar a conversa selecionada (usada para botão Voltar no Mobile)
+  
   const deselecionarConversa = () => {
     if (conversaSelecionada) {
       socket.emit('sair_conversa', conversaSelecionada);
@@ -436,7 +433,7 @@ export default function Chats() {
               <div ref={ultimaMensagemRef}></div>
             </div>
             <div className={styles.formEnvio}>
-              <EmojiPicker onEmojiSelect={handleEmojiSelect} position="top-center" />
+              <EmojiPicker onEmojiSelect={handleEmojiSelect} position="center" />
               <textarea
                 value={novaMensagem}
                 onChange={(e) => setNovaMensagem(e.target.value)}

@@ -28,7 +28,7 @@ const ModalBloqueio = ({
   visible,
   onClose,
   onRemover,
-  onSalvarBloqueio, // Nova prop para salvar bloqueios
+  onSalvarBloqueio, 
   loading,
   slot // O slot selecionado no calendário
 }) => {
@@ -55,7 +55,7 @@ const ModalBloqueio = ({
     // 1. Converte a string de hora para um objeto moment temporário
     const [hours, minutes] = timeString.split(':');
     
-    // 2. Clone a data original (garantindo que o dia seja mantido)
+    // 2. Clona a data original (garantindo que o dia seja mantido)
     let newMoment = formData[field].clone();
 
     // 3. Aplica a nova hora e minuto

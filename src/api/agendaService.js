@@ -68,5 +68,31 @@ export const AgendaService = {
   async cancelarAgendamento(id){
     const response = await api.delete(`agendamento/cancelar/${id}`)
     return response.data.erro;
+  },
+
+  async urgenciaService(profissionalId){
+    const response = await api.get(`urgencia/pendentes/${profissionalId}`);
+    return response.data;
+  },
+
+  //decidir Urgencia
+  async decidirUrgencia(solicitacaoId, acao, motivo) {
+    const response = await api.post(`urgencia/aprovar/${solicitacaoId}`, {
+      status: acao === 'aprovar' ? 'aprovada' : 'rejeitada',
+      motivo: motivo || ''
+    });
+    return response.data;
+  },
+
+  //solicitar Urgencia
+  async solicitarUrgencia(profissionalId, pacienteId, motivo, janelaDeTempo) {
+    const response = await api.post('urgencia/solicitar', {
+      profissionalId,
+      pacienteId,
+      motivo,
+      janelaDeTempo: janelaDeTempo
+    });
+    return response.data;
   }
+
 };

@@ -16,7 +16,7 @@ import Cadastro from './pages/Cadastro';
 import DashboardPaciente from './pages/Dashboard/DashboardPaciente';
 import DashboardProfissional from './pages/Dashboard/DashboardProfissional';
 import Relato from './pages/Relato';
-import RelatosRecebidos from './pages/RelatosRecebidos';
+
 import Chat from './pages/Chat';
 import PerfilPaciente from './pages/Perfil/PerfilPaciente';
 import PerfilProfissional from './pages/Perfil/PerfilProfissional';
@@ -239,7 +239,6 @@ export default function App() {
           <Route path="/dashboard-profissional" element={<ProtectedRoute allowedTypes={['profissional']}><DashboardProfissional /></ProtectedRoute>} />
           <Route path="/dashboard-paciente" element={<ProtectedRoute allowedTypes={['paciente']}><DashboardPaciente /></ProtectedRoute>} />
           <Route path="/relato" element={<ProtectedRoute allowedTypes={['paciente', 'profissional']}><Relato /></ProtectedRoute>} />
-          <Route path="/relatos-recebidos" element={<ProtectedRoute allowedTypes={['profissional']}><RelatosRecebidos /></ProtectedRoute>} />
           <Route path="/chat" element={<ProtectedRoute allowedTypes={['paciente', 'profissional']}><Chat /></ProtectedRoute>} />
           <Route path="/perfil-paciente" element={<ProtectedRoute allowedTypes={['paciente']}><PerfilPaciente /></ProtectedRoute>} />
           <Route path="/perfil-profissional" element={<ProtectedRoute allowedTypes={['profissional']}><PerfilProfissional /></ProtectedRoute>} />

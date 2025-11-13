@@ -74,6 +74,26 @@ td {
     justify-content: space-between;
 }
 
+.botoes-agenda {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn-urgencia {
+    margin-left: 20px;
+    padding: 10px 20px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-urgencia:hover {
+    background-color: #b02a37;
+    transform: scale(1.05);
+}
 
 /* Responsividade */
 @media (max-width: 768px) {

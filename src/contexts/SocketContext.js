@@ -11,7 +11,7 @@ export function SocketProvider({ children }) {
   const getSocketUrl = () => {
     // Se estiver em produção ou usando ngrok
     if (window.location.hostname !== 'localhost') {
-      // Usa o mesmo host do frontend (que será o ngrok)
+      // Usa o mesmo host do frontend (ngrok)
       return window.location.origin;
     }
     // Desenvolvimento local

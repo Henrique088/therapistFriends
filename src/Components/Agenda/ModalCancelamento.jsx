@@ -4,11 +4,11 @@ import React from 'react';
 import Modal from 'react-modal';
 import moment from 'moment';
 import { toast } from 'react-toastify';
-import { AgendaService } from '../../api/agendaService'; // Assumindo que você tem um método de cancelamento aqui
-import './ModalCancelamento.css'; // O CSS que criaremos
+import { AgendaService } from '../../api/agendaService'; 
+import './ModalCancelamento.css';
 
-// Configuração obrigatória para o react-modal
-Modal.setAppElement('#root'); // Altere '#root' se o seu ID root for diferente
+
+Modal.setAppElement('#root');
 
 const ModalCancelamento = ({ isOpen, onRequestClose, evento, onCancelamentoConcluido }) => {
     if (!evento) return null;
@@ -27,7 +27,7 @@ const ModalCancelamento = ({ isOpen, onRequestClose, evento, onCancelamentoConcl
         }
 
         try {
-            // Assumindo que o seu evento tem um 'id' e que o AgendaService tem um método para cancelar
+           
             await AgendaService.cancelarAgendamento(evento.id);
             toast.success('Agendamento cancelado com sucesso!');
             onCancelamentoConcluido(); // Chama a função para fechar o modal e recarregar a agenda

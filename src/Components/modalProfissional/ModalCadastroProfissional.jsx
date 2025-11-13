@@ -24,6 +24,8 @@ export default function ModalCadastroProfissional({ isOpen, onClose, token }) {
   useEffect(() => {
     if (usuario?.validado === false) {
       toast.error('Seu cadastro foi rejeitado. Por favor, corrija os dados e envie novamente.');
+      // motivo
+      toast.error(`Motivo: ${usuario.motivo || 'Não informado'}`);
     }
   }, [usuario]);
 

@@ -20,7 +20,7 @@
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    animation: fadeIn 0.3s ease-out;
+    /* animation: fadeIn 0.3s ease-out; */
   }
   
   @keyframes fadeIn {

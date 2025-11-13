@@ -29,5 +29,5 @@ export default function useNotificacoes() {
       socket.off('nova_notificacao', handleNotificacao);
       socket.off('connect', setupListeners);
     };
-  }, [socket]); // Certifique-se de que 'socket' é estável entre renderizações
+  }, [socket]); 
 }

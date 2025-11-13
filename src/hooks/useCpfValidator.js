@@ -1,4 +1,5 @@
 // hooks/useCpfValidator.js
+
 import { useState } from 'react';
 
 export const useCpfValidator = () => {

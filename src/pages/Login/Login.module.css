@@ -184,7 +184,8 @@ html, body {
   }
 
   .wolfImage {
-    max-width: 100vh;
+    max-width: 50vh;
+    
   }
 }
 
@@ -212,7 +213,7 @@ html, body {
   }
 
   .wolfImage {
-    max-width: 100vh;
+    max-width: 30vh;
   }
 }
 
@@ -226,7 +227,7 @@ html, body {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    height: 100vdh;
+    height: 100%;
     background: linear-gradient(to right, #E0FFE0, #A8D8EA);
   }
 
@@ -267,6 +268,6 @@ html, body {
   }
 
   .wolfImage {
-    max-width: 100vh;
+    max-width: 80vh;
   }
 }

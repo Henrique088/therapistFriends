@@ -11,20 +11,26 @@ import './AgendaPaciente.css';
 import ModalAgendamento from '../../Components/Agenda/ModalAgendamento';
 import ModalCancelamento from '../../Components/Agenda/ModalCancelamento';
 import ModalExplicativo from '../../Components/Agenda/ModalExplicativo';
+import ModalSolicitacaoUrgencia from '../../Components/Agenda/ModalSolicitacaoUrgencia';
 import { AgendaService } from '../../api/agendaService';
 import { MdOutlineQuestionMark } from "react-icons/md";
+import { AiFillAlert } from "react-icons/ai";
+import { useUser } from '../../contexts/UserContext';
 
 
 const AgendaPaciente = () => {
+    const { usuario } = useUser();
     const { profissionalId, profissionalNome } = useParams();
     const [eventos, setEventos] = useState([]);
     const [loading, setLoading] = useState(false);
+
     const [dataAtual, setDataAtual] = useState(moment().toDate());
     const [mostrarModalAgendamento, setMostrarModalAgendamento] = useState(false);
     const [slotSelecionado, setSlotSelecionado] = useState(null);
     const [mostrarModalCancelamento, setMostrarModalCancelamento] = useState(false);
     const [eventoSelecionado, setEventoSelecionado] = useState(null);
-    const [mostrarModalExplicativo, setMostrarModalExplicativo] = useState(false); 
+    const [mostrarModalExplicativo, setMostrarModalExplicativo] = useState(false);
+    const [mostrarModalUrgencia, setMostrarModalUrgencia] = useState(false);
 
 
     const carregarAgenda = async (inicio, fim) => {
@@ -61,14 +67,14 @@ const AgendaPaciente = () => {
 
 
     const handleSelectSlot = ({ start, end, action }) => {
-        // Ignora arrastos longos, que podem ocorrer acidentalmente em toque.
-        // Como step é 60, o slot válido é de 60 minutos.
+       
+
         const duracaoSelecionada = moment(end).diff(moment(start), 'minutes');
         if (duracaoSelecionada > 60) {
             return;
         }
 
-        // Garante que o slot é exato na hora cheia (ex: 10:00 - 11:00)
+        
         const inicioInteiro = moment(start).startOf('hour');
         const fimInteiro = moment(inicioInteiro).add(1, 'hour');
 
@@ -77,12 +83,12 @@ const AgendaPaciente = () => {
             toast.error('Não é possível agendar um horário no passado.');
             return;
         }
-        
-        // 2. Verifica se o slot está ocupado por algum evento (importante para evitar agendamento sobre bloqueios)
+
+        // Verifica se o slot está ocupado por algum evento
         const slotOcupado = eventos.some(evento => {
             const eventoStart = moment(evento.start);
             const eventoEnd = moment(evento.end);
-            
+
             // Verifica se o slot de 1 hora se sobrepõe a qualquer evento existente
             return (
                 (inicioInteiro.isSameOrAfter(eventoStart) && inicioInteiro.isBefore(eventoEnd)) || // Slot começa dentro de um evento
@@ -94,7 +100,7 @@ const AgendaPaciente = () => {
         if (slotOcupado) {
             // Informa ao usuário que o horário não está disponível
             toast.info('Este horário já está ocupado ou indisponível. Clique em um horário vazio.');
-            return; 
+            return;
         }
 
         setSlotSelecionado({ start: inicioInteiro.toDate(), end: fimInteiro.toDate() });
@@ -103,7 +109,7 @@ const AgendaPaciente = () => {
 
 
     const onNavigate = (newDate) => {
-        // Apenas atualize a data no estado
+       
         setDataAtual(newDate);
     };
 
@@ -111,25 +117,28 @@ const AgendaPaciente = () => {
         const agora = moment();
         const inicioEvento = moment(eventoStart);
         const diferencaHoras = inicioEvento.diff(agora, 'hours');
+
+        
+        // Cancelamento com somente 24 horas de atencedência
         return diferencaHoras >= 24;
     };
 
     const handleCancelamentoConcluido = () => {
         setMostrarModalCancelamento(false);
         setEventoSelecionado(null);
-        
+
         // Recarrega a agenda após o cancelamento
         const inicio = moment(dataAtual).startOf('week');
         const fim = moment(dataAtual).endOf('week');
         carregarAgenda(inicio, fim);
-        
+
         toast.success('Consulta cancelada com sucesso!');
     };
 
     const onSelectEvent = (evento) => {
         console.log('Evento selecionado:', evento);
-        
-        if(evento.title === 'BLOQUEADO' || evento.title === 'OCUPADO') {
+
+        if (evento.title === 'BLOQUEADO' || evento.title === 'OCUPADO') {
             toast.info('Este horário está bloqueado e não pode ser alterado.');
             return;
         }
@@ -137,16 +146,16 @@ const AgendaPaciente = () => {
         // Verifica se é um evento que pode ser cancelado (agendamento do paciente)
         if ((evento.title === 'PENDENTE' || evento.title === 'CONFIRMADO') && evento.paciente) {
             const podeCancelar = verificarPodeCancelar(evento.start);
-            
-            if (!podeCancelar) {
+
+            if (!podeCancelar && moment(evento.start).isAfter(moment())) {
                 toast.error('Cancelamento permitido apenas com 24 horas de antecedência.');
                 return;
             }
-            // alert('Você poderá cancelar este agendamento no próximo passo.');
+           
             setEventoSelecionado(evento);
             setMostrarModalCancelamento(true);
         } else {
-            if(evento.title === 'EM USO') {
+            if (evento.title === 'EM USO') {
                 return
             }
         }
@@ -171,35 +180,44 @@ const AgendaPaciente = () => {
     return (
         <div style={{ padding: '20px' }}>
             <div className='cabeca'>
-            <h1>Agenda do Profissional {profissionalNome}</h1>
-            <button 
-                        className="icone-info" 
-                        title="Explicar a agenda"
-                        onClick={() => setMostrarModalExplicativo(true)}
-                    >
-                        <MdOutlineQuestionMark/>
-                    </button>
+                <h1>Agenda do Profissional {profissionalNome}</h1>
+                <div className='botoes-agenda'>
+                <button
+                    className="btn-urgencia"
+                    onClick={() => setMostrarModalUrgencia(true)}
+                    
+                >
+                    <AiFillAlert style={{ fontSize: "18px"  }} /> Solicitar Urgência
+                </button>
 
-                    </div>
+                <button
+                    className="icone-info"
+                    title="Explicar a agenda"
+                    onClick={() => setMostrarModalExplicativo(true)}
+                >
+                    <MdOutlineQuestionMark />
+                </button>
+                </div>
+            </div>
             <table>
-            <thead ></thead>
-            <tbody>
-              <tr>
-                <td><span className="indicativo disponivel"></span> Disponível</td>
-                {/* <td><span className="indicativo disponivel"></span> Podem agendar</td> */}
-                <td><span className="indicativo confirmado"></span> Confirmado</td>
-                {/* <td><span className="indicativo Confirmado"></span> Horário confirmado</td> */}
-              </tr>
+                <thead ></thead>
+                <tbody>
+                    <tr>
+                        <td><span className="indicativo disponivel"></span> Disponível</td>
+                        {/* <td><span className="indicativo disponivel"></span> Podem agendar</td> */}
+                        <td><span className="indicativo confirmado"></span> Confirmado</td>
+                        {/* <td><span className="indicativo Confirmado"></span> Horário confirmado</td> */}
+                    </tr>
 
-              <tr>
-                <td><span className="indicativo bloqueado"></span> Bloqueado/Cancelado</td>
-                {/* <td><span className="indicativo bloqueado"></span> Indisponível</td> */}
-                <td><span className="indicativo aguardando"></span> Aguardando</td>
-                {/* <td><span className="indicativo aguardando"></span> Pedente de confirmarção</td> */}
-              </tr>
+                    <tr>
+                        <td><span className="indicativo bloqueado"></span> Bloqueado/Cancelado</td>
+                        {/* <td><span className="indicativo bloqueado"></span> Indisponível</td> */}
+                        <td><span className="indicativo aguardando"></span> Aguardando</td>
+                        {/* <td><span className="indicativo aguardando"></span> Pedente de confirmarção</td> */}
+                    </tr>
 
-            </tbody>
-          </table>
+                </tbody>
+            </table>
             <Calendar
                 culture={"pt-BR"}
                 localizer={localizer}
@@ -270,6 +288,14 @@ const AgendaPaciente = () => {
             <ModalExplicativo
                 isOpen={mostrarModalExplicativo}
                 onRequestClose={() => setMostrarModalExplicativo(false)}
+            />
+
+            <ModalSolicitacaoUrgencia
+                isOpen={mostrarModalUrgencia}
+                onRequestClose={() => setMostrarModalUrgencia(false)}
+                profissionalId={profissionalId}
+                pacienteId={usuario.id}
+            // Adicione aqui a lógica de sucesso se precisar recarregar algo
             />
 
         </div>

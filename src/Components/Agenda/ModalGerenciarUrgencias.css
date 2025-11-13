@@ -1,0 +1,230 @@
+/* ModalGerenciarUrgencias.css */
+
+.modal-urgencia {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 1000;
+  border: none;
+  outline: none;
+}
+
+/* Overlay do modal */
+.modal-urgencia-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 999;
+}
+
+/* Cabeçalho */
+.modal-urgencia h2 {
+  color: #dc3545;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Botão fechar */
+.close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #6c757d;
+  transition: all 0.2s ease;
+}
+
+.close-button:hover {
+  background: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+
+/* Mensagem quando não há solicitações */
+.modal-urgencia p {
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
+  padding: 20px;
+}
+
+/* Lista de urgências */
+.lista-urgencias {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 15px;
+}
+
+/* Card individual de urgência */
+.card-urgencia {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  border-left: 4px solid #dc3545;
+}
+
+.card-urgencia:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.card-urgencia p {
+  margin: 8px 0;
+  text-align: left;
+  font-style: normal;
+  color: #333;
+}
+
+.card-urgencia p:first-child {
+  font-weight: bold;
+  color: #dc3545;
+  font-size: 1.1rem;
+}
+
+.card-urgencia p:nth-child(2) {
+  font-style: italic;
+  background: white;
+  padding: 10px;
+  border-radius: 4px;
+  border-left: 3px solid #007bff;
+}
+
+.card-urgencia p:nth-child(3) {
+  color: #28a745;
+  font-weight: 500;
+}
+
+/* Container de ações */
+.acoes-urgencia {
+  display: flex;
+  gap: 12px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+
+/* Botões */
+.btn-aprovar, .btn-rejeitar {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  flex: 1;
+  min-width: 140px;
+}
+
+.btn-aprovar {
+  background: #28a745;
+  color: white;
+}
+
+.btn-aprovar span {
+  justify-content: center;
+}
+
+.btn-aprovar:hover:not(:disabled) {
+  background: #218838;
+  transform: translateY(-1px);
+}
+
+.btn-rejeitar {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-rejeitar:hover:not(:disabled) {
+  background: #c82333;
+  transform: translateY(-1px);
+}
+
+.btn-aprovar:disabled, .btn-rejeitar:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  opacity: 0.6;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .modal-urgencia {
+    padding: 20px;
+    width: 95%;
+  }
+  
+  .acoes-urgencia {
+    flex-direction: column;
+  }
+  
+  .btn-aprovar, .btn-rejeitar {
+    min-width: auto;
+  }
+  
+  .modal-urgencia h2 {
+    font-size: 1.3rem;
+    padding-right: 40px; /* Espaço para o botão fechar */
+  }
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.modal-urgencia {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Scrollbar personalizada */
+.lista-urgencias::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lista-urgencias::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.lista-urgencias::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.lista-urgencias::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

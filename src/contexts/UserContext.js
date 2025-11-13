@@ -53,7 +53,7 @@ export function UserProvider({ children }) {
   try {
     await api.post('/auth/logout');
     
-    // ✅ Se chegou aqui, o logout foi bem-sucedido
+    
     setUsuario(null);
     localStorage.clear();
     

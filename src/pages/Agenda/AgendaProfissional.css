@@ -127,6 +127,119 @@ td {
 }
 
 
+/* Container da notificação */
+.urgencia-notification {
+  position: relative;
+  display: inline-block;
+  margin: 10px 0;
+}
+
+/* Botão principal */
+.btn-gerenciar-urgencia {
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 180px;
+  justify-content: center;
+}
+
+.btn-gerenciar-urgencia:hover:not(:disabled) {
+  background: linear-gradient(135deg, #c82333, #a71e2a);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(220, 53, 69, 0.4);
+}
+
+.btn-gerenciar-urgencia:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+/* Estado desabilitado */
+.btn-gerenciar-urgencia:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+  opacity: 0.6;
+}
+
+/* Badge de contagem */
+.badge-pendente {
+  background: #ffc107;
+  color: #212529;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  animation: pulse 2s infinite;
+}
+
+/* Efeito de pulsação para chamar atenção */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(255, 193, 7, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+  }
+}
+
+/* Efeito de tremor quando há urgências */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+.btn-gerenciar-urgencia:not(:disabled) {
+  animation: shake 3s ease-in-out infinite;
+}
+
+/* Estado de carregamento (se necessário no futuro) */
+.btn-gerenciar-urgencia.loading {
+  position: relative;
+  color: transparent;
+}
+
+.btn-gerenciar-urgencia.loading::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
 @media (max-width: 768px) {
   table{
     font-size: 0.9rem;
@@ -134,7 +247,7 @@ td {
 
   .agenda-header {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     height: auto;
    
     gap: 10px;
@@ -147,4 +260,22 @@ td {
     /* margin-top: 40px; */
     margin-left: 35px;
   }
+
+  .btn-gerenciar-urgencia {
+    padding: 10px 16px;
+    font-size: 13px;
+    min-width: 160px;
+  }
+  
+  .badge-pendente {
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+    top: -6px;
+    right: -6px;
+  }
 }
+
+
+
+

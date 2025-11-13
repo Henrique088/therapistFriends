@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import MenuLateral from '../../Components/Menu/MenuLateral';
 import { useUser } from '../../contexts/UserContext';
 import { Calendar } from 'react-big-calendar';
@@ -10,12 +10,11 @@ import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import { toast } from 'react-toastify';
 import ModalStatusAgendamento from '../../Components/Agenda/ModalStatusAgendamento';
 import ModalBloqueio from '../../Components/Agenda/ModalBloqueio';
+import ModalGerenciarUrgencias from '../../Components/Agenda/ModalGerenciarUrgencias';
 import { AgendaService } from '../../api/agendaService';
 import './AgendaProfissional.css';
 import Compartilhar from '../../Components/Compartilhar/Compartilhar';
-
-
-
+import { FaExclamationTriangle } from "react-icons/fa";
 
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 
@@ -28,74 +27,18 @@ function AgendaProfissional() {
   const [mostrarModalStatus, setMostrarModalStatus] = useState(false);
   const [eventoSelecionado, setEventoSelecionado] = useState(null);
 
-  // Carregar dados da agenda
-  // useEffect(() => {
-  //   const carregarAgenda = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const hoje = moment().startOf('day');
-  //       const fimSemana = moment().add(7, 'days').endOf('day');
+  // ESTADOS PARA URGÊNCIA
+  const [solicitacoesPendentes, setSolicitacoesPendentes] = useState([]);
+  const [mostrarModalUrgencia, setMostrarModalUrgencia] = useState(false);
 
-  //       const [disponibilidades, bloqueios] = await Promise.all([
-  //         AgendaService.getDisponibilidades(usuario.id, hoje.toISOString(), fimSemana.toISOString()),
-  //         AgendaService.getBloqueios(usuario.id, hoje.toISOString(), fimSemana.toISOString())
-  //       ]);
-  //       console.log('Disponibilidades:', disponibilidades);
-  //       console.log('Bloqueios:', bloqueios);
-  //       // Verifica se as respostas são arrays válidos (mesmo que vazios)
-  //       const disponibilidadesFormatadas = Array.isArray(disponibilidades)
-  //         ? disponibilidades.map(d => ({
-  //           ...d,
-  //           title: d.tipo === 'disponivel' ? 'Disponível' : 'Consulta',
-  //           start: new Date(d.data_inicio),
-  //           end: new Date(d.data_fim),
-  //           color: d.tipo === 'disponivel' ? '#ccffcc' : '#a0d8f6',
-  //           bloqueado: false
-  //         }))
-  //         : [];
 
-  //       const bloqueiosFormatados = Array.isArray(bloqueios)
-  //         ? bloqueios.map(b => ({
-  //           ...b,
-  //           title: 'BLOQUEADO',
-  //           start: new Date(b.data_inicio),
-  //           end: new Date(b.data_fim),
-  //           color: '#ffcccc',
-  //           bloqueado: true
-  //         }))
-  //         : [];
-
-  //       setEventos([...disponibilidadesFormatadas, ...bloqueiosFormatados]);
-
-  //       // Mostra mensagem se não houver eventos
-  //       if (disponibilidadesFormatadas.length === 0 && bloqueiosFormatados.length === 0) {
-  //         toast.info('Nenhum horário cadastrado para este período');
-  //       }
-  //     } catch (error) {
-  //       // Só mostra erro se não for uma resposta 404 (não encontrado)
-  //       if (!error.response || error.response.status !== 404) {
-  //         toast.error('Erro ao carregar agenda');
-  //         console.error('Erro detalhado:', error);
-  //       } else {
-  //         // Para 404, considera como agenda vazia
-  //         setEventos([]);
-  //         toast.info('Nenhum horário cadastrado ainda');
-  //       }
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   carregarAgenda();
-  // }, [usuario.id]);
   const statusColors = {
-  'pendente': '#a0d8f6',
-  'confirmado': '#57ef2dff',
-  'cancelado': '#f5a142ff'
-  
-};
+    'pendente': '#a0d8f6',
+    'confirmado': '#57ef2dff',
+    'cancelado': '#f5a142ff'
+  };
 
-  const carregarAgenda = async (inicio, fim) => {
+  const carregarAgenda = useCallback(async (inicio, fim) => {
     if (!usuario?.id) return;
 
     try {
@@ -106,8 +49,6 @@ function AgendaProfissional() {
         AgendaService.getAgendamentos(usuario.id, inicio.toISOString(), fim.toISOString())
       ]);
 
-      console.log('Bloqueios:', bloqueios);
-      console.log('Agendamentos:', agendamentos);
       const bloqueiosFormatados = Array.isArray(bloqueios)
         ? bloqueios.map(b => ({
           ...b,
@@ -131,12 +72,11 @@ function AgendaProfissional() {
         : [];
 
       const todosEventos = [...bloqueiosFormatados, ...agendamentosFormatados];
-      console.log('Todos os eventos formatados:', todosEventos);
       setEventos(todosEventos);
 
-      if (todosEventos.length === 0) {
-        toast.info('Nenhum bloqueio ou agendamento para este período');
-      }
+      // if (todosEventos.length === 0) {
+
+      // }
 
     } catch (error) {
       toast.error('Erro ao carregar agenda');
@@ -144,7 +84,29 @@ function AgendaProfissional() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [usuario.id]);
+
+  // FUNÇÃO PARA URGÊNCIAS PENDENTES
+  const carregarUrgenciasPendentes = useCallback(async () => {
+    if (!usuario?.id) return;
+
+    try {
+      const pendencias = await AgendaService.urgenciaService(usuario.id);
+      setSolicitacoesPendentes(pendencias);
+
+      if (pendencias.length > 0) {
+
+        toast.warn(`Você tem ${pendencias.length} solicitações de urgência pendentes!`);
+      }
+
+    } catch (error) {
+      console.error('Erro ao carregar urgências pendentes:', error);
+      if (error.response?.status !== 404) {
+        // toast.error('Erro ao buscar urgências pendentes.');
+      }
+      setSolicitacoesPendentes([]);
+    }
+  }, [usuario.id]);
 
 
   useEffect(() => {
@@ -152,7 +114,13 @@ function AgendaProfissional() {
     const hoje = moment().startOf('week');
     const fimDaSemana = moment().endOf('week');
     carregarAgenda(hoje, fimDaSemana);
-  }, [usuario.id]);
+    carregarUrgenciasPendentes();
+
+
+    const interval = setInterval(carregarUrgenciasPendentes, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, [usuario.id, carregarAgenda, carregarUrgenciasPendentes]);
 
 
   // Manipuladores de seleção no calendário
@@ -167,9 +135,8 @@ function AgendaProfissional() {
 
   const onSelectEvent = (evento) => {
     // Armazena o evento e abre o modal para o profissional
-    console.log('Evento selecionado:', evento);
     setEventoSelecionado(evento);
-    if(evento.title === 'BLOQUEADO') {
+    if (evento.title === 'BLOQUEADO') {
       setSlotSelecionado({
         id: evento.id,
         start: evento.start,
@@ -180,42 +147,25 @@ function AgendaProfissional() {
     else {
       setMostrarModalStatus(true);
     }
-    
   };
-
-  const handleSelectEvent = (event) => {
-    if (event.bloqueado) {
-      setSlotSelecionado({
-        id: event.id,
-        start: event.start,
-        end: event.end
-      });
-      setMostrarModalBloqueio(true);
-    }
-  };
-
-
 
 
   // Função para salvar um novo bloqueio (pontual ou recorrente)
   const handleSalvarBloqueio = async (dados) => {
     try {
       setLoading(true);
-      console.log('Dados recebidos para salvar bloqueio:', dados);
-      const { inicio, fim, recorrente, dias_recorrencia } = dados;
-      const dataInicioFormatada = moment(inicio).format(); 
-        const dataFimFormatada = moment(fim).format();
+      const { inicio, fim, dias_recorrencia } = dados;
+      const dataInicioFormatada = moment(inicio).format();
+      const dataFimFormatada = moment(fim).format();
+
       const novoBloqueio = {
         profissional_id: usuario.id,
         data_inicio: dataInicioFormatada,
         data_fim: dataFimFormatada,
         recorrente: dias_recorrencia.length > 0 ? true : false,
         dias_recorrencia,
-        id : slotSelecionado?.id // Inclui o ID se estiver editando um bloqueio existente
+        id: slotSelecionado?.id
       };
-      console.log(slotSelecionado?.id || 'Nenhum ID de bloqueio existente');
-      console.log('Dados do novo bloqueio:', novoBloqueio);
-
 
       if (slotSelecionado?.id) {
         // Atualiza o bloqueio existente
@@ -226,9 +176,7 @@ function AgendaProfissional() {
         await AgendaService.createBloqueio(novoBloqueio);
         toast.success('Bloqueio criado com sucesso!');
       }
-      
 
-      
       setMostrarModalBloqueio(false);
 
       // Recarrega a agenda após a operação
@@ -280,44 +228,20 @@ function AgendaProfissional() {
   };
 
 
-
-  // Adicionar novo bloqueio
-  const handleAdicionarBloqueio = async () => {
-    try {
-      setLoading(true);
-      const novoBloqueio = {
-        profissional_id: usuario.id,
-        data_inicio: slotSelecionado.start.toISOString(),
-        data_fim: slotSelecionado.end.toISOString(),
-        motivo: 'Bloqueio manual'
-      };
-
-      const response = await AgendaService.createBloqueio(novoBloqueio);
-
-      setEventos(prev => [...prev, {
-        ...response,
-        title: 'BLOQUEADO',
-        start: new Date(response.data_inicio),
-        end: new Date(response.data_fim),
-        color: '#ffcccc',
-        bloqueado: true
-      }]);
-
-      toast.success('Horário bloqueado com sucesso!');
-     
-    } catch (error) {
-      toast.error('Erro ao bloquear horário');
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
+  // Funções de Gerenciamento de Urgência
+  const handleUrgenciaDecidida = () => {
+    // Recarrega a lista de pendências e a agenda após a decisão
+    carregarUrgenciasPendentes();
+    const hoje = moment().startOf('week');
+    const fimDaSemana = moment().endOf('week');
+    carregarAgenda(hoje, fimDaSemana);
+    setMostrarModalUrgencia(false);
   };
 
-  // Estilização dos eventos
-  // Estilização dos eventos do calendário
-  const eventStyleGetter = (event) => {
 
-    
+
+  // Estilização dos eventos
+  const eventStyleGetter = (event) => {
     return {
       style: {
         backgroundColor: event.color,
@@ -333,8 +257,7 @@ function AgendaProfissional() {
     <div className="agenda-container">
       <MenuLateral />
 
-      
-
+      {/* Modal de Bloqueio/Edição */}
       <ModalBloqueio
         visible={mostrarModalBloqueio}
         onClose={() => setMostrarModalBloqueio(false)}
@@ -344,6 +267,7 @@ function AgendaProfissional() {
         slot={slotSelecionado}
       />
 
+      {/* Modal de Status de Agendamento */}
       {mostrarModalStatus && (
         <ModalStatusAgendamento
           evento={eventoSelecionado}
@@ -352,63 +276,58 @@ function AgendaProfissional() {
             // Recarregue a agenda após a mudança de status
             setMostrarModalStatus(false);
             const hoje = moment().startOf('week');
-    const fimDaSemana = moment().endOf('week');
-    carregarAgenda(hoje, fimDaSemana);
+            const fimDaSemana = moment().endOf('week');
+            carregarAgenda(hoje, fimDaSemana);
           }}
         />
       )}
 
+      {/* NOVO: Modal de Gerenciamento de Urgências */}
+      <ModalGerenciarUrgencias
+        visible={mostrarModalUrgencia}
+        onClose={() => setMostrarModalUrgencia(false)}
+        solicitacoes={solicitacoesPendentes}
+        onDecisao={handleUrgenciaDecidida} // Chama a recarga após a decisão
+      />
+
+
       <div className="agenda-content">
         <header className="agenda-header">
           <h1>Agenda de {usuario.nome}</h1>
+
+
+          <div className="urgencia-notification">
+            <button
+              className="btn-gerenciar-urgencia"
+              onClick={() => setMostrarModalUrgencia(true)}
+              disabled={solicitacoesPendentes.length === 0}
+            >
+              <FaExclamationTriangle /> Gerenciar Urgências
+              {solicitacoesPendentes.length > 0 && (
+                <span className="badge-pendente">{solicitacoesPendentes.length}</span>
+              )}
+            </button>
+          </div>
+
 
           <table>
             <thead ></thead>
             <tbody>
               <tr>
                 <td><span className="indicativo disponivel"></span> Disponível</td>
-                {/* <td><span className="indicativo disponivel"></span> Podem agendar</td> */}
                 <td><span className="indicativo confirmado"></span> Confirmado</td>
-                {/* <td><span className="indicativo Confirmado"></span> Horário confirmado</td> */}
               </tr>
-
               <tr>
                 <td><span className="indicativo bloqueado"></span> Bloqueado/Cancelado</td>
-                {/* <td><span className="indicativo bloqueado"></span> Indisponível</td> */}
                 <td><span className="indicativo aguardando"></span> Aguardando</td>
-                {/* <td><span className="indicativo aguardando"></span> Pedente de confirmarção</td> */}
               </tr>
-
             </tbody>
           </table>
-          {/* <div className="agenda-actions">
-            <button
-              className="btn-disponibilidade"
-              onClick={() => {
-                setSlotSelecionado(null);
-                
-              }}
-            >
-              + Nova Disponibilidade
-            </button>
-            <button
-              className="btn-bloqueio"
-              onClick={() => {
-                setSlotSelecionado({
-                  start: new Date(),
-                  end: moment().add(1, 'hour').toDate()
-                });
-                
-              }}
-            >
-              + Bloquear Horário
-            </button>
-          </div> */}
         </header>
 
         <section className="agenda-calendario">
-          
-          <Compartilhar/>
+
+          <Compartilhar />
           <DragAndDropCalendar
             culture={"pt-BR"}
             localizer={localizer}
@@ -437,8 +356,6 @@ function AgendaProfissional() {
             onNavigate={onNavigate}
             min={new Date(2025, 0, 1, 7, 0, 0)} // Início do dia
             max={new Date(2025, 0, 1, 21, 0, 0)} // Fim do dia
-          // onEventResize={handleEventResize}
-          // onEventDrop={handleEventDrop}
           />
         </section>
       </div>

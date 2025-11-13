@@ -37,27 +37,27 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
   }, [recarregar]);
 
   const relatosFiltrados = useMemo(() => {
-    // 1. Inicia com todos os relatos carregados
+
     let relatosParaExibir = [...relatos];
 
-    // 2. Filtra por relatos pessoais se a prop `relatosPessoais` for verdadeira
+
     if (relatosPessoais) {
       relatosParaExibir = relatosParaExibir.filter(relato => relato.paciente.id_usuario === usuario.id);
     }
 
-    // 3. Filtra por número de relatos se a prop `numRelatos` for definida
+
     if (numRelatos && !relatosPessoais) {
       relatosParaExibir = relatosParaExibir.filter(relato => relato.paciente.id_usuario !== usuario.id).slice(0, numRelatos);
     }
-    
-    // 4. Aplica a filtragem por tags como a última etapa
+
+
     if (tagsSelecionadas.length > 0) {
-      // Lógica para a tag 'Disponivéis'
+
       if (tagsSelecionadas.includes('Disponivéis') && usuario.tipo_usuario === 'profissional') {
         relatosParaExibir = relatosParaExibir.filter(relato => !relato.profissional_id);
       }
 
-      // Lógica para as outras tags
+
       const outrasTags = tagsSelecionadas.filter(tag => tag !== 'Disponivéis');
       if (outrasTags.length > 0) {
         relatosParaExibir = relatosParaExibir.filter(relato => {
@@ -107,10 +107,10 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
   const deletarRelato = async (relatoId) => {
     try {
       await api.delete(`/relatos/${relatoId}`);
-      
+
       setRelatos((prev) => prev.filter((r) => r.id !== relatoId));
       toast.success('Relato excluído com sucesso!');
-      
+
     } catch (error) {
       const errorMessage = error.response?.data?.erro || 'Erro ao deletar relato';
       console.error('Erro ao deletar relato:', error);
@@ -181,9 +181,9 @@ export default function ExibirRelatos({ numRelatos, relatosPessoais, recarregar,
           r.id === relato.id ? { ...r, profissional_id: usuario.id } : r
         )
       );
-      
+
       toast.success('Solicitação de conversa enviada com sucesso!');
-      
+
     } catch (error) {
       const errorMessage = error.response?.data?.erro || 'Erro ao solicitar conversa';
       toast.error(errorMessage);

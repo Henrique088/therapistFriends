@@ -40,7 +40,7 @@ export default function DashboardProfissional() {
   ];
 
   useEffect(() => {
-    // Fechar painel de notificações ao clicar fora
+   
     const handleClickOutside = (event) => {
       if (
         showNotifications &&
@@ -57,7 +57,7 @@ export default function DashboardProfissional() {
   }, [showNotifications]);
 
   useEffect(() => {
-    // Buscar estatísticas do backend com axios
+    
     async function fetchStats() {
       setLoading(true);
       try {
@@ -66,7 +66,7 @@ export default function DashboardProfissional() {
         
         setStats(data);
         
-        // Preparar dados para o gráfico
+        
         if (data.consultasPorDia) {
           const dias = data.consultasPorDia.map(item => item.dia);
           const totais = data.consultasPorDia.map(item => item.total);
@@ -85,11 +85,11 @@ export default function DashboardProfissional() {
       fetchStats();
     }
 
-    // Escolher uma dica aleatória
+      // Seleciona uma dica aleatória
     setTip(mentalHealthTips[Math.floor(Math.random() * mentalHealthTips.length)]);
   }, [usuario?.id]);
 
-  // Dados para gráfico simples (exemplo: consultas por dia da semana)
+  
   const chartData = {
     labels: labels,
     datasets: [

@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
 import Modal from 'react-modal';
 import { toast } from 'react-toastify';
-import './ModalCodinome.css';
+import styles from './ModalCodinome.module.css'; // Alterado para .module.css
 import { useUser } from '../../contexts/UserContext';
 import api from '../../api/apiConfig';
 
@@ -77,15 +76,15 @@ export default function ModalCodinome({ isOpen, onClose }) {
       onRequestClose={onClose}
       shouldCloseOnOverlayClick={false}
       shouldCloseOnEsc={false}
-      className="modal-content"
-      overlayClassName="modal-overlay"
+      className={styles.modalContent} // Alterado para styles
+      overlayClassName={styles.modalOverlay} // Alterado para styles
     >
-      <div className="modal-header">
+      <div className={styles.modalHeader}>
         <h2>Complete Seu Perfil</h2>
       </div>
-      <div className="modal-body">
+      <div className={styles.modalBody}>
         <p>Por favor, complete as informações do seu perfil para continuar.</p>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label htmlFor="codinome">Codinome:</label>
           <input
             type="text"
@@ -96,7 +95,7 @@ export default function ModalCodinome({ isOpen, onClose }) {
             placeholder="Digite seu codinome"
           />
         </div>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label htmlFor="telefone">Telefone:</label>
           <input
             type="text"
@@ -108,11 +107,19 @@ export default function ModalCodinome({ isOpen, onClose }) {
           />
         </div>
       </div>
-      <div className="modal-footer">
-        <button onClick={logout} disabled={salvando}>
+      <div className={styles.modalFooter}>
+        <button 
+          onClick={logout} 
+          disabled={salvando}
+          className={styles.logoutButton}
+        >
           Sair
         </button>
-        <button onClick={salvarCodinome} disabled={salvando}>
+        <button 
+          onClick={salvarCodinome} 
+          disabled={salvando}
+          className={styles.saveButton}
+        >
           {salvando ? 'Salvando...' : 'Salvar'}
         </button>
       </div>

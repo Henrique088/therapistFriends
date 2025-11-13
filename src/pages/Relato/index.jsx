@@ -17,7 +17,7 @@ const Relatos = () => {
   const [relatos, setRelatos] = useState([]);
   const [relatoEditando, setRelatoEditando] = useState(null);
   const [recarregarRelatos, setRecarregarRelatos] = useState(0);
-  const [showModalInfo, setShowModalInfo] = useState(false); // Estado para o modal
+  const [showModalInfo, setShowModalInfo] = useState(false); 
   const { usuario } = useUser();
 
   // Estado para as tags selecionadas
@@ -31,7 +31,7 @@ const Relatos = () => {
     tagsDisponiveis.push('Disponivéis','Grave', 'Moderado', 'Leve');
   }
 
-  // ✅ Função para lidar com a seleção e deseleção das tags
+
   const handleTagClick = (tag) => {
     if (tagsSelecionadas.includes(tag)) {
       setTagsSelecionadas(tagsSelecionadas.filter(t => t !== tag));
@@ -41,7 +41,7 @@ const Relatos = () => {
     setRecarregarRelatos(prev => prev + 1);
   };
 
-  // ✅ Função para remover uma tag específica
+
   const handleRemoveTag = (tagToRemove) => {
     setTagsSelecionadas(tagsSelecionadas.filter(tag => tag !== tagToRemove));
     setRecarregarRelatos(prev => prev + 1);
@@ -64,7 +64,7 @@ const Relatos = () => {
     setRelatoEditando(null);
   };
 
-  // ✅ Função para abrir/fechar o modal de informação
+
   const toggleModalInfo = () => {
     setShowModalInfo(!showModalInfo);
   };
